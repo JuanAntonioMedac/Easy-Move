@@ -110,6 +110,9 @@ new TomSelect('#codigo_postal', {
 });
 
 const isAuthenticated = {{ auth()->check() ? 'true' : 'false' }};
+const searchUrl = @json(route('search'));
+const exportPdfUrl = @json(route('export-pdf'));
+const comparisonUrlTemplate = @json(url('/comparacion/__ID__'));
 let currentComparacionId = null;
 
 document.getElementById('searchForm').addEventListener('submit', async (e) => {
@@ -128,12 +131,12 @@ document.getElementById('searchForm').addEventListener('submit', async (e) => {
             </div>
         `;
         
-        const response = await axios.post('/search', {
+        const response = await axios.post(searchUrl, {
             codigo_postal: formData.get('codigo_postal'),
             id_tipo_servicio: formData.get('id_tipo_servicio'),
         });
 
-        const { tarifas } = response.data;
+        const tarifas = response.data?.data?.tarifas ?? response.data?.tarifas ?? [];
         
         if (tarifas.length === 0) {
             resultsContainer.innerHTML = `
@@ -149,16 +152,16 @@ document.getElementById('searchForm').addEventListener('submit', async (e) => {
             <div class="bg-white dark:bg-slate-900 rounded-lg shadow-md p-6 hover:shadow-lg transition border border-gray-200 dark:border-slate-800">
                 <div class="flex justify-between items-start mb-4">
                     <div class="flex-1">
-                        <h3 class="font-bold text-lg text-gray-900 dark:text-white">${tarifa.proveedor.nombre}</h3>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">${tarifa.servicio.nombre}</p>
+                        <h3 class="font-bold text-lg text-gray-900 dark:text-white">${tarifa.proveedor?.nombre ?? 'Proveedor'}</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">${tarifa.servicio?.nombre_servicio ?? 'Servicio'}</p>
                     </div>
                     <span class="text-3xl font-bold text-primary-600 ml-4">$${parseFloat(tarifa.precio).toFixed(2)}</span>
                 </div>
                 
                 <div class="space-y-2 mb-4 text-sm text-gray-600 dark:text-gray-400">
-                    <p><i class="bi bi-geo-alt me-2"></i><strong>Ubicación:</strong> ${tarifa.ubicacion.nombre}</p>
-                    <p><i class="bi bi-clock me-2"></i><strong>Tiempo:</strong> ${tarifa.tiempo_estimado} min</p>
-                    <p><i class="bi bi-star me-2"></i><strong>Calificación:</strong> ${tarifa.calificacion || 'N/A'}</p>
+                    <p><i class="bi bi-geo-alt me-2"></i><strong>Ubicación:</strong> ${tarifa.ubicacion?.nombre ?? formData.get('codigo_postal') ?? 'N/A'}</p>
+                    <p><i class="bi bi-clock me-2"></i><strong>Permanencia:</strong> ${tarifa.permanencia || 'N/A'}</p>
+                    <p><i class="bi bi-star me-2"></i><strong>Unidad:</strong> ${tarifa.unidad_precio || 'N/A'}</p>
                 </div>
 
                 ${isAuthenticated ? `
@@ -191,14 +194,15 @@ async function viewComparison(comparacionId) {
     
     try {
         currentComparacionId = comparacionId;
-        const response = await axios.get(`/comparacion/${comparacionId}`);
+        const comparisonUrl = comparisonUrlTemplate.replace('__ID__', comparacionId);
+        const response = await axios.get(comparisonUrl);
         
         const html = `
             <div class="space-y-4">
                 ${response.data.tarifas.map(t => `
                     <div class="border-b border-gray-200 dark:border-slate-700 pb-4 last:border-0">
                         <h4 class="font-semibold text-gray-900 dark:text-white">${t.proveedor.nombre}</h4>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">${t.servicio.nombre}</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">${t.servicio?.nombre_servicio ?? 'Servicio'}</p>
                         <p class="text-lg font-bold text-primary-600 mt-2">$${parseFloat(t.precio).toFixed(2)}</p>
                     </div>
                 `).join('')}
@@ -217,7 +221,7 @@ async function exportPdf() {
     if (!currentComparacionId) return;
     
     try {
-        const response = await axios.post('/export-pdf', {
+        const response = await axios.post(exportPdfUrl, {
             comparacion_id: currentComparacionId,
         }, {
             responseType: 'blob',

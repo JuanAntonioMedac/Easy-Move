@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet" />
     
-    @vite(['resources/css/app.css', 'resources/js/app.jsx'])
+    @vite(['resources/css/app.css', 'resources/js/site.js'])
 </head>
 <body class="antialiased bg-white dark:bg-slate-950 transition-colors">
     <!-- Navbar -->
@@ -39,6 +39,10 @@
                         <a href="{{ route('login') }}" class="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-primary-600 transition flex items-center gap-2">
                             <i class="bi bi-box-arrow-in-right"></i>
                             Iniciar Sesión
+                        </a>
+                        <a href="{{ route('register') }}" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition flex items-center gap-2 ml-2">
+                            <i class="bi bi-person-plus"></i>
+                            Registrarse
                         </a>
                     @endguest
                     <button id="themeToggle" class="p-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 transition border border-gray-300 dark:border-slate-700 rounded-lg">

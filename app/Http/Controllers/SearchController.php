@@ -11,6 +11,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class SearchController extends Controller
 {
@@ -195,6 +196,58 @@ class SearchController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error al generar PDF: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Devuelve detalle de una comparación para el modal de resultados
+     *
+     * @param int $comparacion
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function showComparison(int $comparacion)
+    {
+        try {
+            $comparacionModel = Comparacion::with('tarifas.servicio.proveedor')
+                ->findOrFail($comparacion);
+
+            if ($comparacionModel->id_usuario && $comparacionModel->id_usuario !== Auth::id()) {
+                return response()->json(['error' => 'No autorizado'], 403);
+            }
+
+            $tarifas = $comparacionModel->tarifas
+                ->sortBy('pivot.posicion_resultado')
+                ->values()
+                ->map(function ($tarifa) {
+                    return [
+                        'id_tarifa' => $tarifa->id_tarifa,
+                        'precio' => $tarifa->precio,
+                        'servicio' => [
+                            'id_servicio' => $tarifa->servicio?->id_servicio,
+                            'nombre_servicio' => $tarifa->servicio?->nombre_servicio,
+                        ],
+                        'proveedor' => [
+                            'id_proveedor' => $tarifa->servicio?->proveedor?->id_proveedor,
+                            'nombre' => $tarifa->servicio?->proveedor?->nombre,
+                        ],
+                    ];
+                });
+
+            return response()->json([
+                'success' => true,
+                'comparacion_id' => $comparacionModel->id_comparacion,
+                'tarifas' => $tarifas,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error al obtener comparacion', [
+                'comparacion_id' => $comparacion,
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al cargar la comparacion',
             ], 500);
         }
     }
