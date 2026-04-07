@@ -4,13 +4,13 @@ import Navbar from '../components/Navbar';
 
 /**
  * Componente Home
- * 
+ *
  * Features:
  * - Formulario elegante para CP y Tipo de Servicio
  * - Lista de resultados en cards
  * - Componente Blur/Lock para usuarios no autenticados
  * - Botones de descarga PDF y envío por email
- * 
+ *
  * @param {Object} user - Objeto del usuario autenticado o null
  * @param {Array} tiposServicios - Lista de tipos de servicios disponibles
  */
@@ -37,11 +37,11 @@ export default function Home({ user = null, tiposServicios = [] }) {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
                 },
                 body: JSON.stringify({
-                    codigo_postal: codigoPostal,
-                    id_tipo_servicio: tipoServicio,
-                    ciudad,
-                    provincia,
-                }),
+                codigo_postal: codigoPostal,
+                id_tipo_servicio: parseInt(tipoServicio), // ← Convierte a integer
+                ciudad,
+                provincia,
+            }),
             });
 
             const data = await response.json();

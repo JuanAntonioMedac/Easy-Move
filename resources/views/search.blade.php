@@ -7,10 +7,10 @@
     <!-- Formulario de Búsqueda -->
     <div class="bg-white dark:bg-slate-900 rounded-lg shadow-md p-8 border border-gray-200 dark:border-slate-800">
         <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Buscar Servicios</h2>
-        
+
         <form id="searchForm" class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
             @csrf
-            
+
             <!-- Tipo de Servicio -->
             <div>
                 <label for="id_tipo_servicio" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -19,7 +19,8 @@
                 <select id="id_tipo_servicio" name="id_tipo_servicio" required class="w-full px-4 py-2 border border-gray-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-600">
                     <option value="">-- Seleccionar --</option>
                     @foreach ($tiposServicios as $tipo)
-                        <option value="{{ $tipo->id }}">{{ $tipo->nombre }}</option>
+
+                    <option value="{{ $tipo->id_tipo_servicio }}">{{ $tipo->nombre }}</option>
                     @endforeach
                 </select>
             </div>
@@ -52,7 +53,7 @@
                 <p class="text-sm text-blue-800 dark:text-blue-300 flex items-start gap-2">
                     <i class="bi bi-info-circle mt-0.5 flex-shrink-0"></i>
                     <span>
-                        <strong>Nota:</strong> Eres usuario anónimo. Solo verás los 2 mejores resultados. 
+                        <strong>Nota:</strong> Eres usuario anónimo. Solo verás los 2 mejores resultados.
                         <a href="{{ route('login') }}" class="underline font-medium hover:text-blue-900 dark:hover:text-blue-200">Inicia sesión</a> para ver todas las opciones.
                     </span>
                 </p>
@@ -117,10 +118,10 @@ let currentComparacionId = null;
 
 document.getElementById('searchForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    
+
     const formData = new FormData(document.getElementById('searchForm'));
     const resultsContainer = document.getElementById('resultsContainer');
-    
+
     try {
         resultsContainer.innerHTML = `
             <div class="bg-white dark:bg-slate-900 rounded-lg shadow-md p-8 text-center text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-slate-800">
@@ -130,14 +131,14 @@ document.getElementById('searchForm').addEventListener('submit', async (e) => {
                 <p class="mt-4">Buscando...</p>
             </div>
         `;
-        
+
         const response = await axios.post(searchUrl, {
             codigo_postal: formData.get('codigo_postal'),
             id_tipo_servicio: formData.get('id_tipo_servicio'),
         });
 
         const tarifas = response.data?.data?.tarifas ?? response.data?.tarifas ?? [];
-        
+
         if (tarifas.length === 0) {
             resultsContainer.innerHTML = `
                 <div class="bg-white dark:bg-slate-900 rounded-lg shadow-md p-12 text-center border border-gray-200 dark:border-slate-800">
@@ -157,7 +158,7 @@ document.getElementById('searchForm').addEventListener('submit', async (e) => {
                     </div>
                     <span class="text-3xl font-bold text-primary-600 ml-4">$${parseFloat(tarifa.precio).toFixed(2)}</span>
                 </div>
-                
+
                 <div class="space-y-2 mb-4 text-sm text-gray-600 dark:text-gray-400">
                     <p><i class="bi bi-geo-alt me-2"></i><strong>Ubicación:</strong> ${tarifa.ubicacion?.nombre ?? formData.get('codigo_postal') ?? 'N/A'}</p>
                     <p><i class="bi bi-clock me-2"></i><strong>Permanencia:</strong> ${tarifa.permanencia || 'N/A'}</p>
@@ -191,12 +192,12 @@ function closeModal() {
 
 async function viewComparison(comparacionId) {
     if (!isAuthenticated) return;
-    
+
     try {
         currentComparacionId = comparacionId;
         const comparisonUrl = comparisonUrlTemplate.replace('__ID__', comparacionId);
         const response = await axios.get(comparisonUrl);
-        
+
         const html = `
             <div class="space-y-4">
                 ${response.data.tarifas.map(t => `
@@ -208,7 +209,7 @@ async function viewComparison(comparacionId) {
                 `).join('')}
             </div>
         `;
-        
+
         document.getElementById('modalContent').innerHTML = html;
         document.getElementById('comparisonModal').classList.remove('hidden');
     } catch (error) {
@@ -219,14 +220,14 @@ async function viewComparison(comparacionId) {
 
 async function exportPdf() {
     if (!currentComparacionId) return;
-    
+
     try {
         const response = await axios.post(exportPdfUrl, {
             comparacion_id: currentComparacionId,
         }, {
             responseType: 'blob',
         });
-        
+
         const url = window.URL.createObjectURL(response.data);
         const a = document.createElement('a');
         a.href = url;
