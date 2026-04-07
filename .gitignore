@@ -22,3 +22,9 @@ yarn-error.log
 /.vscode
 /.zed
 composer.phar
+/database/*.sqlite
+/database/*.sqlite-journal
+res.txt
+composer.lock
+package-lock.json
+res.txt
