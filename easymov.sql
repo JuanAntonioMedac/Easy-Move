@@ -578,6 +578,13 @@ ALTER TABLE `users`
   ADD UNIQUE KEY `users_email_unique` (`email`);
 
 --
+-- Indices de la tabla `usuarios`
+--
+ALTER TABLE `usuarios`
+  ADD PRIMARY KEY (`id_usuario`),
+  ADD UNIQUE KEY `usuarios_email_unique` (`email`);
+
+--
 -- AUTO_INCREMENT de las tablas volcadas
 --
 
