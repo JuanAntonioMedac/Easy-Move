@@ -17,7 +17,7 @@ class SearchController extends Controller
 {
     /**
      * Renderiza la página de inicio (Home)
-     * 
+     *
      * @return \Illuminate\View\View
      */
     public function index()
@@ -34,11 +34,11 @@ class SearchController extends Controller
 
     /**
      * Ejecuta la búsqueda de tarifas basada en filtros
-     * 
+     *
      * Lógica crítica:
      * - Si el usuario NO está autenticado (Auth::check() === false): devuelve SOLO 2 mejores resultados por precio
      * - Si el usuario está autenticado: devuelve TODOS los resultados ordenados por precio
-     * 
+     *
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -61,7 +61,9 @@ class SearchController extends Controller
             );
 
             // Query base: buscar tarifas disponibles para la ubicación y tipo de servicio
+
             $tarifasQuery = Tarifa::query()
+                ->with('servicio.proveedor')
                 ->whereHas('servicio', function ($q) use ($validated) {
                     $q->where('id_tipo_servicio', $validated['id_tipo_servicio']);
                 })
@@ -164,9 +166,9 @@ class SearchController extends Controller
 
     /**
      * Exporta los resultados de una comparación a PDF
-     * 
+     *
      * Solo accesible vía middleware 'auth'
-     * 
+     *
      * @param \Illuminate\Http\Request $request
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
@@ -254,9 +256,9 @@ class SearchController extends Controller
 
     /**
      * Envía los resultados de una comparación por email
-     * 
+     *
      * Solo accesible vía middleware 'auth'
-     * 
+     *
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
