@@ -4,12 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'EasyMove - Comparador de Servicios')</title>
-    
+
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet" />
-    
+
     @vite(['resources/css/app.css', 'resources/js/site.js'])
 </head>
 <body class="antialiased bg-white dark:bg-slate-950 transition-colors">
@@ -26,7 +26,7 @@
                 </a>
                 <div class="flex items-center gap-4">
                     @auth
-                        <span class="text-sm text-gray-600 dark:text-gray-300">{{ Auth::user()->name ?? 'Usuario' }}</span>
+                        <span class="text-sm text-gray-600 dark:text-gray-300">{{ Auth::user()->nombre ?? 'Usuario' }}</span>
                         <form method="POST" action="{{ route('logout') }}" class="inline">
                             @csrf
                             <button type="submit" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition flex items-center gap-2">
@@ -74,7 +74,7 @@
         // Inicializar tema desde localStorage o usar dark por defecto
         const savedTheme = localStorage.getItem('theme');
         const isDark = savedTheme === 'dark' || savedTheme === null; // Dark por defecto
-        
+
         if (isDark) {
             html.classList.add('dark');
             themeIcon.classList.remove('bi-moon-stars');
