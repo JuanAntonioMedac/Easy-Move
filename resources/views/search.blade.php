@@ -156,7 +156,7 @@ document.getElementById('searchForm').addEventListener('submit', async (e) => {
                         <h3 class="font-bold text-lg text-gray-900 dark:text-white">${tarifa.proveedor?.nombre ?? 'Proveedor'}</h3>
                         <p class="text-sm text-gray-600 dark:text-gray-400">${tarifa.servicio?.nombre_servicio ?? 'Servicio'}</p>
                     </div>
-                    <span class="text-3xl font-bold text-primary-600 ml-4">$${parseFloat(tarifa.precio).toFixed(2)}</span>
+                    <span class="text-3xl font-bold text-primary-600 ml-4">${parseFloat(tarifa.precio).toFixed(2)}€</span>
                 </div>
 
                 <div class="space-y-2 mb-4 text-sm text-gray-600 dark:text-gray-400">
