@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.9.0.1
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: sql302.infinityfree.com
--- Tiempo de generación: 07-04-2026 a las 09:48:03
--- Versión del servidor: 11.4.10-MariaDB
--- Versión de PHP: 7.2.22
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 07-04-2026 a las 17:45:57
+-- Versión del servidor: 10.4.32-MariaDB
+-- Versión de PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -19,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `if0_40989992_easymov`
+-- Base de datos: `easymove`
 --
 
 -- --------------------------------------------------------
@@ -62,6 +61,37 @@ CREATE TABLE `comparaciones` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Volcado de datos para la tabla `comparaciones`
+--
+
+INSERT INTO `comparaciones` (`id_comparacion`, `fecha`, `id_usuario`, `id_ubicacion`, `id_tipo_servicio`, `created_at`, `updated_at`) VALUES
+(1, '2026-04-07 12:59:27', NULL, 11, 1, '2026-04-07 12:59:27', '2026-04-07 12:59:27'),
+(2, '2026-04-07 12:59:59', NULL, 12, 1, '2026-04-07 12:59:59', '2026-04-07 12:59:59'),
+(3, '2026-04-07 13:00:02', NULL, 13, 1, '2026-04-07 13:00:02', '2026-04-07 13:00:02'),
+(4, '2026-04-07 13:00:07', NULL, 1, 1, '2026-04-07 13:00:07', '2026-04-07 13:00:07'),
+(5, '2026-04-07 13:00:10', NULL, 2, 1, '2026-04-07 13:00:10', '2026-04-07 13:00:10'),
+(6, '2026-04-07 13:00:12', NULL, 4, 1, '2026-04-07 13:00:12', '2026-04-07 13:00:12'),
+(7, '2026-04-07 13:00:15', NULL, 13, 1, '2026-04-07 13:00:15', '2026-04-07 13:00:15'),
+(8, '2026-04-07 13:00:24', NULL, 13, 2, '2026-04-07 13:00:24', '2026-04-07 13:00:24'),
+(9, '2026-04-07 13:00:27', NULL, 13, 2, '2026-04-07 13:00:27', '2026-04-07 13:00:27'),
+(10, '2026-04-07 13:00:31', NULL, 13, 3, '2026-04-07 13:00:31', '2026-04-07 13:00:31'),
+(11, '2026-04-07 13:01:13', NULL, 1, 1, '2026-04-07 13:01:13', '2026-04-07 13:01:13'),
+(13, '2026-04-07 13:04:34', NULL, 1, 1, '2026-04-07 13:04:34', '2026-04-07 13:04:34'),
+(14, '2026-04-07 13:07:18', NULL, 1, 1, '2026-04-07 13:07:18', '2026-04-07 13:07:18'),
+(20, '2026-04-07 13:14:26', NULL, 11, 1, '2026-04-07 13:14:26', '2026-04-07 13:14:26'),
+(22, '2026-04-07 13:17:57', NULL, 11, 1, '2026-04-07 13:17:57', '2026-04-07 13:17:57'),
+(28, '2026-04-07 13:37:39', NULL, 11, 1, '2026-04-07 13:37:39', '2026-04-07 13:37:39'),
+(31, '2026-04-07 13:44:21', 1, 11, 1, '2026-04-07 13:44:21', '2026-04-07 13:44:21'),
+(32, '2026-04-07 13:44:31', 1, 13, 1, '2026-04-07 13:44:31', '2026-04-07 13:44:31'),
+(33, '2026-04-07 13:44:33', 1, 11, 1, '2026-04-07 13:44:33', '2026-04-07 13:44:33'),
+(34, '2026-04-07 13:44:35', 1, 11, 2, '2026-04-07 13:44:35', '2026-04-07 13:44:35'),
+(35, '2026-04-07 13:44:38', 1, 11, 3, '2026-04-07 13:44:38', '2026-04-07 13:44:38'),
+(36, '2026-04-07 13:44:40', 1, 1, 3, '2026-04-07 13:44:40', '2026-04-07 13:44:40'),
+(37, '2026-04-07 13:44:43', 1, 1, 2, '2026-04-07 13:44:43', '2026-04-07 13:44:43'),
+(38, '2026-04-07 13:44:45', 1, 1, 3, '2026-04-07 13:44:45', '2026-04-07 13:44:45'),
+(39, '2026-04-07 13:44:50', 1, 11, 1, '2026-04-07 13:44:50', '2026-04-07 13:44:50');
+
 -- --------------------------------------------------------
 
 --
@@ -76,6 +106,41 @@ CREATE TABLE `comparacion_tarifas` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `comparacion_tarifas`
+--
+
+INSERT INTO `comparacion_tarifas` (`id_comparacion_tarifa`, `id_comparacion`, `id_tarifa`, `posicion_resultado`, `created_at`, `updated_at`) VALUES
+(1, 14, 4, 1, '2026-04-07 13:07:18', '2026-04-07 13:07:18'),
+(2, 14, 1, 2, '2026-04-07 13:07:18', '2026-04-07 13:07:18'),
+(3, 20, 4, 1, '2026-04-07 13:14:26', '2026-04-07 13:14:26'),
+(4, 20, 1, 2, '2026-04-07 13:14:26', '2026-04-07 13:14:26'),
+(5, 22, 4, 1, '2026-04-07 13:17:57', '2026-04-07 13:17:57'),
+(6, 22, 1, 2, '2026-04-07 13:17:57', '2026-04-07 13:17:57'),
+(7, 28, 4, 1, '2026-04-07 13:37:39', '2026-04-07 13:37:39'),
+(8, 28, 1, 2, '2026-04-07 13:37:39', '2026-04-07 13:37:39'),
+(9, 31, 4, 1, '2026-04-07 13:44:21', '2026-04-07 13:44:21'),
+(10, 31, 1, 2, '2026-04-07 13:44:21', '2026-04-07 13:44:21'),
+(11, 31, 5, 3, '2026-04-07 13:44:21', '2026-04-07 13:44:21'),
+(12, 31, 3, 4, '2026-04-07 13:44:21', '2026-04-07 13:44:21'),
+(13, 31, 2, 5, '2026-04-07 13:44:21', '2026-04-07 13:44:21'),
+(14, 33, 4, 1, '2026-04-07 13:44:33', '2026-04-07 13:44:33'),
+(15, 33, 1, 2, '2026-04-07 13:44:33', '2026-04-07 13:44:33'),
+(16, 33, 5, 3, '2026-04-07 13:44:33', '2026-04-07 13:44:33'),
+(17, 33, 3, 4, '2026-04-07 13:44:33', '2026-04-07 13:44:33'),
+(18, 33, 2, 5, '2026-04-07 13:44:33', '2026-04-07 13:44:33'),
+(19, 36, 8, 1, '2026-04-07 13:44:40', '2026-04-07 13:44:40'),
+(20, 36, 9, 2, '2026-04-07 13:44:40', '2026-04-07 13:44:40'),
+(21, 37, 6, 1, '2026-04-07 13:44:43', '2026-04-07 13:44:43'),
+(22, 37, 7, 2, '2026-04-07 13:44:43', '2026-04-07 13:44:43'),
+(23, 38, 8, 1, '2026-04-07 13:44:45', '2026-04-07 13:44:45'),
+(24, 38, 9, 2, '2026-04-07 13:44:45', '2026-04-07 13:44:45'),
+(25, 39, 4, 1, '2026-04-07 13:44:50', '2026-04-07 13:44:50'),
+(26, 39, 1, 2, '2026-04-07 13:44:50', '2026-04-07 13:44:50'),
+(27, 39, 5, 3, '2026-04-07 13:44:50', '2026-04-07 13:44:50'),
+(28, 39, 3, 4, '2026-04-07 13:44:50', '2026-04-07 13:44:50'),
+(29, 39, 2, 5, '2026-04-07 13:44:50', '2026-04-07 13:44:50');
 
 -- --------------------------------------------------------
 
@@ -305,8 +370,7 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('ck0x05YXMUP57ueotcBTonGoD3fl8HBhNs79BCOx', NULL, '127.0.0.1', 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiS2ZwbnM4RmtuSWQ0UlY2dkJRbTMyYUV4blZETmZ6SVZNekY4cnp0TyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1771024821),
-('g9xG4wKS939i0Cylnj9SU973enYvVwLF1ug9O30q', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.109.3 Chrome/142.0.7444.265 Electron/39.3.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiSWlMY0VpcVdBbHZiSERsU05QOVF1dm9jUm82NHhpTVlLeDhWQWRyeiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6OTU6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC8/aWQ9ZjJhZTgwZWUtNWViOS00ODE4LWI5N2YtNGUzOTc2NzliMGMzJnZzY29kZUJyb3dzZXJSZXFJZD0xNzcxMDI0ODI3MTEwIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1771024827);
+('CsCmB45Hcp5Fen8FF0JyQzYRAqopgkWjh40UFlPY', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 OPR/129.0.0.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoic1NIdkk1VkJPUUpOQlltTUJwcG92Rm5HYjVKQXg2RlpqTkhGWTBIaCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjE7fQ==', 1775576730);
 
 -- --------------------------------------------------------
 
@@ -333,15 +397,15 @@ CREATE TABLE `tarifas` (
 --
 
 INSERT INTO `tarifas` (`id_tarifa`, `nombre_tarifa`, `precio`, `unidad_precio`, `permanencia`, `condiciones`, `url_oferta_externa`, `id_servicio`, `fecha_actualizacion`, `created_at`, `updated_at`) VALUES
-(1, 'Tarifa Luz Basica', '45.50', 'mes', 'Sin permanencia', 'Acceso 0.10€/kWh + potencia 90€/ano', 'https://www.endesa.es/es/particulares/luz', 1, '2026-02-13 23:31:06', '2026-02-13 18:10:31', '2026-02-13 23:31:06'),
-(2, 'Tarifa Luz Plus', '52.30', 'mes', '12 meses', 'Descuento 15% + seguros incluidos', 'https://www.endesa.es/es/particulares/luz', 2, '2026-02-13 18:10:31', '2026-02-13 18:10:31', '2026-02-13 18:10:31'),
-(3, 'Tarifa Luz Eco', '48.75', 'mes', '12 meses', '100% energia renovable certificada', 'https://www.iberdrola.es/clientes/luz', 3, '2026-02-13 23:31:35', '2026-02-13 18:10:31', '2026-02-13 23:31:35'),
-(4, 'Tarifa Luz Ahorro', '44.20', 'mes', 'Sin permanencia', 'Acceso flexible + cambio sin penalizacion', 'https://www.iberdrola.es/clientes/luz', 3, '2026-02-13 23:31:42', '2026-02-13 18:10:31', '2026-02-13 23:31:42'),
-(5, 'Tarifa Luz Estandar', '46.99', 'mes', 'Sin permanencia', 'Precio fijo durante 1 ano', 'https://www.edf.es/es/hogares', 4, '2026-02-13 23:32:10', '2026-02-13 18:10:31', '2026-02-13 23:32:10'),
-(6, 'Tarifa Gas Natural', '35.40', 'mes', 'Sin permanencia', 'Precio variable + facturacion mensual', 'https://www.naturgy.es', 5, '2026-02-13 23:32:17', '2026-02-13 18:10:31', '2026-02-13 23:32:17'),
-(7, 'Tarifa Gas Plus', '42.80', 'mes', '24 meses', 'Incluye seguros de hogar + precio fijo', 'https://www.naturgy.es', 6, '2026-02-13 18:10:31', '2026-02-13 18:10:31', '2026-02-13 18:10:31'),
-(8, 'Fibra 300Mbps + Fijo', '49.95', 'mes', '12 meses', 'Velocidad hasta 300Mbps + llamadas ilimitadas', 'https://www.telefonica.es', 7, '2026-02-13 18:10:31', '2026-02-13 18:10:31', '2026-02-13 18:10:31'),
-(9, 'Fibra 600Mbps + Movil', '59.90', 'mes', '12 meses', 'Velocidad 600Mbps + linea movil 50GB', 'https://www.vodafone.es', 8, '2026-02-13 23:31:55', '2026-02-13 18:10:31', '2026-02-13 23:31:55');
+(1, 'Tarifa Luz Basica', 45.50, 'mes', 'Sin permanencia', 'Acceso 0.10€/kWh + potencia 90€/ano', 'https://www.endesa.es/es/particulares/luz', 1, '2026-02-13 23:31:06', '2026-02-13 18:10:31', '2026-02-13 23:31:06'),
+(2, 'Tarifa Luz Plus', 52.30, 'mes', '12 meses', 'Descuento 15% + seguros incluidos', 'https://www.endesa.es/es/particulares/luz', 2, '2026-02-13 18:10:31', '2026-02-13 18:10:31', '2026-02-13 18:10:31'),
+(3, 'Tarifa Luz Eco', 48.75, 'mes', '12 meses', '100% energia renovable certificada', 'https://www.iberdrola.es/clientes/luz', 3, '2026-02-13 23:31:35', '2026-02-13 18:10:31', '2026-02-13 23:31:35'),
+(4, 'Tarifa Luz Ahorro', 44.20, 'mes', 'Sin permanencia', 'Acceso flexible + cambio sin penalizacion', 'https://www.iberdrola.es/clientes/luz', 3, '2026-02-13 23:31:42', '2026-02-13 18:10:31', '2026-02-13 23:31:42'),
+(5, 'Tarifa Luz Estandar', 46.99, 'mes', 'Sin permanencia', 'Precio fijo durante 1 ano', 'https://www.edf.es/es/hogares', 4, '2026-02-13 23:32:10', '2026-02-13 18:10:31', '2026-02-13 23:32:10'),
+(6, 'Tarifa Gas Natural', 35.40, 'mes', 'Sin permanencia', 'Precio variable + facturacion mensual', 'https://www.naturgy.es', 5, '2026-02-13 23:32:17', '2026-02-13 18:10:31', '2026-02-13 23:32:17'),
+(7, 'Tarifa Gas Plus', 42.80, 'mes', '24 meses', 'Incluye seguros de hogar + precio fijo', 'https://www.naturgy.es', 6, '2026-02-13 18:10:31', '2026-02-13 18:10:31', '2026-02-13 18:10:31'),
+(8, 'Fibra 300Mbps + Fijo', 49.95, 'mes', '12 meses', 'Velocidad hasta 300Mbps + llamadas ilimitadas', 'https://www.telefonica.es', 7, '2026-02-13 18:10:31', '2026-02-13 18:10:31', '2026-02-13 18:10:31'),
+(9, 'Fibra 600Mbps + Movil', 59.90, 'mes', '12 meses', 'Velocidad 600Mbps + linea movil 50GB', 'https://www.vodafone.es', 8, '2026-02-13 23:31:55', '2026-02-13 18:10:31', '2026-02-13 23:31:55');
 
 -- --------------------------------------------------------
 
@@ -404,30 +468,6 @@ INSERT INTO `ubicaciones` (`id_ubicacion`, `codigo_postal`, `ciudad`, `provincia
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `users`
---
-
-CREATE TABLE `users` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `email_verified_at` timestamp NULL DEFAULT NULL,
-  `password` varchar(255) NOT NULL,
-  `remember_token` varchar(100) DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Volcado de datos para la tabla `users`
---
-
-INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'jcaballero', 'jcl0035@alu.medac.es', NULL, '$2y$12$gYfn61u8hHaBd8pk7cYLq.Zv7h.zDF3ICpwrXYAFdZAcZe6mWQfYK', NULL, '2026-04-02 00:09:02', '2026-04-02 00:09:02');
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `usuarios`
 --
 
@@ -439,7 +479,14 @@ CREATE TABLE `usuarios` (
   `fecha_registro` timestamp NOT NULL DEFAULT current_timestamp(),
   `rol` enum('admin','usuario') DEFAULT 'usuario',
   `preferencias` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `usuarios`
+--
+
+INSERT INTO `usuarios` (`id_usuario`, `nombre`, `email`, `password`, `fecha_registro`, `rol`, `preferencias`) VALUES
+(1, 'jose', 'jpb0028@alu.medac.es', '$2y$12$1hWmc1y0RZ1QUyWe2KZpBerqnj8ZONH/.uU5bNwWY5FBABOSwh4i6', '2026-04-07 15:44:17', 'usuario', NULL);
 
 --
 -- Índices para tablas volcadas
@@ -571,13 +618,6 @@ ALTER TABLE `ubicaciones`
   ADD KEY `idx_ciudad` (`ciudad`);
 
 --
--- Indices de la tabla `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `users_email_unique` (`email`);
-
---
 -- Indices de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
@@ -592,13 +632,13 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `comparaciones`
 --
 ALTER TABLE `comparaciones`
-  MODIFY `id_comparacion` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id_comparacion` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT de la tabla `comparacion_tarifas`
 --
 ALTER TABLE `comparacion_tarifas`
-  MODIFY `id_comparacion_tarifa` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id_comparacion_tarifa` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT de la tabla `disponibilidad`
@@ -655,16 +695,10 @@ ALTER TABLE `ubicaciones`
   MODIFY `id_ubicacion` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
--- AUTO_INCREMENT de la tabla `users`
---
-ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id_usuario` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id_usuario` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Restricciones para tablas volcadas
