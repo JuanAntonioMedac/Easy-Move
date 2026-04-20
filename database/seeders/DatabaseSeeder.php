@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,11 +13,29 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Ejecutar el seeder de EasyMove
+        $this->call(EasyMoveSeeder::class);
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // Crear usuario admin
+        User::firstOrCreate(
+            ['email' => 'admin@easymove.com'],
+            [
+                'nombre' => 'Administrador',
+                'email' => 'admin@easymove.com',
+                'password' => Hash::make('password'),
+                'rol' => 'admin',
+            ]
+        );
+
+        // Crear usuario de prueba
+        User::firstOrCreate(
+            ['email' => 'usuario@easymove.com'],
+            [
+                'nombre' => 'Usuario de Prueba',
+                'email' => 'usuario@easymove.com',
+                'password' => Hash::make('password'),
+                'rol' => 'usuario',
+            ]
+        );
     }
 }
