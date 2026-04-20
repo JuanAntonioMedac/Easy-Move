@@ -1,0 +1,302 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "09382846-8ae9-4fd4-a205-8220b7cb60bb",
+      "name": "When clicking \"Execute Workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        16,
+        -64
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const postalCodes = ['18005', '18014', '18002', '18006', '18007', '18004', '18003', '18001'];\nconst companies = [\n  { name: 'endesa', url: 'https://www.endesa.com/es/tarifas' },\n  { name: 'iberdrola', url: 'https://www.iberdrola.es/tarifas' },\n  { name: 'naturgy', url: 'https://www.naturgy.es/hogar/luz' },\n  { name: 'digi', url: 'https://www.digimobil.es/fibra-optica' },\n  { name: 'movistar', url: 'https://www.movistar.es/particulares/tarifas' },\n  { name: 'orange', url: 'https://www.orange.es/tarifas' }\n];// Nota: En la realidad deberias buscar la URL de consulta de CP específica de cada web.\n\nconst items = [];\nfor (const cp of postalCodes) {\n  for (const company of companies) {\n    items.push({\n      json: {\n        postalCode: cp,\n        company: company.name,\n        targetUrl: company.url\n      }\n    });\n  }\n}\nreturn items;"
+      },
+      "id": "0811bd10-7bb5-44cf-a3d5-d289b42b973d",
+      "name": "Generar Tareas (CP + Compañía)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        -64
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "77bc71d2-c22e-44dd-a9b6-1191029146f4",
+      "name": "Loop (Iterar una a una)",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        464,
+        -64
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.targetUrl }}",
+        "options": {}
+      },
+      "id": "4b22d40c-716b-49f3-a41a-ec5edd9a46af",
+      "name": "HTTP Request (Directo)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        704,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "texto_limpio",
+              "cssSelector": "body"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "485930f0-d0d7-4b42-a4f2-d849cf031435",
+      "name": "Extraer Texto (Ahorrar Tokens)",
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1,
+      "position": [
+        896,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "jsonSchema": "={\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"nombre_tarifa\": { \"type\": \"string\" },\n    \"precio\": { \"type\": \"number\" },\n    \"permanencia\": { \"type\": \"string\", \"description\": \"Ej: 12 meses o Sin permanencia\" },\n    \"url_oferta\": { \"type\": \"string\" },\n    \"condiciones\": { \"type\": \"string\" }\n  },\n  \"required\": [\"nombre_tarifa\", \"precio\", \"permanencia\", \"url_oferta\", \"condiciones\"]\n}"
+      },
+      "id": "8f84a722-7231-429a-bd5b-6e5c0796e471",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.1,
+      "position": [
+        1296,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "table": {
+          "__rl": true,
+          "value": "ofertas_scraping",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "fa67e54e-e93e-4c14-8a71-49d37e003fa8",
+      "name": "MySQL (Guardar Datos)",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.1,
+      "position": [
+        1456,
+        -64
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "5b4c2213-88cc-4a2f-b18e-ac5dbb7f6fdf",
+      "name": "Wait (Anti-Rate Limit)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1664,
+        -64
+      ],
+      "webhookId": "d6320e0c-ad2d-40b3-81bf-bd20e44fee4f"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite-preview",
+        "options": {
+          "safetySettings": {
+            "values": [
+              {
+                "category": "HARM_CATEGORY_HARASSMENT",
+                "threshold": "BLOCK_NONE"
+              },
+              {
+                "category": "HARM_CATEGORY_HATE_SPEECH",
+                "threshold": "BLOCK_NONE"
+              },
+              {
+                "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                "threshold": "BLOCK_NONE"
+              },
+              {
+                "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+                "threshold": "BLOCK_NONE"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        112
+      ],
+      "id": "74736170-5075-4165-a15e-b3c06004e7d0",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "yZThGDRkCh7HBNNF",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1120,
+        -80
+      ],
+      "id": "4575520f-6cde-4804-8e0a-322284060c2e",
+      "name": "AI Agent"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking \"Execute Workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Generar Tareas (CP + Compañía)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generar Tareas (CP + Compañía)": {
+      "main": [
+        [
+          {
+            "node": "Loop (Iterar una a una)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop (Iterar una a una)": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request (Directo)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request (Directo)": {
+      "main": [
+        [
+          {
+            "node": "Extraer Texto (Ahorrar Tokens)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer Texto (Ahorrar Tokens)": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MySQL (Guardar Datos)": {
+      "main": [
+        [
+          {
+            "node": "Wait (Anti-Rate Limit)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait (Anti-Rate Limit)": {
+      "main": [
+        [
+          {
+            "node": "Loop (Iterar una a una)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "MySQL (Guardar Datos)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "cd89fa78-1bdf-4a2f-8244-af88a1a60657",
+  "meta": {
+    "instanceId": "3bea655b43df21f6511f1b647e07237cb9066855ac7ce3defb44753b3e1b811b"
+  },
+  "id": "6tQ5z1qb4xavlZMA",
+  "tags": []
+}
