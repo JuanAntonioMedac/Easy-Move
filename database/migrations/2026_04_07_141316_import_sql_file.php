@@ -10,17 +10,17 @@ return new class extends Migration
     {
         try {
             $sql = file_get_contents(database_path('easymove.sql'));
-            
+
             // Ejecutar todo el SQL pero con error handling
             DB::unprepared($sql);
         } catch (\Exception $e) {
             // Si hay error por tabla existente, intentar solo los datos
             Log::warning('Primera ejecución falló, intentando extrayendo solo INSERTs: ' . $e->getMessage());
-            
+
             try {
                 $sql = file_get_contents(database_path('easymove.sql'));
                 $lines = explode("\n", $sql);
-                
+
                 foreach ($lines as $line) {
                     $line = trim($line);
                     if (!empty($line) && str_starts_with($line, 'INSERT INTO')) {

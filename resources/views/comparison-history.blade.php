@@ -52,7 +52,7 @@
                         </td>
                         <td class="py-4 px-6">
                             <div class="flex gap-2">
-                                <a href="{{ route('comparison.show', $comparacion) }}" 
+                                <a href="{{ route('comparison.show', $comparacion) }}"
                                    class="px-3 py-1 bg-primary-600 hover:bg-primary-700 text-white rounded text-sm transition flex items-center gap-1">
                                     <i class="bi bi-eye"></i>
                                     Ver
