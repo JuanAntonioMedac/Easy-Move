@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * Modelo de Tarifa
- * 
+ *
  * @property int $id_tarifa
  * @property string $nombre_tarifa
  * @property float $precio
@@ -40,6 +41,21 @@ class Tarifa extends Model
     public function disponibilidades(): HasMany
     {
         return $this->hasMany(Disponibilidad::class, 'id_tarifa', 'id_tarifa');
+    }
+
+    /**
+     * Relación con Ubicaciones (a través de disponibilidad)
+     */
+    public function ubicaciones(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Ubicacion::class,
+            'disponibilidad',
+            'id_tarifa',
+            'id_ubicacion',
+            'id_tarifa',
+            'id_ubicacion'
+        );
     }
 
     /**

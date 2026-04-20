@@ -48,4 +48,20 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Verificar si el usuario es administrador
+     */
+    public function isAdmin(): bool
+    {
+        return $this->rol === 'admin';
+    }
+
+    /**
+     * Verificar si el usuario puede acceder al panel de administración
+     */
+    public function canAccessAdmin(): bool
+    {
+        return $this->isAdmin();
+    }
 }
