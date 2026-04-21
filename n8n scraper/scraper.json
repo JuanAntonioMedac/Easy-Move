@@ -14,7 +14,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const postalCodes = ['18005', '18014', '18002', '18006', '18007', '18004', '18003', '18001'];\nconst companies = [\n  { name: 'endesa', url: 'https://www.endesa.com/es/tarifas' },\n  { name: 'iberdrola', url: 'https://www.iberdrola.es/tarifas' },\n  { name: 'naturgy', url: 'https://www.naturgy.es/hogar/luz' },\n  { name: 'digi', url: 'https://www.digimobil.es/fibra-optica' },\n  { name: 'movistar', url: 'https://www.movistar.es/particulares/tarifas' },\n  { name: 'orange', url: 'https://www.orange.es/tarifas' }\n];// Nota: En la realidad deberias buscar la URL de consulta de CP específica de cada web.\n\nconst items = [];\nfor (const cp of postalCodes) {\n  for (const company of companies) {\n    items.push({\n      json: {\n        postalCode: cp,\n        company: company.name,\n        targetUrl: company.url\n      }\n    });\n  }\n}\nreturn items;"
+        "jsCode": "const postalCodes = ['18005', '18014', '18002', '18006', '18007', '18004', '18003', '18001'];\nconst companies = [\n  { name: 'Endesa', url: 'https://www.endesa.com/es/tarifas', web: 'https://www.endesa.es', logo: 'https://www.endesa.com/etc/designs/endesa-www/clientlibs/img/logo-endesa.svg' },\n  { name: 'Iberdrola', url: 'https://www.iberdrola.es/tarifas', web: 'https://www.iberdrola.es', logo: 'https://www.iberdrola.es/wcorp/assets/Inicio/Logo-Iberdrola.png' },\n  { name: 'Naturgy', url: 'https://www.naturgy.es/hogar/luz', web: 'https://www.naturgy.es', logo: 'https://www.naturgy.es/etc/designs/naturgy-www/en_US/clientlibs/assets/logos/naturgy-logo.svg' },\n  { name: 'Digi', url: 'https://www.digimobil.es/fibra-optica', web: 'https://www.digimobil.es', logo: 'https://www.digimobil.es/assets/images/logo-digi.png' },\n  { name: 'Movistar', url: 'https://www.movistar.es/particulares/tarifas', web: 'https://www.movistar.es', logo: 'https://www.movistar.es/static/images/movistar-logo.svg' },\n  { name: 'Orange', url: 'https://www.orange.es/tarifas', web: 'https://www.orange.es', logo: 'https://www.orange.es/static/images/header/logo-orange.svg' }\n];\n\nconst items = [];\nfor (const cp of postalCodes) {\n  for (const company of companies) {\n    items.push({\n      json: {\n        codigoPostal: cp,\n        company: company.name,\n        targetUrl: company.url,\n        proveedorWeb: company.web,\n        proveedorLogo: company.logo\n      }\n    });\n  }\n}\nreturn items;"
       },
       "id": "0811bd10-7bb5-44cf-a3d5-d289b42b973d",
       "name": "Generar Tareas (CP + Compañía)",
@@ -60,6 +60,19 @@
             {
               "key": "texto_limpio",
               "cssSelector": "body"
+            },
+            {
+              "key": "logos_encontrados",
+              "cssSelector": "[class*='logo'], [class*='brand'], img[alt*='logo'], img[src*='logo'], svg[id*='logo']",
+              "returnUrl": true
+            },
+            {
+              "key": "precio_elemento",
+              "cssSelector": "[class*='price'], [class*='tarif'], [data-price]"
+            },
+            {
+              "key": "url_actual",
+              "returnUrl": true
             }
           ]
         },
@@ -76,7 +89,7 @@
     },
     {
       "parameters": {
-        "jsonSchema": "={\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"nombre_tarifa\": { \"type\": \"string\" },\n    \"precio\": { \"type\": \"number\" },\n    \"permanencia\": { \"type\": \"string\", \"description\": \"Ej: 12 meses o Sin permanencia\" },\n    \"url_oferta\": { \"type\": \"string\" },\n    \"condiciones\": { \"type\": \"string\" }\n  },\n  \"required\": [\"nombre_tarifa\", \"precio\", \"permanencia\", \"url_oferta\", \"condiciones\"]\n}"
+        "jsonSchema": "={\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"nombre_tarifa\": { \"type\": \"string\", \"description\": \"Nombre de la tarifa\" },\n    \"precio\": { \"type\": \"number\", \"description\": \"Precio mensual en euros\" },\n    \"permanencia\": { \"type\": \"string\", \"description\": \"Ej: 12 meses, 24 meses o Sin permanencia\" },\n    \"condiciones\": { \"type\": \"string\", \"description\": \"Condiciones especiales de la tarifa\" },\n    \"url_oferta\": { \"type\": \"string\", \"description\": \"URL de la oferta externa\" },\n    \"proveedor_nombre\": { \"type\": \"string\", \"description\": \"Nombre del proveedor (Endesa, Iberdrola, etc)\" },\n    \"proveedor_web\": { \"type\": \"string\", \"description\": \"Sitio web del proveedor\" },\n    \"logo_url\": { \"type\": \"string\", \"description\": \"URL directa al logo del proveedor (PNG, JPG, SVG)\" }\n  },\n  \"required\": [\"nombre_tarifa\", \"precio\", \"permanencia\", \"url_oferta\", \"condiciones\", \"proveedor_nombre\", \"logo_url\"]\n}"
       },
       "id": "8f84a722-7231-429a-bd5b-6e5c0796e471",
       "name": "Structured Output Parser",

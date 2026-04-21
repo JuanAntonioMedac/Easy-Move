@@ -84,17 +84,26 @@ class AdminController extends Controller
         $validated = $request->validate([
             'nombre' => ['required', 'string', 'max:255', 'unique:proveedores,nombre'],
             'web' => ['nullable', 'url'],
-            'logo' => ['nullable', 'image', 'max:5120'],
+            'logo' => ['nullable'],
+            'logo_type' => ['nullable', 'in:file,url'],
             'tipo_proveedor' => ['required', 'string', 'max:255'],
             'api_disponible' => ['boolean'],
         ]);
 
-        // Manejar upload de logo
+        // Manejar logo: archivo o URL
         if ($request->hasFile('logo')) {
             $validated['logo'] = $request->file('logo')->store('logos', 'public');
+        } elseif ($request->filled('logo') && $request->input('logo_type') === 'url') {
+            // Validar que sea una URL válida
+            if (filter_var($request->input('logo'), FILTER_VALIDATE_URL)) {
+                $validated['logo'] = $request->input('logo');
+            } else {
+                return redirect()->back()->withErrors(['logo' => 'La URL del logo no es válida.'])->withInput();
+            }
         }
 
         $validated['api_disponible'] = $request->has('api_disponible');
+        unset($validated['logo_type']); // No guardar logo_type en BD
 
         Proveedor::create($validated);
 
@@ -114,21 +123,34 @@ class AdminController extends Controller
         $validated = $request->validate([
             'nombre' => ['required', 'string', 'max:255', 'unique:proveedores,nombre,' . $proveedor->id_proveedor . ',id_proveedor'],
             'web' => ['nullable', 'url'],
-            'logo' => ['nullable', 'image', 'max:5120'],
+            'logo' => ['nullable'],
+            'logo_type' => ['nullable', 'in:file,url'],
             'tipo_proveedor' => ['required', 'string', 'max:255'],
             'api_disponible' => ['boolean'],
         ]);
 
-        // Manejar upload de logo
+        // Manejar logo: archivo o URL
         if ($request->hasFile('logo')) {
-            // Eliminar logo anterior si existe
-            if ($proveedor->logo) {
+            // Eliminar logo anterior si existe y es local (no URL)
+            if ($proveedor->logo && !filter_var($proveedor->logo, FILTER_VALIDATE_URL)) {
                 Storage::disk('public')->delete($proveedor->logo);
             }
             $validated['logo'] = $request->file('logo')->store('logos', 'public');
+        } elseif ($request->filled('logo') && $request->input('logo_type') === 'url') {
+            // Validar que sea una URL válida
+            if (filter_var($request->input('logo'), FILTER_VALIDATE_URL)) {
+                // Eliminar logo anterior si existe y es local
+                if ($proveedor->logo && !filter_var($proveedor->logo, FILTER_VALIDATE_URL)) {
+                    Storage::disk('public')->delete($proveedor->logo);
+                }
+                $validated['logo'] = $request->input('logo');
+            } else {
+                return redirect()->back()->withErrors(['logo' => 'La URL del logo no es válida.'])->withInput();
+            }
         }
 
         $validated['api_disponible'] = $request->has('api_disponible');
+        unset($validated['logo_type']); // No guardar logo_type en BD
 
         $proveedor->update($validated);
 
@@ -143,7 +165,8 @@ class AdminController extends Controller
                             ->with('error', 'No puedes eliminar un proveedor con servicios asociados.');
         }
 
-        if ($proveedor->logo) {
+        // Solo eliminar si es archivo local, no si es URL
+        if ($proveedor->logo && !filter_var($proveedor->logo, FILTER_VALIDATE_URL)) {
             Storage::disk('public')->delete($proveedor->logo);
         }
 

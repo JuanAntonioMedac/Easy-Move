@@ -130,7 +130,7 @@ class SearchController extends Controller
                         'id_proveedor' => $tarifa->servicio->proveedor->id_proveedor,
                         'nombre' => $tarifa->servicio->proveedor->nombre,
                         'web' => $tarifa->servicio->proveedor->web,
-                        'logo' => $tarifa->servicio->proveedor->logo ? Storage::url($tarifa->servicio->proveedor->logo) : null,
+                        'logo' => $tarifa->servicio->proveedor->logo_url,
                     ],
                 ];
             });
@@ -416,7 +416,7 @@ class SearchController extends Controller
                         'id_proveedor' => $tarifa->servicio->proveedor->id_proveedor,
                         'nombre' => $tarifa->servicio->proveedor->nombre,
                         'web' => $tarifa->servicio->proveedor->web,
-                        'logo' => $tarifa->servicio->proveedor->logo ? Storage::url($tarifa->servicio->proveedor->logo) : null,
+                        'logo' => $tarifa->servicio->proveedor->logo_url,
                     ],
                 ];
             });
