@@ -59,7 +59,7 @@
                     <tr class="border-b border-gray-100 dark:border-gray-700/50 hover:bg-blue-50 dark:hover:bg-gray-700/50 transition duration-150">
                         <td class="py-4 px-6">
                             @if ($proveedor->logo)
-                                <img src="{{ Storage::url($proveedor->logo) }}" alt="{{ $proveedor->nombre }}" class="w-12 h-12 rounded-lg object-cover shadow-sm">
+                                <img src="{{ $proveedor->logo_url }}" alt="{{ $proveedor->nombre }}" class="w-12 h-12 rounded-lg object-cover shadow-sm">
                             @else
                                 <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 flex items-center justify-center text-blue-600">
                                     <i class="bi bi-building text-lg"></i>
