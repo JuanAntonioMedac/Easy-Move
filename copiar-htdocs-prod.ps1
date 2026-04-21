@@ -1,3 +1,5 @@
+#powershell -ExecutionPolicy Bypass -File .\copiar-htdocs-prod.ps1
+
 # Stop on any error
 $ErrorActionPreference = 'Stop'
 
