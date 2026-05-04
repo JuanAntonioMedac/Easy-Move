@@ -625,10 +625,11 @@ class SearchController extends Controller
 
         $validated = $request->validate([
             'comparacion_id' => 'required|integer|exists:comparaciones,id_comparacion',
+            'tarifa_id' => 'nullable|integer',
         ]);
 
         try {
-            $comparacion = Comparacion::with('tarifas.servicio.proveedor', 'ubicacion', 'tipoServicio')
+            $comparacion = Comparacion::with('ubicacion', 'tipoServicio')
                 ->findOrFail($validated['comparacion_id']);
 
             // Verificar que la comparación pertenece al usuario
@@ -636,14 +637,49 @@ class SearchController extends Controller
                 return response()->json(['error' => 'No autorizado'], 403);
             }
 
+            // Determinar qué vista y tarifas usar
+            $tipo_descarga = 'todas';
+            $vista = 'pdf.comparacion';
+            
+            if (!empty($validated['tarifa_id'])) {
+                // Descargar una tarifa específica
+                $tarifas = Tarifa::with('servicio.proveedor')
+                    ->where('id_tarifa', $validated['tarifa_id'])
+                    ->get();
+                $tipo_descarga = 'individual';
+                $vista = 'pdf.tarifa-detalle';
+            } else {
+                // Descargar todas las tarifas de la comparación
+                $tarifas = Tarifa::with('servicio.proveedor')
+                    ->whereIn('id_tarifa', 
+                        $comparacion->tarifas->pluck('id_tarifa')->toArray()
+                    )
+                    ->get();
+            }
+
+            // Validar que existan tarifas
+            if ($tarifas->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No hay tarifas para descargar',
+                ], 404);
+            }
+
             // Generar PDF
-            $pdf = Pdf::loadView('pdf.comparacion', [
+            $pdf = Pdf::loadView($vista, [
                 'comparacion' => $comparacion,
+                'tarifas' => $tarifas,
                 'usuario' => Auth::user(),
             ]);
 
-            return $pdf->download('comparacion-' . now()->format('Y-m-d-Hi') . '.pdf');
+            $filename = $tipo_descarga === 'individual' 
+                ? 'tarifa-' . now()->format('Y-m-d-Hi') . '.pdf'
+                : 'comparacion-' . now()->format('Y-m-d-Hi') . '.pdf';
+
+            return $pdf->download($filename);
         } catch (\Exception $e) {
+            \Log::error('Error en exportPDF: ' . $e->getMessage());
+            
             return response()->json([
                 'success' => false,
                 'message' => 'Error al generar PDF: ' . $e->getMessage(),
