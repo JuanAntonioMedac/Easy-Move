@@ -1,8 +1,8 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Gestionar Usuarios - Admin EasyMove')
 
-@section('content')
+@section('admin-content')
 <div class="mb-8">
     <div>
         <h1 class="text-5xl font-black bg-gradient-to-r from-orange-600 to-orange-700 bg-clip-text text-transparent mb-2">

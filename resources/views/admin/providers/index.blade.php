@@ -1,8 +1,8 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Gestionar Proveedores - Admin EasyMove')
 
-@section('content')
+@section('admin-content')
 <div class="mb-8">
     <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-6">
         <div>
