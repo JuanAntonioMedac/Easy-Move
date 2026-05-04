@@ -48,6 +48,11 @@ class SearchController extends Controller
         $validated = $request->validate([
             'codigo_postal' => 'required|string|max:10',
             'id_tipo_servicio' => 'required|integer|exists:tipos_servicios,id_tipo_servicio',
+            'min_precio' => 'nullable|numeric|min:0',
+            'max_precio' => 'nullable|numeric|min:0',
+            'ordenar_por' => 'nullable|string|in:precio_asc,precio_desc,reciente,nombre_asc',
+            'buscar_nombre' => 'nullable|string|max:100',
+            'permanencia' => 'nullable|array',
         ]);
 
         try {
@@ -70,8 +75,64 @@ class SearchController extends Controller
                 })
                 ->whereHas('disponibilidades', function ($q) use ($ubicacion) {
                     $q->where('id_ubicacion', $ubicacion->id_ubicacion);
-                })
-                ->orderBy('precio', 'asc');
+                });
+
+            // Aplicar filtro de rango de precio
+            if (!empty($validated['min_precio'])) {
+                $tarifasQuery->where('precio', '>=', $validated['min_precio']);
+            }
+            if (!empty($validated['max_precio'])) {
+                $tarifasQuery->where('precio', '<=', $validated['max_precio']);
+            }
+
+            // Aplicar filtro de búsqueda por nombre
+            if (!empty($validated['buscar_nombre'])) {
+                $tarifasQuery->where('nombre_tarifa', 'like', '%' . $validated['buscar_nombre'] . '%');
+            }
+
+            // Aplicar filtro de permanencia
+            if (!empty($validated['permanencia']) && is_array($validated['permanencia'])) {
+                $permanencias = $validated['permanencia'];
+                $tarifasQuery->where(function ($q) use ($permanencias) {
+                    foreach ($permanencias as $perm) {
+                        if ($perm === 'sin_permanencia') {
+                            $q->orWhereNull('permanencia')
+                              ->orWhere('permanencia', '=', '')
+                              ->orWhere('permanencia', 'like', '%sin permanencia%');
+                        } elseif ($perm === '1mes') {
+                            $q->orWhere('permanencia', 'like', '%1 mes%')
+                              ->orWhere('permanencia', 'like', '%1mes%');
+                        } elseif ($perm === '3meses') {
+                            $q->orWhere('permanencia', 'like', '%3 meses%')
+                              ->orWhere('permanencia', 'like', '%3meses%');
+                        } elseif ($perm === '6meses') {
+                            $q->orWhere('permanencia', 'like', '%6 meses%')
+                              ->orWhere('permanencia', 'like', '%6meses%');
+                        } elseif ($perm === '12meses') {
+                            $q->orWhere('permanencia', 'like', '%12 meses%')
+                              ->orWhere('permanencia', 'like', '%12meses%');
+                        }
+                    }
+                });
+            }
+
+            // Aplicar ordenamiento
+            $ordenar_por = $validated['ordenar_por'] ?? 'precio_asc';
+            switch ($ordenar_por) {
+                case 'precio_desc':
+                    $tarifasQuery->orderBy('precio', 'desc');
+                    break;
+                case 'nombre_asc':
+                    $tarifasQuery->orderBy('nombre_tarifa', 'asc');
+                    break;
+                case 'reciente':
+                    $tarifasQuery->orderBy('id_tarifa', 'desc');
+                    break;
+                case 'precio_asc':
+                default:
+                    $tarifasQuery->orderBy('precio', 'asc');
+                    break;
+            }
 
             // Lógica crítica: Limitación de resultados por autenticación
             $isAuthenticated = Auth::check();
