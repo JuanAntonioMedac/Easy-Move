@@ -33,6 +33,46 @@
             transform: scale(1);
         }
     }
+
+    .chip {
+        padding: 0.5rem 1rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 9999px;
+        background-color: white;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        color: #4b5563;
+    }
+
+    .dark .chip {
+        background-color: #374151;
+        border-color: #4b5563;
+        color: #e5e7eb;
+    }
+
+    .chip:hover {
+        border-color: #3b82f6;
+        background-color: #eff6ff;
+    }
+
+    .dark .chip:hover {
+        background-color: #1f2937;
+        border-color: #60a5fa;
+    }
+
+    .chip.active {
+        background-color: #3b82f6;
+        border-color: #3b82f6;
+        color: white;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+
+    .dark .chip.active {
+        background-color: #3b82f6;
+        border-color: #60a5fa;
+        color: white;
+    }
 </style>
 
 <div class="space-y-8 p-4 md:p-8">
@@ -45,123 +85,126 @@
             <p class="text-gray-600 dark:text-gray-400 text-lg">Encuentra las mejores tarifas de luz, gas y telefonía en tu zona</p>
         </div>
 
-        <form id="searchForm" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end mb-6">
+        <form id="searchForm" class="space-y-6">
             @csrf
 
-            <!-- Tipo de Servicio -->
-            <div>
-                <label for="id_tipo_servicio" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                    <i class="bi bi-list-check me-2"></i>Tipo de Servicio
-                </label>
-                <select id="id_tipo_servicio" name="id_tipo_servicio" required
-                        class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-600 transition">
-                    <option value="">-- Seleccionar --</option>
-                    @foreach ($tiposServicios as $tipo)
-                        <option value="{{ $tipo->id_tipo_servicio }}">{{ $tipo->nombre }}</option>
-                    @endforeach
-                </select>
+            <!-- Fila Principal: Tipo Servicio, Código Postal, Botón -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                <!-- Tipo de Servicio -->
+                <div>
+                    <label for="id_tipo_servicio" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                        <i class="bi bi-list-check me-2"></i>Tipo de Servicio
+                    </label>
+                    <select id="id_tipo_servicio" name="id_tipo_servicio" required
+                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-600 transition">
+                        <option value="">-- Seleccionar --</option>
+                        @foreach ($tiposServicios as $tipo)
+                            <option value="{{ $tipo->id_tipo_servicio }}">{{ $tipo->nombre }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Código Postal -->
+                <div>
+                    <label for="codigo_postal" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                        <i class="bi bi-geo-alt me-2"></i>Código Postal
+                    </label>
+                    <select id="codigo_postal" name="codigo_postal" required
+                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-600 transition">
+                        <option value="">-- Seleccionar --</option>
+                        @foreach ($codigosPostales as $codigo)
+                            <option value="{{ $codigo }}">{{ $codigo }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Botón Buscar -->
+                <div>
+                    <button type="submit" class="w-full px-6 py-3 bg-gradient-to-r from-primary-600 via-primary-500 to-primary-700 hover:from-primary-700 hover:via-primary-600 hover:to-primary-800 text-white font-bold rounded-lg transition transform hover:scale-105 active:scale-95 shadow-lg flex items-center justify-center gap-2">
+                        <i class="bi bi-search text-lg"></i>
+                        Buscar Tarifas
+                    </button>
+                </div>
             </div>
 
-            <!-- Código Postal -->
-            <div>
-                <label for="codigo_postal" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                    <i class="bi bi-geo-alt me-2"></i>Código Postal
-                </label>
-                <select id="codigo_postal" name="codigo_postal" required
-                        class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-600 transition">
-                    <option value="">-- Seleccionar --</option>
-                    @foreach ($codigosPostales as $codigo)
-                        <option value="{{ $codigo }}">{{ $codigo }}</option>
-                    @endforeach
-                </select>
-            </div>
-
-            <!-- Botón Buscar -->
-            <div>
-                <button type="submit" class="w-full px-6 py-3 bg-gradient-to-r from-primary-600 via-primary-500 to-primary-700 hover:from-primary-700 hover:via-primary-600 hover:to-primary-800 text-white font-bold rounded-lg transition transform hover:scale-105 active:scale-95 shadow-lg flex items-center justify-center gap-2">
-                    <i class="bi bi-search text-lg"></i>
-                    Buscar Tarifas
+            <!-- FILTROS AVANZADOS -->
+            @auth
+                <button type="button" id="toggleFiltersBtn" onclick="toggleAdvancedFilters()"
+                        class="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 font-semibold flex items-center gap-2 text-sm transition">
+                    <i class="bi bi-sliders me-1"></i>
+                    <span id="filterToggleText">Mostrar Filtros Avanzados</span>
                 </button>
-            </div>
-        </form>
 
-        <!-- FILTROS AVANZADOS -->
-        @auth
-            <button type="button" onclick="toggleAdvancedFilters()"
-                    class="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 font-semibold flex items-center gap-2 text-sm mb-6 transition">
-                <i class="bi bi-sliders me-1"></i>
-                <span id="filterToggleText">Mostrar Filtros Avanzados</span>
-            </button>
+                <div id="advancedFilters" class="hidden pt-8 border-t border-gray-300 dark:border-gray-700 space-y-6">
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                        <i class="bi bi-funnel-fill text-primary-600"></i>Filtros Avanzados
+                    </h3>
 
-            <div id="advancedFilters" class="hidden pt-8 border-t border-gray-300 dark:border-gray-700 space-y-6">
-                <h3 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                    <i class="bi bi-funnel-fill text-primary-600"></i>Filtros Avanzados
-                </h3>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Rango de Precios -->
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">
-                            <i class="bi bi-currency-euro me-2"></i>Rango de Precio (€/mes)
-                        </label>
-                        <div class="flex items-center gap-4">
-                            <input type="number" id="min_precio" name="min_precio" step="0.01" min="0" placeholder="Min"
-                               class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-600">
-                            <span class="text-gray-500 dark:text-gray-400 font-bold">—</span>
-                            <input type="number" id="max_precio" name="max_precio" step="0.01" min="0" placeholder="Max"
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Rango de Precios -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">
+                                <i class="bi bi-currency-euro me-2"></i>Rango de Precio (€/mes)
+                            </label>
+                            <div class="flex items-center gap-4">
+                                <input type="number" id="min_precio" name="min_precio" step="0.01" min="0" placeholder="Min"
                                    class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-600">
+                                <span class="text-gray-500 dark:text-gray-400 font-bold">—</span>
+                                <input type="number" id="max_precio" name="max_precio" step="0.01" min="0" placeholder="Max"
+                                       class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-600">
+                            </div>
+                        </div>
+
+                        <!-- Ordenamiento -->
+                        <div>
+                            <label for="ordenar_por" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                <i class="bi bi-sort-down me-2"></i>Ordenar Por
+                            </label>
+                            <select id="ordenar_por" name="ordenar_por"
+                                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-600">
+                                <option value="precio_asc">💰 Precio: Menor a Mayor</option>
+                                <option value="precio_desc">💰 Precio: Mayor a Menor</option>
+                                <option value="reciente">🆕 Más Reciente</option>
+                                <option value="nombre_asc">🔤 Alfabético (A-Z)</option>
+                            </select>
                         </div>
                     </div>
 
-                    <!-- Ordenamiento -->
+                    <!-- Permanencia con Chips -->
                     <div>
-                        <label for="ordenar_por" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            <i class="bi bi-sort-down me-2"></i>Ordenar Por
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">
+                            <i class="bi bi-calendar-check me-2"></i>Permanencia
                         </label>
-                        <select id="ordenar_por" name="ordenar_por"
-                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-600">
-                            <option value="precio_asc">💰 Precio: Menor a Mayor</option>
-                            <option value="precio_desc">💰 Precio: Mayor a Menor</option>
-                            <option value="reciente">🆕 Más Reciente</option>
-                            <option value="nombre_asc">🔤 Alfabético (A-Z)</option>
-                        </select>
+                        <div class="flex flex-wrap gap-3">
+                            <button type="button" class="chip" onclick="toggleChip(this, 'sin_permanencia')">Sin permanencia</button>
+                            <button type="button" class="chip" onclick="toggleChip(this, '1mes')">1 Mes</button>
+                            <button type="button" class="chip" onclick="toggleChip(this, '3meses')">3 Meses</button>
+                            <button type="button" class="chip" onclick="toggleChip(this, '6meses')">6 Meses</button>
+                            <button type="button" class="chip" onclick="toggleChip(this, '12meses')">12 Meses</button>
+                        </div>
+                    </div>
+
+                    <!-- Búsqueda por Nombre -->
+                    <div>
+                        <label for="buscar_nombre" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            <i class="bi bi-search me-2"></i>Buscar Tarifa
+                        </label>
+                        <input type="text" id="buscar_nombre" name="buscar_nombre" placeholder="Ej: Plan Premium, Básico, Eco..."
+                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-600">
+                    </div>
+
+                    <!-- Botones de Filtros -->
+                    <div class="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <button type="submit" id="applyFiltersBtn" class="flex-1 px-6 py-2 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-lg transition flex items-center justify-center gap-2">
+                            <i class="bi bi-check-lg"></i>Aplicar Filtros
+                        </button>
+                        <button type="button" id="clearFiltersBtn" class="flex-1 px-6 py-2 bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-white font-bold rounded-lg hover:bg-gray-400 dark:hover:bg-gray-600 transition flex items-center justify-center gap-2">
+                            <i class="bi bi-arrow-counterclockwise"></i>Limpiar
+                        </button>
                     </div>
                 </div>
-
-                <!-- Permanencia con Chips -->
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">
-                        <i class="bi bi-calendar-check me-2"></i>Permanencia
-                    </label>
-                    <div class="flex flex-wrap gap-3">
-                        <button type="button" class="chip" onclick="toggleChip(this, 'sin_permanencia')">Sin permanencia</button>
-                        <button type="button" class="chip" onclick="toggleChip(this, '1mes')">1 Mes</button>
-                        <button type="button" class="chip" onclick="toggleChip(this, '3meses')">3 Meses</button>
-                        <button type="button" class="chip" onclick="toggleChip(this, '6meses')">6 Meses</button>
-                        <button type="button" class="chip" onclick="toggleChip(this, '12meses')">12 Meses</button>
-                    </div>
-                </div>
-
-                <!-- Búsqueda por Nombre -->
-                <div>
-                    <label for="buscar_nombre" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                        <i class="bi bi-search me-2"></i>Buscar Tarifa
-                    </label>
-                    <input type="text" id="buscar_nombre" name="buscar_nombre" placeholder="Ej: Plan Premium, Básico, Eco..."
-                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-600">
-                </div>
-
-                <!-- Botones de Filtros -->
-                <div class="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <button type="submit" class="flex-1 px-6 py-2 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-lg transition flex items-center justify-center gap-2">
-                        <i class="bi bi-check-lg"></i>Aplicar Filtros
-                    </button>
-                    <button type="button" onclick="resetFilters()" class="flex-1 px-6 py-2 bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-white font-bold rounded-lg hover:bg-gray-400 dark:hover:bg-gray-600 transition flex items-center justify-center gap-2">
-                        <i class="bi bi-arrow-counterclockwise"></i>Limpiar
-                    </button>
-                </div>
-            </div>
-        @endauth
+            @endauth
+        </form>
 
         <!-- INFO USUARIOS ANÓNIMOS -->
         @guest
@@ -255,6 +298,7 @@ const searchUrl = @json(route('search'));
 const exportPdfUrl = @json(route('export-pdf'));
 const comparisonUrlTemplate = @json(url('/comparacion/__ID__'));
 let currentComparacionId = null;
+let currentTarifaId = null;
 let selectedChips = new Set();
 
 // Mapeo color-proveedor
@@ -292,6 +336,15 @@ function resetFilters() {
     document.getElementById('ordenar_por').value = 'precio_asc';
     document.querySelectorAll('.chip').forEach(chip => chip.classList.remove('active'));
     selectedChips.clear();
+}
+
+// Agregar listener al botón "Limpiar"
+const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+if (clearFiltersBtn) {
+    clearFiltersBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        resetFilters();
+    });
 }
 
 // Generar badge dinámico
@@ -375,21 +428,42 @@ document.getElementById('searchForm').addEventListener('submit', async (e) => {
     try {
         const formData = new FormData(document.getElementById('searchForm'));
 
-        const response = await axios.post(searchUrl, {
+        // Construir objeto de filtros - solo incluir valores que no estén vacíos
+        const filters = {
             codigo_postal: codigoPostal,
             id_tipo_servicio: tipoServicio,
-        });
+        };
+
+        const minPrecio = document.getElementById('min_precio')?.value;
+        if (minPrecio) filters.min_precio = minPrecio;
+
+        const maxPrecio = document.getElementById('max_precio')?.value;
+        if (maxPrecio) filters.max_precio = maxPrecio;
+
+        const ordenarPor = document.getElementById('ordenar_por')?.value;
+        if (ordenarPor) filters.ordenar_por = ordenarPor;
+
+        const buscarNombre = document.getElementById('buscar_nombre')?.value;
+        if (buscarNombre) filters.buscar_nombre = buscarNombre;
+
+        if (selectedChips.size > 0) filters.permanencia = Array.from(selectedChips);
+
+        const response = await axios.post(searchUrl, filters);
 
         const result = response.data?.data || response.data;
         const tarifas = result?.tarifas || [];
         const meta = result?.meta || {};
 
         if (tarifas.length === 0) {
+            // Ocultar sección de resultados anteriores
+            resultsSection.classList.add('hidden');
+            // Mostrar estado vacío con mensaje
+            emptyState.classList.remove('hidden');
             emptyState.innerHTML = `
                 <div class="text-center py-12">
                     <i class="bi bi-inbox block text-8xl opacity-30 text-gray-400 mb-6"></i>
-                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Sin resultados</h3>
-                    <p class="text-gray-600 dark:text-gray-400">Intenta con otros filtros o código postal</p>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">No hay tarifas disponibles</h3>
+                    <p class="text-gray-600 dark:text-gray-400">No encontramos tarifas para este tipo de servicio y código postal. Intenta con otros filtros.</p>
                 </div>
             `;
             return;
@@ -449,6 +523,8 @@ document.getElementById('searchForm').addEventListener('submit', async (e) => {
 
     } catch (error) {
         console.error('Error:', error);
+        resultsSection.classList.add('hidden');
+        emptyState.classList.remove('hidden');
         emptyState.innerHTML = `
             <div class="text-center py-12 bg-red-50 dark:bg-red-950 rounded-xl border border-red-200 dark:border-red-800">
                 <i class="bi bi-exclamation-triangle block text-8xl opacity-30 text-red-400 mb-6"></i>
@@ -468,6 +544,7 @@ async function viewComparison(comparacionId, tarifaData) {
 
     try {
         currentComparacionId = comparacionId;
+        currentTarifaId = tarifaData.id_tarifa || null;
 
         const html = `
             <div class="space-y-4">
@@ -537,9 +614,15 @@ async function exportPdf() {
     if (!currentComparacionId) return;
 
     try {
-        const response = await axios.post(exportPdfUrl, {
+        const payload = {
             comparacion_id: currentComparacionId,
-        }, {
+        };
+        
+        if (currentTarifaId) {
+            payload.tarifa_id = currentTarifaId;
+        }
+        
+        const response = await axios.post(exportPdfUrl, payload, {
             responseType: 'blob',
         });
 
