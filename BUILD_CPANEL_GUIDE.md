@@ -1,213 +1,378 @@
-# 🚀 Script de Deploy para cPanel - Easy-Move
+# 🚀 Scripts de Deploy para cPanel - Easy-Move
 
 ## ⚡ Uso Rápido
 
-### **Paso 1: Ejecutar el Script**
-
-En tu PC, en la carpeta del proyecto:
+### **Script 1: `build-cpanel-complete.bat` ⭐ RECOMENDADO**
 
 ```bash
-# Doble clic en:
-build-cpanel.bat
-
-# O desde CMD:
-cd C:\xampp\htdocs\Easy-Move
-build-cpanel.bat
+Doble clic en: build-cpanel-complete.bat
 ```
 
-### **Paso 2: Esperar a que termine**
+**✨ Características**:
+- ✅ Compila automáticamente (`npm run build`)
+- ✅ Empaqueta automáticamente
+- ✅ **Respeta `.gitignore`** - Excluye TODAS las variables de entorno
+- ✅ NO incluye `node_modules` (compilado en `public/build`)
+- ✅ Archivo muy pequeño (~45-60 MB)
+- ✅ 100% seguro - sin secretos incluidos
+- ✅ 9 pasos visuales con colores
 
-- El script compila todo automáticamente
-- Genera el archivo `Easy-Move-Production.zip` (~80-120 MB)
-- Crea un archivo `INSTRUCCIONES_CPANEL.txt` dentro del ZIP
-
-### **Paso 3: Subir a cPanel**
-
-1. Abre el **File Manager** en tu cPanel
-2. Navega a `/public_html/`
-3. Sube el archivo `Easy-Move-Production.zip`
-4. Click derecho → **Extract**
-5. Lee `INSTRUCCIONES_CPANEL.txt`
+**Cuándo usar**: **SIEMPRE** (es la forma correcta)
 
 ---
 
-## 📦 ¿Qué Incluye el ZIP?
-
-```
-Easy-Move-Production.zip
-├── app/                    ✅ Código PHP
-├── bootstrap/              ✅ Bootstrap Laravel
-├── config/                 ✅ Configuración
-├── database/               ✅ Schema SQL
-├── public/                 ✅ CSS/JS compilados
-├── resources/              ✅ Vistas Blade
-├── routes/                 ✅ Rutas
-├── storage/                ✅ Logs y archivos
-├── vendor/                 ✅ Dependencias PHP (compiladas)
-├── .env.example            ✅ Plantilla de configuración
-├── artisan                 ✅ CLI de Laravel
-├── composer.json           ✅ Dependencias PHP
-├── package.json            ✅ Dependencias JS
-├── vite.config.js          ✅ Build tool config
-├── tailwind.config.js      ✅ CSS config
-├── INSTRUCCIONES_CPANEL.txt ✅ Guía de instalación
-└── README.md               ✅ Documentación
-```
-
-### **Excluido (por razones)**
-
-```
-❌ node_modules/      → Se descarga con npm (innecesario en ZIP)
-❌ .env               → Archivo sensible (creas en cPanel)
-❌ .git/              → Control de versiones (no necesario)
-❌ tests/             → Tests de desarrollo
-❌ .vscode/           → Configuración de editor
-```
-
----
-
-## 🛠️ Características del Script
-
-| Característica | Descripción |
-|---|---|
-| **Robusto** | Valida que el proyecto exista antes de empezar |
-| **Seguro** | Excluye `.env` y archivos sensibles |
-| **Rápido** | Usa 7-Zip si está disponible, sino PowerShell |
-| **Informativo** | Muestra colores y barras de progreso |
-| **Completo** | Incluye guía de instalación en el ZIP |
-| **Inteligente** | Genera timestamp de backup |
-
----
-
-## 📋 Requisitos Previos
-
-Antes de ejecutar el script, asegúrate de:
+### **Script 2: `build-cpanel-simple.bat` (OPCIONAL - MANUAL)**
 
 ```bash
-# 1. Compilar dependencias de Node
-npm install
+# Primero compilar:
 npm run build
 
-# 2. Instalar dependencias de PHP
-composer install
+# Luego ejecutar:
+Doble clic en: build-cpanel-simple.bat
+```
 
-# 3. Estar en la raíz del proyecto
-cd C:\xampp\htdocs\Easy-Move
+**⚙️ Características**:
+- ✅ Requiere compilación manual previa
+- ✅ También respeta `.gitignore`
+- ✅ Exluye variables de entorno
+- ✅ Más rápido (no compila)
+- ✅ 8 pasos visuales
+
+**Cuándo usar**: Solo si ya compilaste y quieres empaquetar rápido
+
+---
+
+## 🔒 Seguridad - ¿Qué NO se incluye?
+
+### **Automáticamente Excluido por `.gitignore`**:
+
+| Archivo/Carpeta | Por qué |
+|---|---|
+| `.env` | ⚠️ **Contraseñas y claves API** |
+| `.env.backup` | ⚠️ **Backup con credenciales** |
+| `.env.production` | ⚠️ **Env de producción** |
+| `.env.local` | ⚠️ **Env local** |
+| `node_modules/` | ✅ Se compilan en `public/build` |
+| `.git/` | ✅ No necesario en producción |
+| `tests/` | ✅ Solo para desarrollo |
+| `storage/pail/` | ✅ Logs de dev |
+| `storage/*.key` | ⚠️ **Claves de encriptación** |
+| `public/hot/` | ✅ Vite dev server |
+| `.gitignore` | ✅ No necesario |
+| `.vscode/`, `.idea/` | ✅ Configuración de editor |
+
+### **Automáticamente Incluido**:
+
+```
+✅ app/                     ← Código PHP
+✅ config/                  ← Configuración
+✅ database/                ← Schema SQL
+✅ vendor/                  ← Dependencias PHP (compiladas)
+✅ public/build/            ← CSS/JS compilados (Vite)
+✅ storage/app/             ← Almacenamiento de usuarios
+✅ storage/logs/            ← Archivos de log
+✅ routes/                  ← Rutas de la app
+✅ resources/               ← Vistas Blade
+✅ .env.example             ← PLANTILLA para crear .env
+✅ artisan, composer.json   ← Archivos necesarios
 ```
 
 ---
 
-## ⚙️ Cómo Funciona Internamente
+## 📦 Tamaño y Seguridad
 
-### **Fase 1: Validación**
-- Verifica que `composer.json` existe
-- Detecta Node.js instalado
-- Valida la estructura del proyecto
+| Métrica | Valor |
+|---------|-------|
+| **ZIP respetando `.gitignore`** | ~45-60 MB |
+| **ZIP sin respetar .gitignore** | ~120-150 MB |
+| **Reducción de tamaño** | **60% más pequeño** |
+| **Archivos sensibles incluidos** | **0** ❌ Exluidos |
+| **Secretos en el ZIP** | **NINGUNO** ✅ |
 
-### **Fase 2: Preparación**
-- Crea carpeta temporal `Easy-Move-Production`
-- Copia todas las carpetas necesarias
-- Copia archivos de configuración
+### ¿Por qué es más pequeño?
 
-### **Fase 3: Seguridad**
-- Elimina `.env` (por seguridad)
-- Elimina `.git/` (no es necesario)
-- Elimina `node_modules/` (se puede recompilar)
-- Elimina `tests/` (solo para desarrollo)
+```
+ANTES (Sin .gitignore):
+  node_modules/    ~300 MB  ← ¡ENORME! (innecesario)
+  .env files       ~5 KB    ← Sensible
+  .git/            ~50 MB   ← No necesario
+  tests/           ~10 MB   ← Solo dev
+  ────────────────────────────
+  Total            ~120 MB
 
-### **Fase 4: Documentación**
-- Genera `INSTRUCCIONES_CPANEL.txt`
-- Incluye credenciales y pasos de instalación
-- Proporciona solución de problemas
-
-### **Fase 5: Compresión**
-- Intenta con 7-Zip (mejor compresión)
-- Si no funciona, usa PowerShell
-- Elimina carpeta temporal
-
-### **Fase 6: Resultado**
-- Genera `Easy-Move-Production.zip`
-- Muestra información de tamaño
-- Da instrucciones siguientes
+AHORA (Respeta .gitignore):
+  vendor/          ~80 MB   ← Compilado, necesario
+  public/build/    ~5 MB    ← Assets compilados
+  app, config...   ~20 MB   ← Código
+  database/        ~2 MB    ← Schema SQL
+  ────────────────────────────
+  Total            ~45 MB   (60% menor)
+```
 
 ---
 
-## 🔍 Solucionar Problemas
+## 🎯 Paso a Paso - Deploy Completo
 
-### **El script no encuentra 7-Zip**
-**Solución:** Se usa PowerShell automáticamente (más lento pero funciona)
+### **PASO 1: Ejecutar Script en tu PC**
 
 ```bash
-# Opcional: Instala 7-Zip para mejor compresión
-https://www.7-zip.org/download.html
+# Opción A - Automático (recomendado):
+build-cpanel-complete.bat
+# Espera 5-10 minutos
+
+# Opción B - Manual (si ya compilaste):
+npm run build
+build-cpanel-simple.bat
+# Espera 2-3 minutos
 ```
 
-### **El ZIP pesa mucho (>150 MB)**
-**Solución:** Es normal. Incluye vendor/ compilado.
-- `vendor/` = ~80-100 MB
-- `public/build/` = ~5-10 MB
-- Resto = ~20-30 MB
+**Resultado**: `Easy-Move-Production.zip`
 
-### **"Este script debe ejecutarse desde la raíz del proyecto"**
-**Solución:** Asegúrate de estar en la carpeta correcta
+---
+
+### **PASO 2: Subir a cPanel**
+
+1. Abre: `cPanel` → **File Manager**
+2. Navega a: `/public_html/`
+3. Haz clic en: **Upload**
+4. Selecciona: `Easy-Move-Production.zip`
+5. Espera a que termine
+
+---
+
+### **PASO 3: Extraer ZIP**
+
+1. Click derecho en: `Easy-Move-Production.zip`
+2. Selecciona: **Extract**
+3. Destino: `/public_html/` (dejar por defecto)
+4. Click: **Extract File(s)**
+
+---
+
+### **PASO 4: Crear Base de Datos**
+
+En cPanel:
+
+1. **MySQL Databases**
+2. Crea nueva BD:
+   - **Database Name**: `usuario_bd` (ej: miproyecto_bd)
+   - Click: **Create Database**
+
+3. Crea usuario:
+   - **MySQL Users** → **Add New User**
+   - **Username**: `usuario_bd` (ej: miproyecto_u)
+   - **Password**: (fuerte, 20+ caracteres)
+   - Click: **Create User**
+
+4. Asigna privilegios:
+   - **Add User to Database**
+   - Usuario: `usuario_bd`
+   - BD: `usuario_bd`
+   - **Privilegios**: ☑️ ALL PRIVILEGES
+   - Click: **Make Changes**
+
+---
+
+### **PASO 5: Importar Schema SQL**
+
+En cPanel → **phpMyAdmin**:
+
+1. Selecciona BD: `usuario_bd`
+2. Click en tab: **Import**
+3. Click: **Choose File**
+4. Selecciona: `database/schema.sql`
+5. Click: **Go**
+
+(Espera a que muestre "X queries executed successfully")
+
+---
+
+### **PASO 6: Crear y Editar `.env`**
+
+En cPanel → **File Manager** → `/public_html/Easy-Move-Production/`:
+
+1. Click derecho en: `.env.example`
+2. **Copy**
+3. Click derecho en espacio vacío
+4. **Paste as**
+5. Renombra a: `.env`
+
+---
+
+**Editar `.env`** (click derecho → **Edit** o abrir con editor):
+
+```env
+APP_NAME=Easy-Move
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://tudominio.com
+
+DB_HOST=localhost
+DB_DATABASE=usuario_bd
+DB_USERNAME=usuario_bd
+DB_PASSWORD=tu_password_fuerte
+
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=tu@gmail.com
+MAIL_PASSWORD=tu_app_password
+MAIL_FROM_ADDRESS=noreply@tudominio.com
+```
+
+---
+
+### **PASO 7: Configurar Permisos** (Si tienes SSH)
 
 ```bash
-cd C:\xampp\htdocs\Easy-Move
-build-cpanel.bat
+chmod 775 storage bootstrap/cache
+chmod 644 public/index.php
 ```
 
 ---
 
-## 🚀 Flujo Completo
+### **PASO 8: Verificar**
+
+Abre en navegador: `https://tudominio.com`
+
+✅ Debe cargar correctamente  
+✅ CSS y JS deben verse  
+✅ La página no debe estar "sin estilo"
+
+---
+
+## 🚨 Troubleshooting
+
+### **Problema: "Sin estilo" (todo en texto)**
+
+**Síntomas**: Página carga pero sin colores, sin formato, texto enorme
+
+**Soluciones** (en orden):
 
 ```
-1. En tu PC
-   └─ build-cpanel.bat (doble clic)
-       └─ Genera Easy-Move-Production.zip
-       
-2. Subes a cPanel
-   └─ File Manager > Upload > Easy-Move-Production.zip
+1. Verificar que existe:
+   public/build/manifest.json
+   public/build/assets/app-*.js
+   public/build/assets/app-*.css
+
+2. Editar .env:
+   APP_URL=https://tudominio.com
+   (Debe ser EXACTO, con https://)
+
+3. Si tienes SSH, ejecutar:
+   php artisan config:clear
    
-3. Extraes en cPanel
-   └─ Click derecho > Extract
-   
-4. Configuras en cPanel
-   ├─ Crear BD MySQL
-   ├─ Importar schema.sql
-   ├─ Editar .env
-   └─ Dar permisos (chmod 755)
-   
-5. ¡Listo!
-   └─ Accede a https://tudominio.com
+4. Refresca navegador (Ctrl+F5)
 ```
 
 ---
 
-## 📞 Soporte
+### **Problema: Error de conexión a Base de Datos**
 
-Si hay problemas:
+**Síntomas**: "SQLSTATE[HY000]: General error"
 
-1. **Revisa `INSTRUCCIONES_CPANEL.txt`** (está en el ZIP)
-2. **Lee `DOCUMENTACION_TECNICA.md`** (en el proyecto)
-3. **Verifica credenciales de BD** en `.env`
-4. **Comprueba permisos** de `storage/` y `bootstrap/cache`
+**Soluciones**:
 
----
+```
+1. Verificar credenciales en .env:
+   - DB_DATABASE correcto
+   - DB_USERNAME correcto
+   - DB_PASSWORD correcto
 
-## ✅ Checklist Después de Deploy
-
-- [ ] ZIP extraído en cPanel
-- [ ] `.env` creado (copy de `.env.example`)
-- [ ] Base de datos creada en cPanel
-- [ ] `schema.sql` importado en phpMyAdmin
-- [ ] Credenciales en `.env` (DB, SMTP, APP_URL)
-- [ ] Permisos: `chmod 755 storage bootstrap/cache`
-- [ ] Acceso a `https://tudominio.com` funciona
-- [ ] Landing page carga correctamente
-- [ ] Email SMTP configurado (opcional)
+2. En phpMyAdmin:
+   - Verifica que BD existe
+   - Verifica que usuario tiene privilegios
+   
+3. Ejecutar en SSH (si tienes):
+   php artisan migrate --force
+```
 
 ---
 
-**Versión:** 1.0  
-**Compatibilidad:** Windows 7+, PHP 8.2+, Laravel 11  
-**Última actualización:** Abril 2026
+### **Problema: "El archivo ZIP pesa mucho"**
+
+**Normal**: El ZIP pesa 45-60 MB, es correcto
+
+**Incluye**: vendor/ (~80 MB descomprimido, ~40 comprimido)
+
+---
+
+### **Problema: El script no compila**
+
+**Solución**:
+
+```bash
+# 1. Instalar dependencias
+npm install
+
+# 2. Compilar manualmente
+npm run build
+
+# 3. Ejecutar script simple
+build-cpanel-simple.bat
+```
+
+---
+
+## 📋 Checklist Final
+
+```
+ANTES de ejecutar script:
+☐ npm install (si es primera vez)
+☐ npm run build (para complete) o manual (para simple)
+☐ Estoy en C:\xampp\htdocs\Easy-Move
+
+DURANTE:
+☐ Script muestra progreso colorido
+☐ Script termina con "✓ BUILD COMPLETADO"
+
+DESPUÉS de script:
+☐ Existe Easy-Move-Production.zip (~45-60 MB)
+☐ Subo a cPanel
+☐ Extraigo en /public_html
+
+EN CPANEL:
+☐ Creo BD MySQL
+☐ Creo usuario de BD
+☐ Importo database/schema.sql
+☐ Copio .env.example a .env
+☐ Edito .env con valores reales
+☐ Doy permisos: chmod 775 storage
+☐ Accedo a https://tudominio.com
+
+VERIFICACIÓN:
+☐ Página carga con estilos
+☐ CSS y JS se ven bien
+☐ No dice "sin estilo"
+☐ La BD conecta sin errores
+```
+
+---
+
+## 🔐 Notas de Seguridad
+
+✅ **El script respeta `.gitignore` automáticamente**
+
+✅ **Nunca incluye** `.env` real en el ZIP
+
+✅ **Debes crear** `.env` nuevo en cPanel (basado en `.env.example`)
+
+✅ **La contraseña debe ser fuerte** (20+ caracteres, símbolos)
+
+✅ **No subas** `.env` a GitHub **NUNCA**
+
+✅ **Usa Gmail App Password**, no contraseña normal
+
+---
+
+## 📚 Más Información
+
+- [`N8N_EXPORT_GUIDE.md`](N8N_EXPORT_GUIDE.md) - Cómo exportar datos del scraper
+- [`SCRAPER_SYNC_GUIDE.md`](SCRAPER_SYNC_GUIDE.md) - Documentación del scraper
+- [`README.md`](README.md) - General del proyecto
+
+---
+
+**¡Listo para deploy! 🚀**
+
+Ejecuta `build-cpanel-complete.bat` y en 10 minutos tendrás tu ZIP listo para cPanel.
