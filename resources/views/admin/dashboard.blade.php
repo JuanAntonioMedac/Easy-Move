@@ -1,8 +1,8 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Panel Administrador - EasyMove')
 
-@section('content')
+@section('admin-content')
 <!-- Header -->
 <div class="mb-10">
     <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-6">
@@ -95,10 +95,6 @@
                 <span class="text-red-600 dark:text-red-400 font-semibold text-sm">↓ {{ abs($porcentajeBusquedas) }}%</span>
             @endif
             <span class="text-gray-500 dark:text-gray-400 text-xs">vs. semana anterior</span>
-        </div>
-    </div>
-</div>
-            <i class="bi bi-map-fill text-3xl text-indigo-600 opacity-20"></i>
         </div>
     </div>
 </div>
