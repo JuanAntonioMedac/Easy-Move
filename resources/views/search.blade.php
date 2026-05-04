@@ -298,6 +298,7 @@ const searchUrl = @json(route('search'));
 const exportPdfUrl = @json(route('export-pdf'));
 const comparisonUrlTemplate = @json(url('/comparacion/__ID__'));
 let currentComparacionId = null;
+let currentTarifaId = null;
 let selectedChips = new Set();
 
 // Mapeo color-proveedor
@@ -543,6 +544,7 @@ async function viewComparison(comparacionId, tarifaData) {
 
     try {
         currentComparacionId = comparacionId;
+        currentTarifaId = tarifaData.id_tarifa || null;
 
         const html = `
             <div class="space-y-4">
@@ -612,9 +614,15 @@ async function exportPdf() {
     if (!currentComparacionId) return;
 
     try {
-        const response = await axios.post(exportPdfUrl, {
+        const payload = {
             comparacion_id: currentComparacionId,
-        }, {
+        };
+        
+        if (currentTarifaId) {
+            payload.tarifa_id = currentTarifaId;
+        }
+        
+        const response = await axios.post(exportPdfUrl, payload, {
             responseType: 'blob',
         });
 
