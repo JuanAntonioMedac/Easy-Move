@@ -27,6 +27,30 @@ class AdminController extends Controller
 
         // Búsquedas últimos 7 días
         $busquedasUltimaSemana = Comparacion::where('fecha', '>=', now()->subDays(7))->count();
+        
+        // Búsquedas semana anterior
+        $busquedasSemanaAnterior = Comparacion::whereBetween('fecha', [
+            now()->subDays(14),
+            now()->subDays(7)
+        ])->count();
+        
+        // Calcular porcentaje de cambio en búsquedas
+        $porcentajeBusquedas = $busquedasSemanaAnterior > 0 
+            ? round((($busquedasUltimaSemana - $busquedasSemanaAnterior) / $busquedasSemanaAnterior) * 100)
+            : 0;
+
+        // Usuarios nuevos últimos 7 días (usando fecha_registro)
+        $usuariosNuevos = User::where('fecha_registro', '>=', now()->subDays(7))->count();
+
+        // Búsquedas por día (últimos 7 días)
+        $busquedasPorDia = [];
+        $diasNombres = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+        
+        for ($i = 6; $i >= 0; $i--) {
+            $fecha = now()->subDays($i);
+            $count = Comparacion::whereDate('fecha', $fecha->toDateString())->count();
+            $busquedasPorDia[] = $count;
+        }
 
         // Proveedores más buscados (con servicios)
         $proveedoresMasBuscados = Proveedor::withCount('servicios')
@@ -47,6 +71,10 @@ class AdminController extends Controller
             'totalTarifas' => $totalTarifas,
             'totalUbicaciones' => $totalUbicaciones,
             'busquedasUltimaSemana' => $busquedasUltimaSemana,
+            'busquedasPorDia' => $busquedasPorDia,
+            'porcentajeUsuarios' => 0,
+            'porcentajeBusquedas' => $porcentajeBusquedas,
+            'usuariosNuevos' => $usuariosNuevos,
             'proveedoresMasBuscados' => $proveedoresMasBuscados,
             'tiposMasDemandados' => $tiposMasDemandados,
         ]);

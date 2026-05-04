@@ -38,8 +38,8 @@
             </div>
         </div>
         <div class="flex items-center gap-2 pt-3 border-t border-gray-100 dark:border-gray-700">
-            <span class="text-green-600 dark:text-green-400 font-semibold text-sm">↑ 12%</span>
-            <span class="text-gray-500 dark:text-gray-400 text-xs">vs. semana anterior</span>
+            <span class="text-green-600 dark:text-green-400 font-semibold text-sm">{{ $usuariosNuevos }} nuevo{{ $usuariosNuevos !== 1 ? 's' : '' }}</span>
+            <span class="text-gray-500 dark:text-gray-400 text-xs">en los últimos 7 días</span>
         </div>
     </div>
 
@@ -55,8 +55,8 @@
             </div>
         </div>
         <div class="flex items-center gap-2 pt-3 border-t border-gray-100 dark:border-gray-700">
-            <span class="text-green-600 dark:text-green-400 font-semibold text-sm">✓ Activos</span>
-            <span class="text-gray-500 dark:text-gray-400 text-xs">listados</span>
+            <span class="text-green-600 dark:text-green-400 font-semibold text-sm">✓ {{ $totalProveedores }} Activos</span>
+            <span class="text-gray-500 dark:text-gray-400 text-xs">disponibles</span>
         </div>
     </div>
 
@@ -89,8 +89,12 @@
             </div>
         </div>
         <div class="flex items-center gap-2 pt-3 border-t border-gray-100 dark:border-gray-700">
-            <span class="text-green-600 dark:text-green-400 font-semibold text-sm">↑ 8%</span>
-            <span class="text-gray-500 dark:text-gray-400 text-xs">en actividad</span>
+            @if ($porcentajeBusquedas >= 0)
+                <span class="text-green-600 dark:text-green-400 font-semibold text-sm">↑ {{ $porcentajeBusquedas }}%</span>
+            @else
+                <span class="text-red-600 dark:text-red-400 font-semibold text-sm">↓ {{ abs($porcentajeBusquedas) }}%</span>
+            @endif
+            <span class="text-gray-500 dark:text-gray-400 text-xs">vs. semana anterior</span>
         </div>
     </div>
 </div>
@@ -144,8 +148,8 @@
         <div class="space-y-3">
             @php
                 $dias = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
-                $datos = [12, 19, 15, 28, 35, 18, $busquedasUltimaSemana - 127]; // Ejemplo
-                $maxValor = max($datos);
+                $datos = $busquedasPorDia;
+                $maxValor = !empty($datos) && max($datos) > 0 ? max($datos) : 1;
             @endphp
             @forelse ($dias as $idx => $dia)
                 <div class="flex items-end gap-3">
