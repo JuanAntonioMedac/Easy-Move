@@ -385,11 +385,15 @@ document.getElementById('searchForm').addEventListener('submit', async (e) => {
         const meta = result?.meta || {};
 
         if (tarifas.length === 0) {
+            // Ocultar sección de resultados anteriores
+            resultsSection.classList.add('hidden');
+            // Mostrar estado vacío con mensaje
+            emptyState.classList.remove('hidden');
             emptyState.innerHTML = `
                 <div class="text-center py-12">
                     <i class="bi bi-inbox block text-8xl opacity-30 text-gray-400 mb-6"></i>
-                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Sin resultados</h3>
-                    <p class="text-gray-600 dark:text-gray-400">Intenta con otros filtros o código postal</p>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">No hay tarifas disponibles</h3>
+                    <p class="text-gray-600 dark:text-gray-400">No encontramos tarifas para este tipo de servicio y código postal. Intenta con otros filtros.</p>
                 </div>
             `;
             return;
@@ -449,6 +453,8 @@ document.getElementById('searchForm').addEventListener('submit', async (e) => {
 
     } catch (error) {
         console.error('Error:', error);
+        resultsSection.classList.add('hidden');
+        emptyState.classList.remove('hidden');
         emptyState.innerHTML = `
             <div class="text-center py-12 bg-red-50 dark:bg-red-950 rounded-xl border border-red-200 dark:border-red-800">
                 <i class="bi bi-exclamation-triangle block text-8xl opacity-30 text-red-400 mb-6"></i>
