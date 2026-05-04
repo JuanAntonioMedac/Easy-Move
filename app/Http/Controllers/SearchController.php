@@ -48,6 +48,11 @@ class SearchController extends Controller
         $validated = $request->validate([
             'codigo_postal' => 'required|string|max:10',
             'id_tipo_servicio' => 'required|integer|exists:tipos_servicios,id_tipo_servicio',
+            'min_precio' => 'nullable|numeric|min:0',
+            'max_precio' => 'nullable|numeric|min:0',
+            'ordenar_por' => 'nullable|string|in:precio_asc,precio_desc,reciente,nombre_asc',
+            'buscar_nombre' => 'nullable|string|max:100',
+            'permanencia' => 'nullable|array',
         ]);
 
         try {
@@ -70,8 +75,64 @@ class SearchController extends Controller
                 })
                 ->whereHas('disponibilidades', function ($q) use ($ubicacion) {
                     $q->where('id_ubicacion', $ubicacion->id_ubicacion);
-                })
-                ->orderBy('precio', 'asc');
+                });
+
+            // Aplicar filtro de rango de precio
+            if (!empty($validated['min_precio'])) {
+                $tarifasQuery->where('precio', '>=', $validated['min_precio']);
+            }
+            if (!empty($validated['max_precio'])) {
+                $tarifasQuery->where('precio', '<=', $validated['max_precio']);
+            }
+
+            // Aplicar filtro de búsqueda por nombre
+            if (!empty($validated['buscar_nombre'])) {
+                $tarifasQuery->where('nombre_tarifa', 'like', '%' . $validated['buscar_nombre'] . '%');
+            }
+
+            // Aplicar filtro de permanencia
+            if (!empty($validated['permanencia']) && is_array($validated['permanencia'])) {
+                $permanencias = $validated['permanencia'];
+                $tarifasQuery->where(function ($q) use ($permanencias) {
+                    foreach ($permanencias as $perm) {
+                        if ($perm === 'sin_permanencia') {
+                            $q->orWhereNull('permanencia')
+                              ->orWhere('permanencia', '=', '')
+                              ->orWhere('permanencia', 'like', '%sin permanencia%');
+                        } elseif ($perm === '1mes') {
+                            $q->orWhere('permanencia', 'like', '%1 mes%')
+                              ->orWhere('permanencia', 'like', '%1mes%');
+                        } elseif ($perm === '3meses') {
+                            $q->orWhere('permanencia', 'like', '%3 meses%')
+                              ->orWhere('permanencia', 'like', '%3meses%');
+                        } elseif ($perm === '6meses') {
+                            $q->orWhere('permanencia', 'like', '%6 meses%')
+                              ->orWhere('permanencia', 'like', '%6meses%');
+                        } elseif ($perm === '12meses') {
+                            $q->orWhere('permanencia', 'like', '%12 meses%')
+                              ->orWhere('permanencia', 'like', '%12meses%');
+                        }
+                    }
+                });
+            }
+
+            // Aplicar ordenamiento
+            $ordenar_por = $validated['ordenar_por'] ?? 'precio_asc';
+            switch ($ordenar_por) {
+                case 'precio_desc':
+                    $tarifasQuery->orderBy('precio', 'desc');
+                    break;
+                case 'nombre_asc':
+                    $tarifasQuery->orderBy('nombre_tarifa', 'asc');
+                    break;
+                case 'reciente':
+                    $tarifasQuery->orderBy('id_tarifa', 'desc');
+                    break;
+                case 'precio_asc':
+                default:
+                    $tarifasQuery->orderBy('precio', 'asc');
+                    break;
+            }
 
             // Lógica crítica: Limitación de resultados por autenticación
             $isAuthenticated = Auth::check();
@@ -564,10 +625,11 @@ class SearchController extends Controller
 
         $validated = $request->validate([
             'comparacion_id' => 'required|integer|exists:comparaciones,id_comparacion',
+            'tarifa_id' => 'nullable|integer',
         ]);
 
         try {
-            $comparacion = Comparacion::with('tarifas.servicio.proveedor', 'ubicacion', 'tipoServicio')
+            $comparacion = Comparacion::with('ubicacion', 'tipoServicio')
                 ->findOrFail($validated['comparacion_id']);
 
             // Verificar que la comparación pertenece al usuario
@@ -575,14 +637,49 @@ class SearchController extends Controller
                 return response()->json(['error' => 'No autorizado'], 403);
             }
 
+            // Determinar qué vista y tarifas usar
+            $tipo_descarga = 'todas';
+            $vista = 'pdf.comparacion';
+            
+            if (!empty($validated['tarifa_id'])) {
+                // Descargar una tarifa específica
+                $tarifas = Tarifa::with('servicio.proveedor')
+                    ->where('id_tarifa', $validated['tarifa_id'])
+                    ->get();
+                $tipo_descarga = 'individual';
+                $vista = 'pdf.tarifa-detalle';
+            } else {
+                // Descargar todas las tarifas de la comparación
+                $tarifas = Tarifa::with('servicio.proveedor')
+                    ->whereIn('id_tarifa', 
+                        $comparacion->tarifas->pluck('id_tarifa')->toArray()
+                    )
+                    ->get();
+            }
+
+            // Validar que existan tarifas
+            if ($tarifas->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No hay tarifas para descargar',
+                ], 404);
+            }
+
             // Generar PDF
-            $pdf = Pdf::loadView('pdf.comparacion', [
+            $pdf = Pdf::loadView($vista, [
                 'comparacion' => $comparacion,
+                'tarifas' => $tarifas,
                 'usuario' => Auth::user(),
             ]);
 
-            return $pdf->download('comparacion-' . now()->format('Y-m-d-Hi') . '.pdf');
+            $filename = $tipo_descarga === 'individual' 
+                ? 'tarifa-' . now()->format('Y-m-d-Hi') . '.pdf'
+                : 'comparacion-' . now()->format('Y-m-d-Hi') . '.pdf';
+
+            return $pdf->download($filename);
         } catch (\Exception $e) {
+            \Log::error('Error en exportPDF: ' . $e->getMessage());
+            
             return response()->json([
                 'success' => false,
                 'message' => 'Error al generar PDF: ' . $e->getMessage(),

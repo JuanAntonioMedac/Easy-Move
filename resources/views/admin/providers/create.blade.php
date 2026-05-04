@@ -1,8 +1,8 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Crear Proveedor - Admin EasyMove')
 
-@section('content')
+@section('admin-content')
 <div class="mb-8">
     <a href="{{ route('admin.providers.index') }}" class="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 mb-4">
         <i class="bi bi-chevron-left"></i>

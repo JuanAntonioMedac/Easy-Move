@@ -1,8 +1,8 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
-@section('title', 'Editar Código Postal - Admin EasyMove')
+@section('title', 'Editar Ubicación - Admin EasyMove')
 
-@section('content')
+@section('admin-content')
 <div class="mb-8">
     <div class="flex items-center gap-3">
         <a href="{{ route('admin.locations.index') }}" class="text-primary-600 hover:text-primary-700 transition">

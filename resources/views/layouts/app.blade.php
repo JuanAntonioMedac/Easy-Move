@@ -28,15 +28,7 @@
                     </div>
                 </a>
 
-                <!-- Search & Menu Toggle -->
-                <div class="flex-1 flex items-center gap-4">
-                    <!-- Search Bar (Hidden on mobile) -->
-                    <div class="hidden md:flex flex-1 max-w-xs relative">
-                        <input type="text" placeholder="🔍 Buscar servicios..."
-                               class="w-full px-4 py-2.5 rounded-lg border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 transition text-sm">
-                    </div>
-
-                    <!-- Right Section -->
+                <!-- Right Section -->
                     <div class="flex items-center gap-2 ml-auto">
                         <!-- Admin Panel Button -->
                         @auth
@@ -105,8 +97,6 @@
             <!-- Mobile Menu -->
             <div id="mobileMenu" class="hidden md:hidden pb-4 border-t border-gray-200 dark:border-gray-700">
                 <div class="flex flex-col gap-2">
-                    <input type="text" placeholder="🔍 Buscar servicios..."
-                           class="w-full px-4 py-2.5 rounded-lg border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 text-sm">
                     @guest
                         <a href="{{ route('login') }}" class="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition text-sm font-medium">
                             Iniciar Sesión

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ScraperController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [SearchController::class, 'index'])->name('home');
@@ -103,4 +104,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/users', [AdminController::class, 'indexUsers'])->name('users.index');
     Route::put('/users/{user}/role', [AdminController::class, 'updateUserRole'])->name('users.update-role');
     Route::delete('/users/{user}', [AdminController::class, 'destroyUser'])->name('users.destroy');
+
+    // Scraper
+    Route::post('/scraper/sync-json', [ScraperController::class, 'syncJson'])->name('scraper.sync-json');
+    Route::post('/scraper/validate-json', [ScraperController::class, 'validateJson'])->name('scraper.validate-json');
 });

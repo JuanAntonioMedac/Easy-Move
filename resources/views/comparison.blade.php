@@ -131,17 +131,35 @@
                                 </div>
                             @endif
 
-                            <!-- Botón Acción -->
-                            @if($tarifa->url_oferta_externa)
-                                <a href="{{ $tarifa->url_oferta_externa }}" target="_blank" rel="noopener"
-                                   class="w-full py-2.5 rounded-lg font-semibold transition text-center block {{ $esMasBarata ? 'bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl' : 'bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg' }}">
-                                    <i class="bi bi-box-arrow-out-right me-2"></i>Ver Oferta {{ $esMasBarata ? '⭐' : '' }}
-                                </a>
-                            @else
-                                <button disabled class="w-full py-2.5 rounded-lg font-semibold bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed">
-                                    No disponible
-                                </button>
-                            @endif
+                            <!-- Botones de Acción -->
+                            <div class="space-y-2">
+                                @if($tarifa->url_oferta_externa)
+                                    <a href="{{ $tarifa->url_oferta_externa }}" target="_blank" rel="noopener"
+                                       class="w-full py-2.5 rounded-lg font-semibold transition text-center block {{ $esMasBarata ? 'bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl' : 'bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg' }}">
+                                        <i class="bi bi-box-arrow-out-right me-2"></i>Ver Oferta {{ $esMasBarata ? '⭐' : '' }}
+                                    </a>
+                                @else
+                                    <button disabled class="w-full py-2.5 rounded-lg font-semibold bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed">
+                                        No disponible
+                                    </button>
+                                @endif
+
+                                @auth
+                                    <!-- Botones PDF -->
+                                    <div class="flex gap-2">
+                                        <button onclick="downloadTarifaPDF({{ $comparacion_id }}, {{ $tarifa->id_tarifa }})"
+                                                class="flex-1 py-2 rounded-lg font-semibold bg-purple-500 hover:bg-purple-600 text-white text-sm transition flex items-center justify-center gap-1">
+                                            <i class="bi bi-file-pdf"></i>
+                                            <span class="hidden sm:inline">Detalle</span>
+                                        </button>
+                                        <button onclick="downloadTodasPDF({{ $comparacion_id }})"
+                                                class="flex-1 py-2 rounded-lg font-semibold bg-orange-500 hover:bg-orange-600 text-white text-sm transition flex items-center justify-center gap-1">
+                                            <i class="bi bi-files"></i>
+                                            <span class="hidden sm:inline">Todas</span>
+                                        </button>
+                                    </div>
+                                @endauth
+                            </div>
                         </div>
                     </div>
                 @endforeach
@@ -256,6 +274,60 @@ document.getElementById('saveComparisonForm')?.addEventListener('submit', async 
         alert('Error al guardar la comparación');
     }
 });
+
+// Función para descargar PDF de una tarifa individual
+function downloadTarifaPDF(comparacionId, tarifaId) {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '@json(route("export-pdf"))';
+    form.style.display = 'none';
+
+    const tokenInput = document.createElement('input');
+    tokenInput.type = 'hidden';
+    tokenInput.name = '_token';
+    tokenInput.value = document.querySelector('meta[name="csrf-token"]').content;
+
+    const comparacionInput = document.createElement('input');
+    comparacionInput.type = 'hidden';
+    comparacionInput.name = 'comparacion_id';
+    comparacionInput.value = comparacionId;
+
+    const tarifaInput = document.createElement('input');
+    tarifaInput.type = 'hidden';
+    tarifaInput.name = 'tarifa_id';
+    tarifaInput.value = tarifaId;
+
+    form.appendChild(tokenInput);
+    form.appendChild(comparacionInput);
+    form.appendChild(tarifaInput);
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+}
+
+// Función para descargar PDF de todas las tarifas
+function downloadTodasPDF(comparacionId) {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '@json(route("export-pdf"))';
+    form.style.display = 'none';
+
+    const tokenInput = document.createElement('input');
+    tokenInput.type = 'hidden';
+    tokenInput.name = '_token';
+    tokenInput.value = document.querySelector('meta[name="csrf-token"]').content;
+
+    const comparacionInput = document.createElement('input');
+    comparacionInput.type = 'hidden';
+    comparacionInput.name = 'comparacion_id';
+    comparacionInput.value = comparacionId;
+
+    form.appendChild(tokenInput);
+    form.appendChild(comparacionInput);
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+}
 </script>
 @endauth
 @endsection
