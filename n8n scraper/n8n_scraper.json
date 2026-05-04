@@ -1,5 +1,6 @@
 {
-  "name": "My workflow",
+  "name": "Scraper Tarifas Energía y Telecomunicaciones",
+
   "nodes": [
     {
       "parameters": {},
@@ -555,4 +556,5 @@
   },
   "id": "4lHpaw6Ckc8ZC9fv",
   "tags": []
+
 }
