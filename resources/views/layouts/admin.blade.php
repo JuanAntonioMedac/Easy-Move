@@ -139,7 +139,7 @@
             <i class="bi bi-list text-xl"></i>
         </button>
 
-        <div class="flex-1 w-full p-4 md:p-8">
+        <div class="flex-1 w-full p-1 md:p-2">
             @yield('admin-content')
         </div>
     </main>
@@ -149,7 +149,7 @@
 function toggleSidebar() {
     const sidebar = document.querySelector('.admin-sidebar');
     const overlay = document.getElementById('sidebarOverlay');
-    
+
     sidebar.classList.toggle('active');
     overlay.classList.toggle('hidden');
 }
