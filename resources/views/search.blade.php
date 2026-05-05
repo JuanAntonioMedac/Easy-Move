@@ -10,22 +10,13 @@
 
     @keyframes fadeInUp {
         from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
+                currentComparacionId = result?.comparacion_id || null;
+                currentTarifaId = tarifas[0]?.id_tarifa || null;
+                currentComparisonData = tarifas[0] || null;
             opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .animate-slideInScale {
-        animation: slideInScale 0.4s ease-out forwards;
-    }
 
     @keyframes slideInScale {
-        from {
-            opacity: 0;
+                updateSaveButtonState();
             transform: scale(0.95);
         }
         to {
@@ -87,8 +78,6 @@
 
         <form id="searchForm" class="space-y-6">
             @csrf
-
-            <!-- Fila Principal: Tipo Servicio, Código Postal, Botón -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                 <!-- Tipo de Servicio -->
                 <div>
@@ -240,6 +229,12 @@
                         Cargando resultados...
                     </span>
                 </div>
+                @auth
+                    <button id="saveComparisonStickyBtn" type="button" onclick="saveCurrentComparison()" class="hidden px-4 py-2 bg-white dark:bg-gray-800 border border-primary-600 text-primary-700 dark:text-primary-300 rounded-lg transition font-bold flex items-center justify-center gap-2 hover:bg-primary-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="bi bi-bookmark-fill"></i>
+                        <span>Guardar seleccionada</span>
+                    </button>
+                @endauth
             </div>
         </div>
 
@@ -295,7 +290,17 @@ const exportPdfUrl = @json(route('export-pdf'));
 const comparisonUrlTemplate = @json(url('/comparacion/__ID__'));
 let currentComparacionId = null;
 let currentTarifaId = null;
+let currentComparisonData = null;
 let selectedChips = new Set();
+
+function updateSaveButtonState() {
+    const saveButton = document.getElementById('saveComparisonStickyBtn');
+    if (!saveButton) return;
+
+    const hasComparison = Boolean(currentComparacionId);
+    saveButton.classList.toggle('hidden', !hasComparison);
+    saveButton.disabled = !hasComparison;
+}
 
 // Mapeo color-proveedor
 const providerColors = {
@@ -399,6 +404,11 @@ function generateBenefits(tarifa) {
 document.getElementById('searchForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
+    currentComparacionId = null;
+    currentTarifaId = null;
+    currentComparisonData = null;
+    updateSaveButtonState();
+
     const tipoServicio = document.getElementById('id_tipo_servicio').value;
     const codigoPostal = document.getElementById('codigo_postal').value;
 
@@ -449,6 +459,10 @@ document.getElementById('searchForm').addEventListener('submit', async (e) => {
         const result = response.data?.data || response.data;
         const tarifas = result?.tarifas || [];
         const meta = result?.meta || {};
+        currentComparacionId = result?.comparacion_id || null;
+        currentTarifaId = tarifas[0]?.id_tarifa || null;
+        currentComparisonData = tarifas[0] || null;
+        updateSaveButtonState();
 
         if (tarifas.length === 0) {
             // Ocultar sección de resultados anteriores
@@ -503,7 +517,7 @@ document.getElementById('searchForm').addEventListener('submit', async (e) => {
                     <!-- Botones Grandes y Visuales -->
                     <div class="p-4 flex flex-col gap-2 mt-auto">
                         ${isAuthenticated ? `
-                            <button onclick="viewComparison(${result.comparacion_id}, ${JSON.stringify(tarifa).split('"').join('&quot;')})" class="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold rounded-lg transition-all flex items-center justify-center gap-2 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg">
+                            <button type="button" onclick="viewComparison(${result.comparacion_id}, ${JSON.stringify(tarifa).split('"').join('&quot;')})" class="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold rounded-lg transition-all flex items-center justify-center gap-2 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg">
                                 <i class="bi bi-eye-fill text-lg"></i><span>Ver Detalles</span>
                             </button>
                         ` : ''}
@@ -541,6 +555,8 @@ async function viewComparison(comparacionId, tarifaData) {
     try {
         currentComparacionId = comparacionId;
         currentTarifaId = tarifaData.id_tarifa || null;
+        currentComparisonData = tarifaData;
+        updateSaveButtonState();
 
         const html = `
             <div class="space-y-4">
@@ -604,6 +620,50 @@ async function viewComparison(comparacionId, tarifaData) {
         console.error('Error:', error);
         alert('Error al cargar los detalles');
     }
+}
+
+async function saveComparisonFromSearch(comparacionId) {
+    if (!isAuthenticated) return;
+
+    const defaultName = currentComparisonData?.nombre_tarifa
+        ? `Comparación ${currentComparisonData.nombre_tarifa}`
+        : `Comparación ${new Date().toLocaleDateString('es-ES')}`;
+
+    const nombre = prompt('Nombre para guardar la comparación:', defaultName);
+    if (nombre === null) {
+        return;
+    }
+
+    const trimmedName = nombre.trim();
+    if (!trimmedName) {
+        alert('Debes indicar un nombre válido');
+        return;
+    }
+
+    try {
+        const response = await axios.post(@json(route('comparison.save')), {
+            comparacion_id: comparacionId,
+            nombre: trimmedName,
+        });
+
+        if (response.data?.success) {
+            alert('Comparación guardada correctamente');
+        } else {
+            alert(response.data?.message || 'No se pudo guardar la comparación');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert(error.response?.data?.message || 'Error al guardar la comparación');
+    }
+}
+
+async function saveCurrentComparison() {
+    if (!currentComparacionId) {
+        alert('Primero selecciona una comparación');
+        return;
+    }
+
+    await saveComparisonFromSearch(currentComparacionId);
 }
 
 async function exportPdf() {

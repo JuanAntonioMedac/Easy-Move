@@ -51,12 +51,17 @@ Route::post('/logout', function () {
 // ============================================================================
 
 Route::middleware('auth')->group(function () {
-    Route::get('/comparacion/{comparacion}', [SearchController::class, 'showComparison'])->name('comparacion.show');
+    Route::get('/comparacion/{comparacion}', [SearchController::class, 'showComparison'])
+        ->whereNumber('comparacion')
+        ->name('comparacion.show');
     Route::post('/export-pdf', [SearchController::class, 'exportPDF'])->name('export-pdf');
     Route::post('/send-email', [SearchController::class, 'sendEmail'])->name('send-email');
-    Route::get('/comparison/{comparacion}', [SearchController::class, 'showComparisonView'])->name('comparison.show');
+    Route::get('/comparison/{comparacion}', [SearchController::class, 'showComparisonView'])
+        ->whereNumber('comparacion')
+        ->name('comparison.show');
     Route::post('/comparison/save', [SearchController::class, 'saveComparison'])->name('comparison.save');
     Route::get('/comparison/history', [SearchController::class, 'showHistory'])->name('comparison.history');
+    Route::get('/comparison/saved', [SearchController::class, 'showSavedComparisons'])->name('comparison.saved');
     Route::post('/comparison/export-pdf', [SearchController::class, 'exportPDF'])->name('comparison.export-pdf');
 });
 

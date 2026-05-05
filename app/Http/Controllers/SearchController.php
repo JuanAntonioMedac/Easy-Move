@@ -10,8 +10,10 @@ use App\Models\Ubicacion;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 
 class SearchController extends Controller
@@ -240,11 +242,13 @@ class SearchController extends Controller
      * @param int $comparacion
      * @return \Illuminate\Http\JsonResponse
      */
-    public function showComparison(int $comparacion)
+    public function showComparison(int|string $comparacion)
     {
         try {
+            $comparacionId = (int) $comparacion;
+
             $comparacionModel = Comparacion::with('tarifas.servicio.proveedor')
-                ->findOrFail($comparacion);
+                ->findOrFail($comparacionId);
 
             if ($comparacionModel->id_usuario && $comparacionModel->id_usuario !== Auth::id()) {
                 return response()->json(['error' => 'No autorizado'], 403);
@@ -542,10 +546,23 @@ class SearchController extends Controller
             // Actualizar los datos de la comparación para "guardarla"
             // En el modelo, necesitaremos agregar un campo 'nombre_guardado' o usar el campo 'titulo'
             // Por ahora, actualizamos la fecha como indicador de que fue guardada
-            $comparacion->update([
-                'nombre_guardado' => $validated['nombre'],
+            $updateData = [
                 'fecha' => now(),
-            ]);
+            ];
+
+            if (Schema::hasColumn('comparaciones', 'nombre_guardado')) {
+                $updateData['nombre_guardado'] = $validated['nombre'];
+            } else {
+                Log::warning('La columna nombre_guardado no existe en comparaciones; se guarda solo la fecha.', [
+                    'comparacion_id' => $comparacion->id_comparacion,
+                ]);
+            }
+
+            DB::table('comparaciones')
+                ->where('id_comparacion', $comparacion->id_comparacion)
+                ->update($updateData);
+
+            $comparacion->refresh();
 
             return response()->json([
                 'success' => true,
@@ -577,6 +594,41 @@ class SearchController extends Controller
 
         return view('comparison-history', [
             'comparaciones' => $comparaciones,
+            'title' => 'Historial de Comparaciones',
+            'subtitle' => 'Todas tus comparaciones realizadas',
+            'emptyMessage' => 'No tienes comparaciones realizadas',
+        ]);
+    }
+
+    /**
+     * Mostrar solo comparaciones guardadas
+     *
+     * @return \Illuminate\View\View
+     */
+    public function showSavedComparisons()
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+
+        $query = Comparacion::where('id_usuario', Auth::id())
+            ->with('tipoServicio', 'ubicacion')
+            ->orderBy('fecha', 'desc');
+
+        if (Schema::hasColumn('comparaciones', 'nombre_guardado')) {
+            $query->whereNotNull('nombre_guardado');
+        } else {
+            Log::warning('Se solicitó la vista de comparaciones guardadas sin existir la columna nombre_guardado en comparaciones.');
+            $query->whereRaw('1 = 0');
+        }
+
+        $comparaciones = $query->paginate(10);
+
+        return view('comparison-history', [
+            'comparaciones' => $comparaciones,
+            'title' => 'Comparaciones Guardadas',
+            'subtitle' => 'Solo las comparaciones que has guardado con nombre',
+            'emptyMessage' => 'No tienes comparaciones guardadas',
         ]);
     }
 
@@ -586,11 +638,13 @@ class SearchController extends Controller
      * @param int $comparacion
      * @return \Illuminate\View\View
      */
-    public function showComparisonView(int $comparacion)
+    public function showComparisonView(int|string $comparacion)
     {
         try {
+            $comparacionId = (int) $comparacion;
+
             $comparacionModel = Comparacion::with('tarifas.servicio.proveedor', 'ubicacion', 'tipoServicio')
-                ->findOrFail($comparacion);
+                ->findOrFail($comparacionId);
 
             // Verificar autorización para comparaciones privadas
             if ($comparacionModel->id_usuario && $comparacionModel->id_usuario !== Auth::id()) {
@@ -604,7 +658,7 @@ class SearchController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('Error al mostrar comparación', [
-                'comparacion_id' => $comparacion,
+                'comparacion_id' => $comparacionId,
                 'error' => $e->getMessage(),
             ]);
             abort(404, 'Comparación no encontrada');
@@ -640,7 +694,7 @@ class SearchController extends Controller
             // Determinar qué vista y tarifas usar
             $tipo_descarga = 'todas';
             $vista = 'pdf.comparacion';
-            
+
             if (!empty($validated['tarifa_id'])) {
                 // Descargar una tarifa específica
                 $tarifas = Tarifa::with('servicio.proveedor')
@@ -651,7 +705,7 @@ class SearchController extends Controller
             } else {
                 // Descargar todas las tarifas de la comparación
                 $tarifas = Tarifa::with('servicio.proveedor')
-                    ->whereIn('id_tarifa', 
+                    ->whereIn('id_tarifa',
                         $comparacion->tarifas->pluck('id_tarifa')->toArray()
                     )
                     ->get();
@@ -672,14 +726,14 @@ class SearchController extends Controller
                 'usuario' => Auth::user(),
             ]);
 
-            $filename = $tipo_descarga === 'individual' 
+            $filename = $tipo_descarga === 'individual'
                 ? 'tarifa-' . now()->format('Y-m-d-Hi') . '.pdf'
                 : 'comparacion-' . now()->format('Y-m-d-Hi') . '.pdf';
 
             return $pdf->download($filename);
         } catch (\Exception $e) {
             \Log::error('Error en exportPDF: ' . $e->getMessage());
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Error al generar PDF: ' . $e->getMessage(),
