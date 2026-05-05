@@ -80,7 +80,7 @@
     <div class="bg-gradient-to-br from-white via-gray-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-2xl shadow-xl p-8 border border-gray-200 dark:border-gray-700">
         <div class="mb-8">
             <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-2">
-                🔍 Buscar Servicios
+                Buscar Servicios
             </h1>
             <p class="text-gray-600 dark:text-gray-400 text-lg">Encuentra las mejores tarifas de luz, gas y telefonía en tu zona</p>
         </div>
