@@ -3,7 +3,10 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "dev": "vite"
+    "dev": "vite",
+    "migrate": "php artisan migrate --force --seed",
+    "migrate:fresh": "php artisan migrate:fresh --force --seed",
+    "seed": "php artisan db:seed --force"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.20",

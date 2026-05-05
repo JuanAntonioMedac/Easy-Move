@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
@@ -13,8 +14,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Ejecutar el seeder de EasyMove
-        $this->call(EasyMoveSeeder::class);
+        // Ejecutar el seeder completo solo si la base está vacía.
+        // Evita truncar datos existentes en Railway o en re-deploys.
+        if (!DB::table('tipos_servicios')->exists()) {
+            $this->call(EasyMoveSeeder::class);
+        }
 
         // Crear usuario admin
         User::firstOrCreate(

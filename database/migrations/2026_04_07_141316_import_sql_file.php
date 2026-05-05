@@ -3,11 +3,21 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
     public function up(): void
     {
+        // En Railway y en el flujo normal de migraciones, las tablas ya se crean
+        // con 2026_02_13_000001_create_easymove_tables.php y los datos se cargan
+        // con los seeders. Evitamos ejecutar el dump SQL para no duplicar ni romper
+        // la creación de tablas.
+        if (Schema::hasTable('comparaciones')) {
+            Log::info('Saltando importación SQL completa: la base ya se está gestionando por migraciones y seeders.');
+            return;
+        }
+
         try {
             $sql = file_get_contents(database_path('easymove.sql'));
 
