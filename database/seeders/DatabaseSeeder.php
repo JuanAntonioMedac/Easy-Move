@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,7 +17,7 @@ class DatabaseSeeder extends Seeder
     {
         // Ejecutar el seeder completo solo si la base está vacía.
         // Evita truncar datos existentes en Railway o en re-deploys.
-        if (!DB::table('tipos_servicios')->exists()) {
+        if (Schema::hasTable('tipos_servicios') && !DB::table('tipos_servicios')->exists()) {
             $this->call(EasyMoveSeeder::class);
         }
 
