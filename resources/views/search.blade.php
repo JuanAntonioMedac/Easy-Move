@@ -240,10 +240,6 @@
                         Cargando resultados...
                     </span>
                 </div>
-                <button onclick="document.getElementById('advancedFilters').classList.toggle('hidden')"
-                        class="text-xs px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition font-semibold text-gray-700 dark:text-white">
-                    <i class="bi bi-sliders me-1"></i>Filtros
-                </button>
             </div>
         </div>
 
@@ -617,11 +613,11 @@ async function exportPdf() {
         const payload = {
             comparacion_id: currentComparacionId,
         };
-        
+
         if (currentTarifaId) {
             payload.tarifa_id = currentTarifaId;
         }
-        
+
         const response = await axios.post(exportPdfUrl, payload, {
             responseType: 'blob',
         });
