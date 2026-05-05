@@ -16,7 +16,7 @@
             const savedTheme = localStorage.getItem('theme');
             const prefersColorScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
             const isDark = savedTheme ? savedTheme === 'dark' : prefersColorScheme;
-            
+
             if (isDark) {
                 document.documentElement.classList.add('dark');
             } else {
@@ -93,6 +93,32 @@
 
                 <!-- Right Section -->
                     <div class="flex items-center gap-2 ml-auto">
+                        @auth
+                            <!-- Comparisons Menu -->
+                            <div class="relative hidden md:block">
+                                <button id="comparisonsMenuToggle" type="button" class="flex items-center gap-2 px-4 py-2.5 rounded-lg border-2 border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-200 hover:border-sky-500 dark:hover:border-sky-400 hover:text-sky-600 dark:hover:text-sky-400 transition-all duration-300 hover:scale-105">
+                                    <i class="bi bi-bar-chart-line text-lg"></i>
+                                    <span class="font-semibold">Comparaciones</span>
+                                    <i class="bi bi-chevron-down text-xs"></i>
+                                </button>
+
+                                <div id="comparisonsMenu" class="hidden absolute right-0 mt-2 w-56 rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-xl overflow-hidden z-50">
+                                    <a href="{{ route('comparison.history') }}" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors">
+                                        <i class="bi bi-clock-history text-sky-600 dark:text-sky-400"></i>
+                                        <span>Historial</span>
+                                    </a>
+                                    <a href="{{ route('comparison.saved') }}" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors border-t border-gray-100 dark:border-slate-700">
+                                        <i class="bi bi-bookmark-fill text-sky-600 dark:text-sky-400"></i>
+                                        <span>Guardadas</span>
+                                    </a>
+                                    <a href="{{ route('home') }}" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors border-t border-gray-100 dark:border-slate-700">
+                                        <i class="bi bi-search text-sky-600 dark:text-sky-400"></i>
+                                        <span>Nueva búsqueda</span>
+                                    </a>
+                                </div>
+                            </div>
+                        @endauth
+
                         <!-- Admin Panel Button -->
                         @auth
                             @if(Auth::user()->isAdmin())
@@ -160,6 +186,21 @@
             <!-- Mobile Menu -->
             <div id="mobileMenu" class="hidden md:hidden pb-4 border-t border-gray-200 dark:border-slate-700 animate-slide-down">
                 <div class="flex flex-col gap-2">
+                    @auth
+                        <a href="{{ route('comparison.history') }}" class="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors text-sm font-medium flex items-center gap-2">
+                            <i class="bi bi-clock-history text-sky-600 dark:text-sky-400"></i>
+                            <span>Historial</span>
+                        </a>
+                        <a href="{{ route('comparison.saved') }}" class="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors text-sm font-medium flex items-center gap-2">
+                            <i class="bi bi-bookmark-fill text-sky-600 dark:text-sky-400"></i>
+                            <span>Guardadas</span>
+                        </a>
+                        <a href="{{ route('home') }}" class="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors text-sm font-medium flex items-center gap-2">
+                            <i class="bi bi-search text-sky-600 dark:text-sky-400"></i>
+                            <span>Nueva búsqueda</span>
+                        </a>
+                    @endauth
+
                     @guest
                         <a href="{{ route('login') }}" class="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors text-sm font-medium">
                             Iniciar Sesión
@@ -253,7 +294,7 @@
 
         // Detectar preferencia del sistema
         const prefersColorScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        
+
         // Inicializar tema desde localStorage o usar preferencia del sistema
         const savedTheme = localStorage.getItem('theme');
         const isDark = savedTheme ? savedTheme === 'dark' : prefersColorScheme;
@@ -278,7 +319,7 @@
             const isDarkNow = html.classList.contains('dark');
             applyTheme(!isDarkNow);
             localStorage.setItem('theme', !isDarkNow ? 'dark' : 'light');
-            
+
             setTimeout(() => {
                 html.classList.remove('switching');
             }, 300);
@@ -306,6 +347,22 @@
                 link.addEventListener('click', () => {
                     mobileMenu.classList.add('hidden');
                 });
+            });
+        }
+
+        const comparisonsMenuToggle = document.getElementById('comparisonsMenuToggle');
+        const comparisonsMenu = document.getElementById('comparisonsMenu');
+
+        if (comparisonsMenuToggle && comparisonsMenu) {
+            comparisonsMenuToggle.addEventListener('click', (event) => {
+                event.stopPropagation();
+                comparisonsMenu.classList.toggle('hidden');
+            });
+
+            document.addEventListener('click', (event) => {
+                if (!comparisonsMenuToggle.contains(event.target) && !comparisonsMenu.contains(event.target)) {
+                    comparisonsMenu.classList.add('hidden');
+                }
             });
         }
     </script>

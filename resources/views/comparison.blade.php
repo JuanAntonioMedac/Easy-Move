@@ -260,7 +260,7 @@ document.getElementById('saveComparisonForm')?.addEventListener('submit', async 
     }
 
     try {
-        const response = await axios.post('@json(route("comparison.save"))', {
+        const response = await axios.post(@json(route("comparison.save")), {
             comparacion_id: comparacionId,
             nombre: nombre,
         });
@@ -279,7 +279,7 @@ document.getElementById('saveComparisonForm')?.addEventListener('submit', async 
 function downloadTarifaPDF(comparacionId, tarifaId) {
     const form = document.createElement('form');
     form.method = 'POST';
-    form.action = '@json(route("export-pdf"))';
+    form.action = @json(route("export-pdf"));
     form.style.display = 'none';
 
     const tokenInput = document.createElement('input');
@@ -309,7 +309,7 @@ function downloadTarifaPDF(comparacionId, tarifaId) {
 function downloadTodasPDF(comparacionId) {
     const form = document.createElement('form');
     form.method = 'POST';
-    form.action = '@json(route("export-pdf"))';
+    form.action = @json(route("export-pdf"));
     form.style.display = 'none';
 
     const tokenInput = document.createElement('input');
