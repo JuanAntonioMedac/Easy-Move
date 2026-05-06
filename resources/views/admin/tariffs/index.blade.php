@@ -1,125 +1,114 @@
 @extends('layouts.admin')
 
-@section('title', 'Gestionar Tarifas - Admin EasyMove')
+@section('title', 'Tarifas · Admin EasyMove')
 
 @section('admin-content')
-<div class="mb-8">
-    <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-6">
-        <div>
-            <h1 class="text-5xl font-black bg-gradient-to-r from-rose-600 to-rose-700 bg-clip-text text-transparent mb-2">
-                💰 Gestionar Tarifas
-            </h1>
-            <p class="text-gray-600 dark:text-gray-400">Administra precios y planes de servicios</p>
-            <p class="text-sm text-gray-500 dark:text-gray-500 mt-1">Total: <span class="font-bold text-gray-700 dark:text-gray-300">{{ $tarifas->total() }}</span> tarifas</p>
+<div class="mb-8 flex flex-col md:flex-row md:justify-between md:items-end gap-4">
+    <div>
+        <div class="flex items-center gap-3 mb-2">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 grid place-items-center text-white shadow-lg shadow-amber-500/30">
+                <i class="bi bi-tags-fill text-xl"></i>
+            </div>
+            <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">Tarifas</h1>
         </div>
-        <a href="{{ route('admin.tariffs.create') }}" class="px-6 py-3 bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-700 hover:to-rose-800 text-white font-bold rounded-lg transition shadow-lg flex items-center gap-2 w-fit">
-            <i class="bi bi-plus-circle-fill text-xl"></i>
-            Nueva Tarifa
-        </a>
+        <p class="text-sm text-slate-500 dark:text-slate-400">Total: <span class="font-bold text-slate-700 dark:text-slate-200">{{ $tarifas->total() }}</span> tarifas registradas</p>
     </div>
+    <a href="{{ route('admin.tariffs.create') }}" class="btn-brand ring-brand inline-flex items-center gap-2 px-5 py-3 rounded-xl text-white font-bold w-fit">
+        <i class="bi bi-plus-lg"></i>Nueva tarifa
+    </a>
 </div>
 
 @include('shared.alerts')
 
-<!-- Filtro de búsqueda -->
-<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 mb-6 border border-gray-200 dark:border-gray-700">
+<div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 mb-6">
     <form method="GET" class="flex flex-col md:flex-row gap-3">
-        <div class="flex-1">
-            <input type="text" name="search" value="{{ $search }}" placeholder="🔍 Buscar tarifas..."
-                   class="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-rose-500 dark:focus:border-rose-400 transition">
+        <div class="flex-1 relative">
+            <i class="bi bi-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input type="text" name="search" value="{{ $search }}" placeholder="Buscar tarifas…"
+                   class="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950/50 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 transition-all">
         </div>
-        <button type="submit" class="px-6 py-3 bg-rose-600 hover:bg-rose-700 text-white font-semibold rounded-lg transition flex items-center justify-center gap-2 whitespace-nowrap shadow-md">
-            <i class="bi bi-search"></i>
-            Buscar
+        <button type="submit" class="btn-brand ring-brand inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-white font-bold whitespace-nowrap">
+            <i class="bi bi-search"></i>Buscar
         </button>
         @if($search)
-            <a href="{{ route('admin.tariffs.index') }}" class="px-6 py-3 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold rounded-lg transition whitespace-nowrap">
-                ✕ Limpiar
+            <a href="{{ route('admin.tariffs.index') }}" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-bold whitespace-nowrap transition">
+                <i class="bi bi-x-lg"></i>Limpiar
             </a>
         @endif
     </form>
 </div>
 
-<!-- Tabla de Tarifas -->
-<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+<div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full">
-            <thead>
-                <tr class="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 border-b-2 border-gray-200 dark:border-gray-700">
-                    <th class="text-left py-4 px-6 text-gray-700 dark:text-gray-300 font-bold text-sm uppercase tracking-wide">Nombre</th>
-                    <th class="text-left py-4 px-6 text-gray-700 dark:text-gray-300 font-bold text-sm uppercase tracking-wide">Servicio</th>
-                    <th class="text-left py-4 px-6 text-gray-700 dark:text-gray-300 font-bold text-sm uppercase tracking-wide">Proveedor</th>
-                    <th class="text-left py-4 px-6 text-gray-700 dark:text-gray-300 font-bold text-sm uppercase tracking-wide">Ubicaciones</th>
-                    <th class="text-left py-4 px-6 text-gray-700 dark:text-gray-300 font-bold text-sm uppercase tracking-wide">Precio</th>
-                    <th class="text-left py-4 px-6 text-gray-700 dark:text-gray-300 font-bold text-sm uppercase tracking-wide">Permanencia</th>
-                    <th class="text-left py-4 px-6 text-gray-700 dark:text-gray-300 font-bold text-sm uppercase tracking-wide">Actualizado</th>
-                    <th class="text-center py-4 px-6 text-gray-700 dark:text-gray-300 font-bold text-sm uppercase tracking-wide">Acciones</th>
+            <thead class="bg-slate-50 dark:bg-slate-800/40 border-b border-slate-100 dark:border-slate-800">
+                <tr>
+                    <th class="text-left py-3 px-6 text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Nombre</th>
+                    <th class="text-left py-3 px-6 text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Servicio</th>
+                    <th class="text-left py-3 px-6 text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Proveedor</th>
+                    <th class="text-left py-3 px-6 text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Ubicaciones</th>
+                    <th class="text-left py-3 px-6 text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Precio</th>
+                    <th class="text-left py-3 px-6 text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Permanencia</th>
+                    <th class="text-left py-3 px-6 text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Actualizado</th>
+                    <th class="text-right py-3 px-6 text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Acciones</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
                 @forelse ($tarifas as $tarifa)
-                    <tr class="border-b border-gray-100 dark:border-gray-700/50 hover:bg-rose-50 dark:hover:bg-gray-700/50 transition duration-150">
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
                         <td class="py-4 px-6">
-                            <p class="text-gray-900 dark:text-white font-bold">{{ $tarifa->nombre_tarifa }}</p>
+                            <p class="font-bold text-slate-900 dark:text-white">{{ $tarifa->nombre_tarifa }}</p>
                         </td>
                         <td class="py-4 px-6">
-                            <span class="text-gray-600 dark:text-gray-400 text-sm">{{ $tarifa->servicio->nombre_servicio }}</span>
+                            <span class="text-sm text-slate-600 dark:text-slate-400">{{ $tarifa->servicio->nombre_servicio }}</span>
                         </td>
                         <td class="py-4 px-6">
-                            <span class="inline-flex items-center gap-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-3 py-1 rounded-full text-sm font-semibold">
-                                {{ $tarifa->servicio->proveedor->nombre }}
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300">
+                                <i class="bi bi-building"></i>{{ $tarifa->servicio->proveedor->nombre }}
                             </span>
                         </td>
                         <td class="py-4 px-6">
                             @if ($tarifa->disponibilidades->count() > 0)
                                 <div class="flex flex-wrap gap-1">
                                     @foreach ($tarifa->disponibilidades->take(3) as $disponibilidad)
-                                        <span class="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-2 py-1 rounded-full text-xs font-semibold">
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold bg-sky-100 dark:bg-sky-950/50 text-sky-700 dark:text-sky-300">
                                             {{ $disponibilidad->ubicacion->codigo_postal }}
                                         </span>
                                     @endforeach
                                     @if ($tarifa->disponibilidades->count() > 3)
-                                        <span class="text-gray-500 dark:text-gray-400 text-xs font-semibold">+{{ $tarifa->disponibilidades->count() - 3 }}</span>
+                                        <span class="text-slate-500 dark:text-slate-400 text-[11px] font-bold">+{{ $tarifa->disponibilidades->count() - 3 }}</span>
                                     @endif
                                 </div>
                             @else
-                                <span class="text-gray-400 text-sm">—</span>
+                                <span class="text-slate-400 text-sm">—</span>
                             @endif
                         </td>
                         <td class="py-4 px-6">
-                            <p class="text-gray-900 dark:text-white font-bold">{{ number_format($tarifa->precio, 2, ',', '.') }} €</p>
-                            <p class="text-gray-500 dark:text-gray-400 text-xs">/ {{ $tarifa->unidad_precio }}</p>
+                            <p class="font-extrabold gradient-text tabular-nums">{{ number_format($tarifa->precio, 2, ',', '.') }} €</p>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 uppercase tracking-wider font-semibold">/ {{ $tarifa->unidad_precio }}</p>
                         </td>
                         <td class="py-4 px-6">
                             @if ($tarifa->permanencia)
-                                <span class="inline-flex items-center gap-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-3 py-1 rounded-full text-sm font-semibold">
-                                    {{ $tarifa->permanencia }}
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-indigo-100 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300">
+                                    <i class="bi bi-calendar-check"></i>{{ $tarifa->permanencia }}
                                 </span>
                             @else
-                                <span class="text-gray-400">—</span>
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300">
+                                    <i class="bi bi-unlock"></i>Sin
+                                </span>
                             @endif
                         </td>
-                        <td class="py-4 px-6">
-                            <span class="text-gray-600 dark:text-gray-400 text-sm">
-                                @if ($tarifa->updated_at)
-                                    {{ \Carbon\Carbon::parse($tarifa->updated_at)->format('d/m/Y') }}
-                                @else
-                                    N/A
-                                @endif
-                            </span>
+                        <td class="py-4 px-6 text-sm text-slate-600 dark:text-slate-400">
+                            {{ $tarifa->updated_at ? \Carbon\Carbon::parse($tarifa->updated_at)->format('d/m/Y') : 'N/A' }}
                         </td>
                         <td class="py-4 px-6">
-                            <div class="flex gap-2 justify-center">
-                                <a href="{{ route('admin.tariffs.edit', $tarifa) }}"
-                                   class="p-2.5 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition duration-200 font-semibold"
-                                   title="Editar">
-                                    <i class="bi bi-pencil"></i>
+                            <div class="flex gap-2 justify-end">
+                                <a href="{{ route('admin.tariffs.edit', $tarifa) }}" title="Editar" class="p-2.5 rounded-lg text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 transition">
+                                    <i class="bi bi-pencil-square"></i>
                                 </a>
-                                <form method="POST" action="{{ route('admin.tariffs.destroy', $tarifa) }}"
-                                      onsubmit="return confirm('¿Seguro que deseas eliminar esta tarifa?');" style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="p-2.5 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition duration-200 font-semibold" title="Eliminar">
+                                <form method="POST" action="{{ route('admin.tariffs.destroy', $tarifa) }}" onsubmit="return confirm('¿Seguro que deseas eliminar esta tarifa?');" class="inline">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" title="Eliminar" class="p-2.5 rounded-lg text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </form>
@@ -128,14 +117,12 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="8" class="py-12 px-6 text-center">
-                            <div class="flex flex-col items-center gap-3">
-                                <i class="bi bi-inbox text-4xl text-gray-300 dark:text-gray-600"></i>
-                                <p class="text-gray-500 dark:text-gray-400 font-medium">No hay tarifas registradas</p>
-                                <a href="{{ route('admin.tariffs.create') }}" class="text-rose-600 dark:text-rose-400 hover:underline text-sm font-semibold">
-                                    + Crear la primera
-                                </a>
+                        <td colspan="8" class="py-16 px-6 text-center">
+                            <div class="w-14 h-14 mx-auto mb-3 rounded-2xl grid place-items-center bg-slate-100 dark:bg-slate-800 text-slate-400">
+                                <i class="bi bi-inbox text-2xl"></i>
                             </div>
+                            <p class="text-slate-500 dark:text-slate-400 font-semibold mb-2">No hay tarifas registradas</p>
+                            <a href="{{ route('admin.tariffs.create') }}" class="text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:underline">+ Crear la primera</a>
                         </td>
                     </tr>
                 @endforelse
@@ -144,10 +131,5 @@
     </div>
 </div>
 
-<!-- Paginación -->
-<div class="mt-6 flex justify-center">
-    <nav aria-label="pagination" class="inline-flex gap-1">
-        {{ $tarifas->links() }}
-    </nav>
-</div>
+<div class="mt-6">{{ $tarifas->links() }}</div>
 @endsection

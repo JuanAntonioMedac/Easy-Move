@@ -1,95 +1,84 @@
 @extends('layouts.admin')
 
-@section('title', 'Gestionar Usuarios - Admin EasyMove')
+@section('title', 'Usuarios · Admin EasyMove')
 
 @section('admin-content')
 <div class="mb-8">
-    <div>
-        <h1 class="text-5xl font-black bg-gradient-to-r from-orange-600 to-orange-700 bg-clip-text text-transparent mb-2">
-            👥 Gestionar Usuarios
-        </h1>
-        <p class="text-gray-600 dark:text-gray-400">Administra los usuarios registrados en la plataforma</p>
-        <p class="text-sm text-gray-500 dark:text-gray-500 mt-1">Total: <span class="font-bold text-gray-700 dark:text-gray-300">{{ $users->total() }}</span> usuarios</p>
+    <div class="flex items-center gap-3 mb-2">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-rose-500 to-fuchsia-500 grid place-items-center text-white shadow-lg shadow-rose-500/30">
+            <i class="bi bi-people-fill text-xl"></i>
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">Usuarios</h1>
     </div>
+    <p class="text-sm text-slate-500 dark:text-slate-400">Total: <span class="font-bold text-slate-700 dark:text-slate-200">{{ $users->total() }}</span> usuarios registrados</p>
 </div>
 
 @include('shared.alerts')
 
-<!-- Filtro de búsqueda -->
-<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 mb-6 border border-gray-200 dark:border-gray-700">
+<div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 mb-6">
     <form method="GET" class="flex flex-col md:flex-row gap-3">
-        <div class="flex-1">
-            <input type="text" name="search" value="{{ $search }}" placeholder="🔍 Buscar por nombre o email..."
-                   class="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 dark:focus:border-orange-400 transition">
+        <div class="flex-1 relative">
+            <i class="bi bi-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input type="text" name="search" value="{{ $search }}" placeholder="Buscar por nombre o email…"
+                   class="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950/50 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 transition-all">
         </div>
-        <button type="submit" class="px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-lg transition flex items-center justify-center gap-2 whitespace-nowrap shadow-md">
-            <i class="bi bi-search"></i>
-            Buscar
+        <button type="submit" class="btn-brand ring-brand inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-white font-bold whitespace-nowrap">
+            <i class="bi bi-search"></i>Buscar
         </button>
         @if($search)
-            <a href="{{ route('admin.users.index') }}" class="px-6 py-3 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold rounded-lg transition whitespace-nowrap">
-                ✕ Limpiar
+            <a href="{{ route('admin.users.index') }}" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-bold whitespace-nowrap transition">
+                <i class="bi bi-x-lg"></i>Limpiar
             </a>
         @endif
     </form>
 </div>
 
-<!-- Tabla de Usuarios -->
-<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+<div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full">
-            <thead>
-                <tr class="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 border-b-2 border-gray-200 dark:border-gray-700">
-                    <th class="text-left py-4 px-6 text-gray-700 dark:text-gray-300 font-bold text-sm uppercase tracking-wide">Usuario</th>
-                    <th class="text-left py-4 px-6 text-gray-700 dark:text-gray-300 font-bold text-sm uppercase tracking-wide">Email</th>
-                    <th class="text-left py-4 px-6 text-gray-700 dark:text-gray-300 font-bold text-sm uppercase tracking-wide">Rol</th>
-                    <th class="text-left py-4 px-6 text-gray-700 dark:text-gray-300 font-bold text-sm uppercase tracking-wide">Registrado</th>
-                    <th class="text-center py-4 px-6 text-gray-700 dark:text-gray-300 font-bold text-sm uppercase tracking-wide">Acciones</th>
+            <thead class="bg-slate-50 dark:bg-slate-800/40 border-b border-slate-100 dark:border-slate-800">
+                <tr>
+                    <th class="text-left py-3 px-6 text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Usuario</th>
+                    <th class="text-left py-3 px-6 text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Email</th>
+                    <th class="text-left py-3 px-6 text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Rol</th>
+                    <th class="text-left py-3 px-6 text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Registrado</th>
+                    <th class="text-right py-3 px-6 text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Acciones</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
                 @forelse ($users as $user)
-                    <tr class="border-b border-gray-100 dark:border-gray-700/50 hover:bg-orange-50 dark:hover:bg-gray-700/50 transition duration-150">
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
                         <td class="py-4 px-6">
-                            <p class="text-gray-900 dark:text-white font-bold">{{ $user->nombre }}</p>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-gradient-to-br {{ $user->rol === 'admin' ? 'from-rose-500 to-fuchsia-500' : 'from-sky-500 to-indigo-500' }} grid place-items-center text-white font-bold shadow-md">
+                                    {{ strtoupper(substr($user->nombre, 0, 1)) }}
+                                </div>
+                                <p class="font-bold text-slate-900 dark:text-white">{{ $user->nombre }}</p>
+                            </div>
                         </td>
+                        <td class="py-4 px-6 text-sm text-slate-600 dark:text-slate-400">{{ $user->email }}</td>
                         <td class="py-4 px-6">
-                            <span class="text-gray-600 dark:text-gray-400 text-sm">{{ $user->email }}</span>
-                        </td>
-                        <td class="py-4 px-6">
-                            <form method="POST" action="{{ route('admin.users.update-role', $user) }}" style="display:inline;">
-                                @csrf
-                                @method('PUT')
-                                <select name="rol" style="display:inline-block;" onchange="this.form.submit()"
-                                        class="px-3 py-1.5 rounded-full text-xs font-bold border-0 cursor-pointer transition
-                                        {{ $user->rol === 'admin' ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400' : 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400' }}">
-                                    <option value="usuario" @selected($user->rol === 'usuario')>👤 Usuario</option>
-                                    <option value="admin" @selected($user->rol === 'admin')>🔐 Administrador</option>
+                            <form method="POST" action="{{ route('admin.users.update-role', $user) }}" class="inline">
+                                @csrf @method('PUT')
+                                <select name="rol" onchange="this.form.submit()"
+                                        class="px-3 py-1.5 rounded-full text-xs font-bold border-0 cursor-pointer transition-all {{ $user->rol === 'admin' ? 'bg-rose-100 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300' : 'bg-sky-100 dark:bg-sky-950/50 text-sky-700 dark:text-sky-300' }}">
+                                    <option value="usuario" @selected($user->rol === 'usuario')>Usuario</option>
+                                    <option value="admin" @selected($user->rol === 'admin')>Administrador</option>
                                 </select>
                             </form>
                         </td>
-                        <td class="py-4 px-6">
-                            <span class="text-gray-600 dark:text-gray-400 text-sm">
-                                @if ($user->created_at)
-                                    {{ \Carbon\Carbon::parse($user->created_at)->format('d/m/Y') }}
-                                @else
-                                    N/A
-                                @endif
-                            </span>
+                        <td class="py-4 px-6 text-sm text-slate-600 dark:text-slate-400">
+                            {{ $user->created_at ? \Carbon\Carbon::parse($user->created_at)->format('d/m/Y') : 'N/A' }}
                         </td>
                         <td class="py-4 px-6">
-                            <div class="flex gap-2 justify-center">
-                                <button onclick="viewUserDetails('{{ $user->nombre }}', '{{ $user->email }}', '{{ $user->rol }}')"
-                                        class="p-2.5 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition duration-200 font-semibold"
-                                        title="Ver detalles">
-                                    <i class="bi bi-eye"></i>
+                            <div class="flex gap-2 justify-end">
+                                <button onclick="viewUserDetails(@js($user->nombre), @js($user->email), @js($user->rol))" title="Ver detalles" class="p-2.5 rounded-lg text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 transition">
+                                    <i class="bi bi-eye-fill"></i>
                                 </button>
                                 @if ($user->rol !== 'admin' || \App\Models\User::where('rol', 'admin')->count() > 1)
-                                    <form method="POST" action="{{ route('admin.users.destroy', $user) }}"
-                                          onsubmit="return confirm('¿Seguro que deseas eliminar este usuario?');" style="display:inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="p-2.5 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition duration-200 font-semibold" title="Eliminar">
+                                    <form method="POST" action="{{ route('admin.users.destroy', $user) }}" onsubmit="return confirm('¿Seguro que deseas eliminar este usuario?');" class="inline">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" title="Eliminar" class="p-2.5 rounded-lg text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
@@ -99,12 +88,11 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="py-12 px-6 text-center">
-                            <div class="flex flex-col items-center gap-3">
-                                <i class="bi bi-inbox text-4xl text-gray-300 dark:text-gray-600"></i>
-                                <p class="text-gray-500 dark:text-gray-400 font-medium">No hay usuarios registrados</p>
-                                <p class="text-gray-400 text-sm">Los nuevos usuarios aparecerán aquí</p>
+                        <td colspan="5" class="py-16 px-6 text-center">
+                            <div class="w-14 h-14 mx-auto mb-3 rounded-2xl grid place-items-center bg-slate-100 dark:bg-slate-800 text-slate-400">
+                                <i class="bi bi-inbox text-2xl"></i>
                             </div>
+                            <p class="text-slate-500 dark:text-slate-400 font-semibold">No hay usuarios registrados</p>
                         </td>
                     </tr>
                 @endforelse
@@ -113,58 +101,49 @@
     </div>
 </div>
 
-<!-- Paginación -->
-<div class="mt-6 flex justify-center">
-    <nav aria-label="pagination" class="inline-flex gap-1">
-        {{ $users->links() }}
-    </nav>
-</div>
+<div class="mt-6">{{ $users->links() }}</div>
 
-<!-- Modal de Detalles del Usuario -->
-<div id="userModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-2xl max-w-md w-full mx-4">
-        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-            <div class="flex justify-between items-center">
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Detalles del Usuario</h3>
-                <button onclick="closeUserModal()" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
-                    <i class="bi bi-x-lg text-xl"></i>
-                </button>
-            </div>
+{{-- Modal detalles --}}
+<div id="userModal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full border border-slate-200 dark:border-slate-700 overflow-hidden animate-fade-in-up">
+        <div class="bg-gradient-to-r from-rose-500 to-fuchsia-500 px-6 py-4 flex justify-between items-center">
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                <i class="bi bi-person-badge"></i>Detalles del usuario
+            </h3>
+            <button onclick="closeUserModal()" class="text-white/90 hover:text-white text-xl leading-none">
+                <i class="bi bi-x-lg"></i>
+            </button>
         </div>
-        <div id="userModalContent" class="p-6 space-y-4">
-            <!-- Content loaded via JS -->
-        </div>
+        <div id="userModalContent" class="p-6 space-y-4"></div>
     </div>
 </div>
 
 <script>
 function viewUserDetails(nombre, email, rol) {
-    const content = `
-        <div class="space-y-4">
-            <div>
-                <p class="text-sm text-gray-600 dark:text-gray-400">Nombre</p>
-                <p class="text-lg font-medium text-gray-900 dark:text-white">${nombre}</p>
+    const isAdmin = rol === 'admin';
+    document.getElementById('userModalContent').innerHTML = `
+        <div class="flex items-center gap-4 mb-2">
+            <div class="w-16 h-16 rounded-full bg-gradient-to-br ${isAdmin ? 'from-rose-500 to-fuchsia-500' : 'from-sky-500 to-indigo-500'} grid place-items-center text-white text-2xl font-extrabold shadow-lg">
+                ${nombre.charAt(0).toUpperCase()}
             </div>
             <div>
-                <p class="text-sm text-gray-600 dark:text-gray-400">Email</p>
-                <p class="text-lg font-medium text-gray-900 dark:text-white">${email}</p>
-            </div>
-            <div>
-                <p class="text-sm text-gray-600 dark:text-gray-400">Rol</p>
-                <p class="text-lg font-medium"><span class="inline-block px-3 py-1 rounded-full text-sm ${
-                    rol === 'admin'
-                    ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
-                    : 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400'
-                }">${rol === 'admin' ? 'Administrador' : 'Usuario'}</span></p>
+                <p class="text-xs uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">Nombre</p>
+                <p class="text-lg font-bold text-slate-900 dark:text-white">${nombre}</p>
             </div>
         </div>
+        <div class="rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 p-3">
+            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1"><i class="bi bi-envelope"></i> Email</p>
+            <p class="text-sm font-medium text-slate-900 dark:text-white break-all">${email}</p>
+        </div>
+        <div class="rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 p-3">
+            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1"><i class="bi bi-shield-lock"></i> Rol</p>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${isAdmin ? 'bg-rose-100 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300' : 'bg-sky-100 dark:bg-sky-950/50 text-sky-700 dark:text-sky-300'}">
+                <i class="bi bi-${isAdmin ? 'shield-fill' : 'person-fill'}"></i>${isAdmin ? 'Administrador' : 'Usuario'}
+            </span>
+        </div>
     `;
-    document.getElementById('userModalContent').innerHTML = content;
     document.getElementById('userModal').classList.remove('hidden');
 }
-
-function closeUserModal() {
-    document.getElementById('userModal').classList.add('hidden');
-}
+function closeUserModal() { document.getElementById('userModal').classList.add('hidden'); }
 </script>
 @endsection

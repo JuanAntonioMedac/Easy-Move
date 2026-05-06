@@ -1,25 +1,30 @@
 @extends('layouts.app')
 
-@section('title', 'Comparación de Tarifas -EasyMove')
+@section('title', 'Comparación · EasyMove')
 
 @section('content')
-<div class="mb-16">
-    <!-- Header con Gradiente -->
-    <div class="bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-700 dark:to-purple-800 rounded-lg shadow-lg p-8 mb-8">
-        <div class="flex justify-between items-start gap-6">
+<div class="space-y-8">
+
+    {{-- ============== HERO HEADER ============== --}}
+    <div class="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-700 p-6 sm:p-10 bg-gradient-to-br from-sky-500 via-indigo-600 to-purple-600 text-white shadow-xl shadow-indigo-500/20">
+        <div class="bg-blob w-[420px] h-[420px] -top-24 -right-24 bg-white/40"></div>
+        <div class="bg-blob w-[320px] h-[320px] -bottom-24 -left-24 bg-white/30" style="animation-delay: -8s;"></div>
+
+        <div class="relative flex flex-col sm:flex-row justify-between items-start gap-6">
             <div>
-                <h1 class="text-5xl font-black text-white mb-2">💰 Comparación de Tarifas</h1>
-                <p class="text-blue-100 text-lg">Compara las mejores opciones y ahorra dinero</p>
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white/20 backdrop-blur border border-white/30 mb-4">
+                    <i class="bi bi-bar-chart-fill"></i> Comparativa
+                </div>
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">Tu comparación de tarifas</h1>
+                <p class="mt-2 text-white/90 text-base sm:text-lg max-w-2xl">Compara las mejores opciones lado a lado y elige la que más te conviene.</p>
             </div>
             @auth
-                <div class="flex flex-col sm:flex-row gap-2">
-                    <button onclick="saveComparison()" class="px-4 py-2.5 bg-white hover:bg-blue-50 text-blue-600 rounded-lg transition font-semibold flex items-center gap-2 shadow-md hover:shadow-lg whitespace-nowrap text-sm sm:text-base">
-                        <i class="bi bi-bookmark-fill"></i>
-                        <span class="hidden sm:inline">Guardar</span>
+                <div class="flex flex-wrap gap-2 flex-shrink-0">
+                    <button onclick="saveComparison()" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-indigo-700 font-bold shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all">
+                        <i class="bi bi-bookmark-fill"></i><span>Guardar</span>
                     </button>
-                    <a href="{{ route('comparison.history') }}" class="px-4 py-2.5 bg-blue-500 hover:bg-blue-700 text-white rounded-lg transition font-semibold flex items-center gap-2 shadow-md hover:shadow-lg whitespace-nowrap text-sm sm:text-base">
-                        <i class="bi bi-clock-history"></i>
-                        <span class="hidden sm:inline">Historial</span>
+                    <a href="{{ route('comparison.history') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/15 backdrop-blur border border-white/30 text-white font-bold hover:bg-white/25 transition-all">
+                        <i class="bi bi-clock-history"></i><span>Historial</span>
                     </a>
                 </div>
             @endauth
@@ -28,218 +33,222 @@
 
     @include('shared.alerts')
 
-    <!-- Cards Comparativas -->
-    <div>
-        @if(isset($tarifas) && count($tarifas) > 0)
-            @php
-                // Calcular tarifa más barata
-                $minPrecio = $tarifas->min('precio');
-            @endphp
+    @if(isset($tarifas) && count($tarifas) > 0)
+        @php
+            $minPrecio = $tarifas->min('precio');
+            $maxPrecio = $tarifas->max('precio');
+            $ahorro = $maxPrecio - $minPrecio;
+        @endphp
 
-            <!-- Información de Precios -->
-            <div class="mb-6 p-4 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg">
-                <p class="text-blue-900 dark:text-blue-200 text-sm">
-                    <i class="bi bi-info-circle me-2"></i>
-                    <strong>Mejor precio:</strong> {{ number_format($minPrecio, 2, ',', '.') }}€
-                    <span class="text-xs opacity-75">(Ahorra hasta {{ number_format($tarifas->max('precio') - $minPrecio, 2, ',', '.') }}€)</span>
-                </p>
+        {{-- ============== INSIGHT BAR ============== --}}
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="rounded-2xl border border-emerald-200 dark:border-emerald-900 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/40 dark:to-teal-950/40 p-5">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-xl grid place-items-center bg-emerald-500 text-white shadow-md shadow-emerald-500/30">
+                        <i class="bi bi-trophy-fill text-lg"></i>
+                    </div>
+                    <div>
+                        <p class="text-[11px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300">Mejor precio</p>
+                        <p class="text-2xl font-extrabold text-emerald-900 dark:text-emerald-100">{{ number_format($minPrecio, 2, ',', '.') }}€</p>
+                    </div>
+                </div>
             </div>
+            <div class="rounded-2xl border border-sky-200 dark:border-sky-900 bg-gradient-to-br from-sky-50 to-indigo-50 dark:from-sky-950/40 dark:to-indigo-950/40 p-5">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-xl grid place-items-center bg-sky-500 text-white shadow-md shadow-sky-500/30">
+                        <i class="bi bi-piggy-bank-fill text-lg"></i>
+                    </div>
+                    <div>
+                        <p class="text-[11px] font-bold uppercase tracking-wider text-sky-700 dark:text-sky-300">Ahorro potencial</p>
+                        <p class="text-2xl font-extrabold text-sky-900 dark:text-sky-100">{{ number_format($ahorro, 2, ',', '.') }}€</p>
+                    </div>
+                </div>
+            </div>
+            <div class="rounded-2xl border border-purple-200 dark:border-purple-900 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/40 dark:to-pink-950/40 p-5">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-xl grid place-items-center bg-purple-500 text-white shadow-md shadow-purple-500/30">
+                        <i class="bi bi-stack text-lg"></i>
+                    </div>
+                    <div>
+                        <p class="text-[11px] font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300">Tarifas comparadas</p>
+                        <p class="text-2xl font-extrabold text-purple-900 dark:text-purple-100">{{ count($tarifas) }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-            <!-- Grid de Tarifas -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                @foreach($tarifas as $tarifa)
-                    @php
-                        $esMasBarata = $tarifa->precio == $minPrecio;
-                        $diferencia = $tarifa->precio - $minPrecio;
-                    @endphp
+        {{-- ============== TARIFAS GRID ============== --}}
+        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5">
+            @foreach($tarifas as $i => $tarifa)
+                @php
+                    $esMasBarata = $tarifa->precio == $minPrecio;
+                    $diferencia = $tarifa->precio - $minPrecio;
+                @endphp
 
-                    <div class="bg-white dark:bg-gray-800 rounded-lg border-2 {{ $esMasBarata ? 'border-green-500 dark:border-green-600' : 'border-gray-200 dark:border-gray-700' }} shadow-md hover:shadow-lg transition overflow-hidden">
+                <div class="relative rounded-2xl overflow-hidden bg-white dark:bg-slate-900 border {{ $esMasBarata ? 'border-emerald-400 dark:border-emerald-600 shadow-2xl shadow-emerald-500/20 ring-2 ring-emerald-400/40' : 'border-slate-200 dark:border-slate-800 shadow-sm' }} hover:shadow-xl hover:-translate-y-1 transition-all duration-300 animate-fade-in-up" style="animation-delay: {{ $i * 0.05 }}s">
 
-                        <!-- Badge Mejor Oferta -->
-                        @if($esMasBarata)
-                            <div class="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-2 text-center font-bold text-sm">
-                                ⭐ MEJOR OFERTA
+                    @if($esMasBarata)
+                        <div class="bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-4 py-2 text-center font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2">
+                            <i class="bi bi-star-fill"></i> Mejor oferta
+                        </div>
+                    @else
+                        <div class="h-1.5 bg-gradient-to-r from-slate-300 to-slate-400 dark:from-slate-700 dark:to-slate-600"></div>
+                    @endif
+
+                    <div class="p-5 space-y-4">
+                        <div class="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
+                            @if($tarifa->servicio->proveedor->logo)
+                                <img src="{{ Storage::url($tarifa->servicio->proveedor->logo) }}" alt="{{ $tarifa->servicio->proveedor->nombre }}" class="w-12 h-12 rounded-xl object-cover shadow-sm">
+                            @else
+                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 grid place-items-center text-white font-bold">
+                                    {{ substr($tarifa->servicio->proveedor->nombre, 0, 1) }}
+                                </div>
+                            @endif
+                            <div class="flex-1 min-w-0">
+                                <p class="font-bold text-slate-900 dark:text-white truncate">{{ $tarifa->servicio->proveedor->nombre }}</p>
+                                <p class="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">{{ $tarifa->servicio->nombre_servicio }}</p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Plan</p>
+                            <p class="font-bold text-slate-900 dark:text-white truncate">{{ $tarifa->nombre_tarifa }}</p>
+                        </div>
+
+                        <div class="rounded-xl p-4 {{ $esMasBarata ? 'bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/40 dark:to-teal-950/40 border border-emerald-100 dark:border-emerald-900' : 'bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700' }}">
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Precio</p>
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-4xl font-black {{ $esMasBarata ? 'text-emerald-600 dark:text-emerald-400' : 'gradient-text' }}">
+                                    {{ number_format($tarifa->precio, 2, ',', '.') }}€
+                                </span>
+                                <span class="text-sm text-slate-600 dark:text-slate-400">/ {{ $tarifa->unidad_precio }}</span>
+                            </div>
+                            @if(!$esMasBarata && $diferencia > 0)
+                                <p class="text-xs text-rose-600 dark:text-rose-400 mt-2 font-semibold">
+                                    <i class="bi bi-arrow-up"></i> +{{ number_format($diferencia, 2, ',', '.') }}€ vs. mejor opción
+                                </p>
+                            @endif
+                        </div>
+
+                        @if($tarifa->permanencia)
+                            <div class="flex items-center gap-2">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-100 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300">
+                                    <i class="bi bi-calendar-check"></i> {{ $tarifa->permanencia }}
+                                </span>
+                            </div>
+                        @else
+                            <div class="flex items-center gap-2">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300">
+                                    <i class="bi bi-unlock-fill"></i> Sin permanencia
+                                </span>
                             </div>
                         @endif
 
-                        <!-- Contenido Card -->
-                        <div class="p-6 space-y-4">
-
-                            <!-- Proveedor -->
-                            <div class="flex items-center gap-3 pb-4 border-b border-gray-200 dark:border-gray-700">
-                                @if($tarifa->servicio->proveedor->logo)
-                                    <img src="{{ Storage::url($tarifa->servicio->proveedor->logo) }}"
-                                         alt="{{ $tarifa->servicio->proveedor->nombre }}"
-                                         class="w-12 h-12 rounded-lg object-cover shadow-sm">
-                                @else
-                                    <div class="w-12 h-12 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-400">
-                                        <i class="bi bi-building text-lg"></i>
-                                    </div>
-                                @endif
-                                <div class="flex-1">
-                                    <p class="font-bold text-gray-900 dark:text-white">{{ $tarifa->servicio->proveedor->nombre }}</p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ $tarifa->servicio->nombre_servicio }}</p>
-                                </div>
+                        @if($tarifa->condiciones)
+                            <div class="rounded-xl p-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700">
+                                <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1"><i class="bi bi-info-circle"></i> Detalles</p>
+                                <p class="text-xs text-slate-700 dark:text-slate-300 line-clamp-2">{{ $tarifa->condiciones }}</p>
                             </div>
+                        @endif
 
-                            <!-- Nombre Tarifa -->
-                            <div>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">Plan</p>
-                                <p class="font-semibold text-gray-900 dark:text-white truncate">{{ $tarifa->nombre_tarifa }}</p>
-                            </div>
-
-                            <!-- Precio Principal -->
-                            <div class="bg-gradient-to-r {{ $esMasBarata ? 'from-green-50 to-emerald-50 dark:from-green-900/30 dark:to-emerald-900/30' : 'from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800' }} rounded-lg p-4">
-                                <p class="text-xs text-gray-600 dark:text-gray-400 uppercase tracking-wide">Precio</p>
-                                <div class="flex items-baseline gap-2 mt-1">
-                                    <span class="{{ $esMasBarata ? 'text-green-600 dark:text-green-400' : 'text-gray-900 dark:text-white' }} text-4xl font-black">
-                                        {{ number_format($tarifa->precio, 2, ',', '.') }}€
-                                    </span>
-                                    <span class="text-sm text-gray-600 dark:text-gray-400">/ {{ $tarifa->unidad_precio }}</span>
-                                </div>
-
-                                <!-- Diferencia de Precio -->
-                                @if(!$esMasBarata)
-                                    <p class="text-xs text-red-600 dark:text-red-400 mt-2">
-                                        +{{ number_format($diferencia, 2, ',', '.') }}€ más caro
-                                    </p>
-                                @endif
-                            </div>
-
-                            <!-- Permanencia -->
-                            @if($tarifa->permanencia)
-                                <div>
-                                    <p class="text-xs text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-1">Permanencia</p>
-                                    <span class="inline-block bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300 px-3 py-1 rounded-full text-xs font-medium">
-                                        <i class="bi bi-calendar-check me-1"></i>{{ $tarifa->permanencia }}
-                                    </span>
-                                </div>
+                        <div class="space-y-2 pt-2">
+                            @if($tarifa->url_oferta_externa)
+                                <a href="{{ $tarifa->url_oferta_externa }}" target="_blank" rel="noopener"
+                                   class="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm transition-all hover:-translate-y-0.5 {{ $esMasBarata ? 'bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-lg shadow-emerald-500/30' : 'btn-brand text-white' }}">
+                                    <i class="bi bi-box-arrow-up-right"></i>Ver oferta
+                                </a>
                             @else
-                                <div>
-                                    <p class="text-xs text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-1">Permanencia</p>
-                                    <p class="text-sm text-green-600 dark:text-green-400 font-medium">
-                                        <i class="bi bi-check-circle me-1"></i>Sin compromiso
-                                    </p>
-                                </div>
+                                <button disabled class="w-full py-3 rounded-xl font-bold text-sm bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed">
+                                    No disponible
+                                </button>
                             @endif
 
-                            <!-- Condiciones -->
-                            @if($tarifa->condiciones)
-                                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 border border-gray-200 dark:border-gray-600">
-                                    <p class="text-xs text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-1">Detalles</p>
-                                    <p class="text-xs text-gray-700 dark:text-gray-300 line-clamp-2">{{ $tarifa->condiciones }}</p>
-                                </div>
-                            @endif
-
-                            <!-- Botones de Acción -->
-                            <div class="space-y-2">
-                                @if($tarifa->url_oferta_externa)
-                                    <a href="{{ $tarifa->url_oferta_externa }}" target="_blank" rel="noopener"
-                                       class="w-full py-2.5 rounded-lg font-semibold transition text-center block {{ $esMasBarata ? 'bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl' : 'bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg' }}">
-                                        <i class="bi bi-box-arrow-out-right me-2"></i>Ver Oferta {{ $esMasBarata ? '⭐' : '' }}
-                                    </a>
-                                @else
-                                    <button disabled class="w-full py-2.5 rounded-lg font-semibold bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed">
-                                        No disponible
+                            @auth
+                                <div class="flex gap-2">
+                                    <button onclick="downloadTarifaPDF({{ $comparacion_id }}, {{ $tarifa->id_tarifa }})"
+                                            class="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl font-semibold text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition">
+                                        <i class="bi bi-file-earmark-pdf"></i><span>PDF</span>
                                     </button>
-                                @endif
-
-                                @auth
-                                    <!-- Botones PDF -->
-                                    <div class="flex gap-2">
-                                        <button onclick="downloadTarifaPDF({{ $comparacion_id }}, {{ $tarifa->id_tarifa }})"
-                                                class="flex-1 py-2 rounded-lg font-semibold bg-purple-500 hover:bg-purple-600 text-white text-sm transition flex items-center justify-center gap-1">
-                                            <i class="bi bi-file-pdf"></i>
-                                            <span class="hidden sm:inline">Detalle</span>
-                                        </button>
-                                        <button onclick="downloadTodasPDF({{ $comparacion_id }})"
-                                                class="flex-1 py-2 rounded-lg font-semibold bg-orange-500 hover:bg-orange-600 text-white text-sm transition flex items-center justify-center gap-1">
-                                            <i class="bi bi-files"></i>
-                                            <span class="hidden sm:inline">Todas</span>
-                                        </button>
-                                    </div>
-                                @endauth
-                            </div>
+                                    <button onclick="downloadTodasPDF({{ $comparacion_id }})"
+                                            class="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl font-semibold text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition">
+                                        <i class="bi bi-files"></i><span>Todas</span>
+                                    </button>
+                                </div>
+                            @endauth
                         </div>
                     </div>
-                @endforeach
+                </div>
+            @endforeach
+        </div>
+    @else
+        <div class="rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 bg-white/60 dark:bg-slate-900/40 p-16 text-center">
+            <div class="w-16 h-16 mx-auto mb-5 rounded-2xl grid place-items-center bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800 text-slate-500">
+                <i class="bi bi-inbox text-3xl"></i>
             </div>
+            <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">Sin tarifas para comparar</h3>
+            <p class="text-slate-600 dark:text-slate-400 mb-6">Realiza una búsqueda para empezar a comparar opciones.</p>
+            <a href="{{ route('search') }}" class="btn-brand ring-brand inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white font-bold">
+                <i class="bi bi-search"></i>Ir al buscador
+            </a>
+        </div>
+    @endif
 
-        @else
-            <!-- Estado Vacío -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 p-12 text-center">
-                <i class="bi bi-inbox text-6xl text-gray-300 dark:text-gray-600 block mb-4"></i>
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Sin tarifas para comparar</h3>
-                <p class="text-gray-600 dark:text-gray-400 mb-6">Realiza una búsqueda para comparar opciones</p>
-                <a href="{{ route('search') }}" class="inline-block px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition">
-                    <i class="bi bi-search me-2"></i>Ir a Búsqueda
-                </a>
-            </div>
-        @endif
-    </div>
-
-    <!-- Sección para No Autenticados -->
+    {{-- ============== AVISO INVITADO ============== --}}
     @guest
-        <div class="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/30 dark:to-orange-900/30 border-2 border-amber-300 dark:border-amber-700 rounded-lg p-8 text-center">
-            <i class="bi bi-lock-fill text-4xl text-amber-600 dark:text-amber-400 block mb-4"></i>
-            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                Acceso Restringido
-            </h3>
-            <p class="text-gray-700 dark:text-gray-300 mb-6">
-                Para guardar tus comparaciones o acceder al historial, debes iniciar sesión o registrarte
-            </p>
+        <div class="rounded-2xl border-2 border-dashed border-amber-300 dark:border-amber-800 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 p-8 text-center">
+            <div class="w-14 h-14 mx-auto mb-4 rounded-2xl grid place-items-center bg-gradient-to-br from-amber-400 to-orange-500 text-white shadow-lg shadow-amber-500/30">
+                <i class="bi bi-lock-fill text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Desbloquea todas las funciones</h3>
+            <p class="text-slate-700 dark:text-slate-300 mb-6 max-w-md mx-auto">Crea una cuenta gratis para guardar tus comparativas, ver el historial y descargar PDFs.</p>
             <div class="flex flex-col sm:flex-row justify-center gap-3">
-                <a href="{{ route('login') }}" class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition shadow-md hover:shadow-lg">
-                    <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
+                <a href="{{ route('login') }}" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-amber-400 dark:border-amber-700 bg-white dark:bg-slate-900 text-amber-700 dark:text-amber-300 font-bold hover:bg-amber-50 dark:hover:bg-slate-800 transition">
+                    <i class="bi bi-box-arrow-in-right"></i>Iniciar sesión
                 </a>
-                <a href="{{ route('register') }}" class="px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition shadow-md hover:shadow-lg">
-                    <i class="bi bi-person-plus me-2"></i>Registrarse Gratis
+                <a href="{{ route('register') }}" class="btn-brand ring-brand inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-white font-bold">
+                    <i class="bi bi-person-plus-fill"></i>Crear cuenta gratis
                 </a>
+            </div>
+        </div>
+    @endguest
+
+    {{-- ============== MODAL GUARDAR ============== --}}
+    @auth
+        <div id="saveModal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
+            <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full border border-slate-200 dark:border-slate-700 overflow-hidden animate-fade-in-up">
+                <div class="bg-gradient-to-r from-sky-500 via-indigo-500 to-purple-500 px-6 py-4">
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="bi bi-bookmark-fill"></i>Guardar comparación
+                    </h3>
+                </div>
+                <form id="saveComparisonForm" class="p-6 space-y-4">
+                    @csrf
+                    <div>
+                        <label for="nombre" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
+                            Nombre descriptivo
+                        </label>
+                        <input type="text" id="nombre" name="nombre" required
+                               placeholder="Ej: Comparación luz hogar"
+                               class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950/50 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 transition-all">
+                    </div>
+                    <div class="flex gap-3 pt-2">
+                        <button type="submit" class="btn-brand ring-brand flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-white font-bold">
+                            <i class="bi bi-check-lg"></i>Guardar
+                        </button>
+                        <button type="button" onclick="closeSaveModal()" class="flex-1 px-4 py-3 rounded-xl bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-bold transition">
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     @endauth
-
-
-
-<!-- Modal guardar comparación -->
-@auth
-    <div id="saveModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-2xl max-w-md w-full">
-            <div class="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-4">
-                <h3 class="text-lg font-bold text-white">
-                    <i class="bi bi-bookmark-fill me-2"></i>Guardar Comparación
-                </h3>
-            </div>
-            <form id="saveComparisonForm" class="p-6 space-y-4">
-                @csrf
-                <div>
-                    <label for="nombre" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                        Nombre descriptivo
-                    </label>
-                    <input type="text" id="nombre" name="nombre" required
-                           placeholder="ej: Comparación Mudanza Abril 2026"
-                           class="w-full px-4 py-2.5 border-2 border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 font-medium">
-                </div>
-                <div class="flex gap-3 pt-4">
-                    <button type="submit" class="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition shadow-md">
-                        <i class="bi bi-check-lg me-2"></i>Guardar
-                    </button>
-                    <button type="button" onclick="closeSaveModal()" class="flex-1 px-4 py-2.5 bg-gray-300 dark:bg-gray-600 text-gray-900 dark:text-white rounded-lg font-semibold hover:bg-gray-400 transition">
-                        Cancelar
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-@endauth
-
+</div>
 @endsection
 
 @section('scripts')
 @auth
 <script>
-let currentComparacionId = null;
-
 function saveComparison() {
     document.getElementById('saveModal').classList.remove('hidden');
 }
@@ -250,12 +259,11 @@ function closeSaveModal() {
 
 document.getElementById('saveComparisonForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
-
     const nombre = document.getElementById('nombre').value;
     const comparacionId = {{ $comparacion_id ?? 'null' }};
 
     if (!comparacionId) {
-        alert('Error: Identificador de comparación no disponible');
+        alert('Error: identificador de comparación no disponible');
         return;
     }
 
@@ -264,7 +272,6 @@ document.getElementById('saveComparisonForm')?.addEventListener('submit', async 
             comparacion_id: comparacionId,
             nombre: nombre,
         });
-
         if (response.data.success) {
             alert('Comparación guardada exitosamente');
             closeSaveModal();
@@ -275,59 +282,34 @@ document.getElementById('saveComparisonForm')?.addEventListener('submit', async 
     }
 });
 
-// Función para descargar PDF de una tarifa individual
-function downloadTarifaPDF(comparacionId, tarifaId) {
+function submitPDFForm(comparacionId, tarifaId = null) {
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = @json(route("export-pdf"));
     form.style.display = 'none';
 
-    const tokenInput = document.createElement('input');
-    tokenInput.type = 'hidden';
-    tokenInput.name = '_token';
-    tokenInput.value = document.querySelector('meta[name="csrf-token"]').content;
+    const token = document.querySelector('meta[name="csrf-token"]').content;
+    const inputs = [
+        ['_token', token],
+        ['comparacion_id', comparacionId],
+    ];
+    if (tarifaId) inputs.push(['tarifa_id', tarifaId]);
 
-    const comparacionInput = document.createElement('input');
-    comparacionInput.type = 'hidden';
-    comparacionInput.name = 'comparacion_id';
-    comparacionInput.value = comparacionId;
+    inputs.forEach(([name, value]) => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = name;
+        input.value = value;
+        form.appendChild(input);
+    });
 
-    const tarifaInput = document.createElement('input');
-    tarifaInput.type = 'hidden';
-    tarifaInput.name = 'tarifa_id';
-    tarifaInput.value = tarifaId;
-
-    form.appendChild(tokenInput);
-    form.appendChild(comparacionInput);
-    form.appendChild(tarifaInput);
     document.body.appendChild(form);
     form.submit();
     document.body.removeChild(form);
 }
 
-// Función para descargar PDF de todas las tarifas
-function downloadTodasPDF(comparacionId) {
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = @json(route("export-pdf"));
-    form.style.display = 'none';
-
-    const tokenInput = document.createElement('input');
-    tokenInput.type = 'hidden';
-    tokenInput.name = '_token';
-    tokenInput.value = document.querySelector('meta[name="csrf-token"]').content;
-
-    const comparacionInput = document.createElement('input');
-    comparacionInput.type = 'hidden';
-    comparacionInput.name = 'comparacion_id';
-    comparacionInput.value = comparacionId;
-
-    form.appendChild(tokenInput);
-    form.appendChild(comparacionInput);
-    document.body.appendChild(form);
-    form.submit();
-    document.body.removeChild(form);
-}
+function downloadTarifaPDF(comparacionId, tarifaId) { submitPDFForm(comparacionId, tarifaId); }
+function downloadTodasPDF(comparacionId) { submitPDFForm(comparacionId); }
 </script>
 @endauth
 @endsection
