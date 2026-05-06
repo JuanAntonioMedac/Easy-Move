@@ -1,62 +1,102 @@
 @extends('layouts.app')
 
+@section('title', 'Crear cuenta · EasyMove')
+
+@section('main_class', 'w-full')
+
 @section('content')
-<div class="max-w-md mx-auto bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg shadow-md p-8 mt-10">
-    <div class="text-center mb-8">
-        <i class="bi bi-person-plus text-4xl text-primary-600"></i>
-        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mt-4">Crear una cuenta</h2>
-        <p class="text-gray-600 dark:text-gray-400 mt-2">Únete a EasyMove para guardar tus búsquedas</p>
-    </div>
+<div class="relative min-h-[calc(100vh-5rem)] flex items-center justify-center px-4 py-12 overflow-hidden">
+    <div class="bg-blob w-[480px] h-[480px] -top-24 -right-24 bg-gradient-to-br from-purple-500 to-pink-500"></div>
+    <div class="bg-blob w-[420px] h-[420px] -bottom-24 -left-24 bg-gradient-to-br from-sky-400 to-indigo-500" style="animation-delay: -8s;"></div>
 
-    <form method="POST" action="{{ route('register.store') }}" class="space-y-6">
-        @csrf
+    <div class="relative w-full max-w-md">
+        <div class="rounded-3xl border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-2xl shadow-indigo-500/10 p-8 sm:p-10 animate-fade-in-up">
+            <div class="flex flex-col items-center text-center mb-8">
+                <div class="w-14 h-14 rounded-2xl grid place-items-center bg-gradient-to-br from-purple-500 via-indigo-500 to-sky-500 text-white shadow-lg shadow-purple-500/30 mb-4">
+                    <i class="bi bi-person-plus-fill text-2xl"></i>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">Crea tu cuenta</h1>
+                <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">Guarda tus comparativas y desbloquea filtros avanzados</p>
+            </div>
 
-        <!-- Name -->
-        <div>
-            <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nombre completo</label>
-            <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus
-                class="mt-1 block w-full px-4 py-2 bg-gray-50 dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-600">
-            @error('name')
-                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-            @enderror
-        </div>
+            @include('shared.alerts')
 
-        <!-- Email Address -->
-        <div>
-            <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Correo Electrónico</label>
-            <input id="email" type="email" name="email" value="{{ old('email') }}" required
-                class="mt-1 block w-full px-4 py-2 bg-gray-50 dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-600">
-            @error('email')
-                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-            @enderror
-        </div>
+            <form method="POST" action="{{ route('register.store') }}" class="space-y-5">
+                @csrf
 
-        <!-- Password -->
-        <div>
-            <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Contraseña</label>
-            <input id="password" type="password" name="password" required
-                class="mt-1 block w-full px-4 py-2 bg-gray-50 dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-600">
-            @error('password')
-                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-            @enderror
-        </div>
+                <div>
+                    <label for="name" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
+                        <i class="bi bi-person mr-1"></i>Nombre completo
+                    </label>
+                    <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus placeholder="Tu nombre"
+                           class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950/50 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 transition-all">
+                    @error('name')<p class="text-rose-500 text-xs mt-1.5 font-medium">{{ $message }}</p>@enderror
+                </div>
 
-        <!-- Confirm Password -->
-        <div>
-            <label for="password_confirmation" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Confirmar Contraseña</label>
-            <input id="password_confirmation" type="password" name="password_confirmation" required
-                class="mt-1 block w-full px-4 py-2 bg-gray-50 dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-600">
-        </div>
+                <div>
+                    <label for="email" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
+                        <i class="bi bi-envelope mr-1"></i>Correo electrónico
+                    </label>
+                    <input id="email" type="email" name="email" value="{{ old('email') }}" required placeholder="tu@email.com"
+                           class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950/50 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 transition-all">
+                    @error('email')<p class="text-rose-500 text-xs mt-1.5 font-medium">{{ $message }}</p>@enderror
+                </div>
 
-        <div class="flex items-center justify-between mt-4">
-            <a class="text-sm text-primary-600 hover:text-primary-700 dark:hover:text-primary-400" href="{{ route('login') }}">
+                <div>
+                    <label for="password" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
+                        <i class="bi bi-lock mr-1"></i>Contraseña
+                    </label>
+                    <div class="relative">
+                        <input id="password" type="password" name="password" required placeholder="Mínimo 8 caracteres"
+                               class="w-full px-4 py-3 pr-12 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950/50 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 transition-all">
+                        <button type="button" onclick="togglePwd('password', this)" class="absolute inset-y-0 right-0 px-4 text-slate-400 hover:text-indigo-500" tabindex="-1">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                    @error('password')<p class="text-rose-500 text-xs mt-1.5 font-medium">{{ $message }}</p>@enderror
+                </div>
+
+                <div>
+                    <label for="password_confirmation" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
+                        <i class="bi bi-shield-lock mr-1"></i>Confirmar contraseña
+                    </label>
+                    <div class="relative">
+                        <input id="password_confirmation" type="password" name="password_confirmation" required placeholder="Repite la contraseña"
+                               class="w-full px-4 py-3 pr-12 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950/50 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 transition-all">
+                        <button type="button" onclick="togglePwd('password_confirmation', this)" class="absolute inset-y-0 right-0 px-4 text-slate-400 hover:text-indigo-500" tabindex="-1">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-brand ring-brand w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-white font-bold text-base">
+                    <i class="bi bi-person-plus-fill"></i>
+                    Crear mi cuenta
+                </button>
+            </form>
+
+            <div class="my-6 flex items-center gap-3">
+                <div class="flex-1 h-px bg-slate-200 dark:bg-slate-700"></div>
+                <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">o</span>
+                <div class="flex-1 h-px bg-slate-200 dark:bg-slate-700"></div>
+            </div>
+
+            <p class="text-center text-sm text-slate-600 dark:text-slate-400">
                 ¿Ya tienes cuenta?
-            </a>
-
-            <button type="submit" class="px-6 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition font-medium">
-                Registrarse
-            </button>
+                <a href="{{ route('login') }}" class="font-bold text-indigo-600 dark:text-indigo-400 hover:underline">Inicia sesión</a>
+            </p>
         </div>
-    </form>
+    </div>
 </div>
+
+<script>
+    function togglePwd(id, btn) {
+        const input = document.getElementById(id);
+        const icon = btn.querySelector('i');
+        const isPwd = input.type === 'password';
+        input.type = isPwd ? 'text' : 'password';
+        icon.classList.toggle('bi-eye', !isPwd);
+        icon.classList.toggle('bi-eye-slash', isPwd);
+    }
+</script>
 @endsection
