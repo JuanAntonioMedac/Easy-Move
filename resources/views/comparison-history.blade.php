@@ -9,7 +9,7 @@
             <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">{{ $title ?? 'Historial de Comparaciones' }}</h1>
             <p class="text-gray-600 dark:text-gray-400">{{ $subtitle ?? 'Tus comparaciones guardadas' }}</p>
         </div>
-        <a href="{{ route('home') }}" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition flex items-center gap-2">
+        <a href="{{ route('search') }}" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition flex items-center gap-2">
             <i class="bi bi-plus-lg"></i>
             Nueva Búsqueda
         </a>
@@ -73,7 +73,7 @@
                         <td colspan="5" class="py-8 px-6 text-center text-gray-500 dark:text-gray-400">
                             <i class="bi bi-inbox text-4xl opacity-50 block mb-2"></i>
                             <p class="font-medium mb-2">{{ $emptyMessage ?? 'No tienes comparaciones guardadas' }}</p>
-                            <a href="{{ route('home') }}" class="text-primary-600 hover:text-primary-700 underline">
+                            <a href="{{ route('search') }}" class="text-primary-600 hover:text-primary-700 underline">
                                 Realiza una nueva búsqueda
                             </a>
                         </td>
