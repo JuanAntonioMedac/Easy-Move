@@ -1,6 +1,7 @@
 {
   "name": "Easy-Move",
   "buildCommand": "composer install --no-dev && npm install && npm run build",
+  "preDeployCommand": "php artisan migrate --force",
   "startCommand": "vendor/bin/heroku-php-apache2 public/",
   "envs": {
     "APP_ENV": "production",
