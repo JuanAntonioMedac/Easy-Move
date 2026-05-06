@@ -7,7 +7,7 @@ use App\Models\ComparacionTarifa;
 use App\Models\Tarifa;
 use App\Models\TipoServicio;
 use App\Models\Ubicacion;
-use Barryvdh\DomPDF\Facade\Pdf;
+use App\Services\PdfService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -298,7 +298,7 @@ class SearchController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function sendEmail(Request $request)
+    public function sendEmail(Request $request, PdfService $pdfService)
     {
         $request->validate([
             'comparacion_id' => 'required|integer|exists:comparaciones,id_comparacion',
@@ -317,18 +317,16 @@ class SearchController extends Controller
             $usuario = Auth::user();
             $emailDestino = $request->input('email');
 
-            // Generar PDF en memoria
-            $pdf = Pdf::loadView('pdf.comparacion', [
-                'comparacion' => $comparacion,
-                'usuario' => $usuario,
-            ]);
+            // Generar PDF en memoria mediante el servicio centralizado
+            $pdf = $pdfService->generateComparison($comparacion, $usuario);
+            $filename = $pdfService->comparisonFilename($comparacion);
 
             // Enviar email con PDF adjunto
-            Mail::send('emails.comparacion', ['comparacion' => $comparacion, 'usuario' => $usuario], function ($message) use ($emailDestino, $pdf) {
+            Mail::send('emails.comparacion', ['comparacion' => $comparacion, 'usuario' => $usuario], function ($message) use ($emailDestino, $pdf, $filename) {
                 $message->from(config('mail.from.address'), config('mail.from.name'))
                     ->to($emailDestino)
                     ->subject('Tu Comparativa de Tarifas - EasyMove')
-                    ->attachData($pdf->output(), 'comparativa-tarifas.pdf', [
+                    ->attachData($pdf->output(), $filename, [
                         'mime' => 'application/pdf',
                     ]);
             });
@@ -338,6 +336,8 @@ class SearchController extends Controller
                 'message' => 'Email enviado correctamente a ' . $emailDestino,
             ]);
         } catch (\Exception $e) {
+            Log::error('Error en sendEmail: ' . $e->getMessage());
+
             return response()->json([
                 'success' => false,
                 'message' => 'Error al enviar email: ' . $e->getMessage(),
@@ -543,24 +543,13 @@ class SearchController extends Controller
                 ], 403);
             }
 
-            // Actualizar los datos de la comparación para "guardarla"
-            // En el modelo, necesitaremos agregar un campo 'nombre_guardado' o usar el campo 'titulo'
-            // Por ahora, actualizamos la fecha como indicador de que fue guardada
-            $updateData = [
-                'fecha' => now(),
-            ];
-
-            if (Schema::hasColumn('comparaciones', 'nombre_guardado')) {
-                $updateData['nombre_guardado'] = $validated['nombre'];
-            } else {
-                Log::warning('La columna nombre_guardado no existe en comparaciones; se guarda solo la fecha.', [
-                    'comparacion_id' => $comparacion->id_comparacion,
-                ]);
-            }
-
+            // Marcar la comparación como guardada con el nombre que indica el usuario.
             DB::table('comparaciones')
                 ->where('id_comparacion', $comparacion->id_comparacion)
-                ->update($updateData);
+                ->update([
+                    'nombre_guardado' => $validated['nombre'],
+                    'fecha' => now(),
+                ]);
 
             $comparacion->refresh();
 
@@ -611,18 +600,11 @@ class SearchController extends Controller
             return redirect()->route('login');
         }
 
-        $query = Comparacion::where('id_usuario', Auth::id())
+        $comparaciones = Comparacion::where('id_usuario', Auth::id())
+            ->whereNotNull('nombre_guardado')
             ->with('tipoServicio', 'ubicacion')
-            ->orderBy('fecha', 'desc');
-
-        if (Schema::hasColumn('comparaciones', 'nombre_guardado')) {
-            $query->whereNotNull('nombre_guardado');
-        } else {
-            Log::warning('Se solicitó la vista de comparaciones guardadas sin existir la columna nombre_guardado en comparaciones.');
-            $query->whereRaw('1 = 0');
-        }
-
-        $comparaciones = $query->paginate(10);
+            ->orderBy('fecha', 'desc')
+            ->paginate(10);
 
         return view('comparison-history', [
             'comparaciones' => $comparaciones,
@@ -671,7 +653,7 @@ class SearchController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
-    public function exportPDF(Request $request)
+    public function exportPDF(Request $request, PdfService $pdfService)
     {
         if (!Auth::check()) {
             return redirect()->route('login');
@@ -679,7 +661,7 @@ class SearchController extends Controller
 
         $validated = $request->validate([
             'comparacion_id' => 'required|integer|exists:comparaciones,id_comparacion',
-            'tarifa_id' => 'nullable|integer',
+            'tarifa_id' => 'nullable|integer|exists:tarifas,id_tarifa',
         ]);
 
         try {
@@ -691,48 +673,49 @@ class SearchController extends Controller
                 return response()->json(['error' => 'No autorizado'], 403);
             }
 
-            // Determinar qué vista y tarifas usar
-            $tipo_descarga = 'todas';
-            $vista = 'pdf.comparacion';
+            $usuario = Auth::user();
 
             if (!empty($validated['tarifa_id'])) {
-                // Descargar una tarifa específica
+                // Descargar una tarifa específica — verificando que pertenece a la comparación
+                $idsTarifasComparacion = $comparacion->tarifas()->pluck('tarifas.id_tarifa')->toArray();
+                if (!in_array($validated['tarifa_id'], $idsTarifasComparacion, true)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'La tarifa solicitada no pertenece a esta comparación',
+                    ], 403);
+                }
+
                 $tarifas = Tarifa::with('servicio.proveedor')
                     ->where('id_tarifa', $validated['tarifa_id'])
                     ->get();
-                $tipo_descarga = 'individual';
-                $vista = 'pdf.tarifa-detalle';
-            } else {
-                // Descargar todas las tarifas de la comparación
-                $tarifas = Tarifa::with('servicio.proveedor')
-                    ->whereIn('id_tarifa',
-                        $comparacion->tarifas->pluck('id_tarifa')->toArray()
-                    )
-                    ->get();
+
+                if ($tarifas->isEmpty()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'No hay tarifas para descargar',
+                    ], 404);
+                }
+
+                $pdf = $pdfService->generateTariffDetail($comparacion, $tarifas, $usuario);
+                $filename = $pdfService->tariffFilename($tarifas->first());
+
+                return $pdf->download($filename);
             }
 
-            // Validar que existan tarifas
-            if ($tarifas->isEmpty()) {
+            // Comparación completa
+            if ($comparacion->tarifas->isEmpty()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'No hay tarifas para descargar',
                 ], 404);
             }
 
-            // Generar PDF
-            $pdf = Pdf::loadView($vista, [
-                'comparacion' => $comparacion,
-                'tarifas' => $tarifas,
-                'usuario' => Auth::user(),
-            ]);
-
-            $filename = $tipo_descarga === 'individual'
-                ? 'tarifa-' . now()->format('Y-m-d-Hi') . '.pdf'
-                : 'comparacion-' . now()->format('Y-m-d-Hi') . '.pdf';
+            $pdf = $pdfService->generateComparison($comparacion, $usuario);
+            $filename = $pdfService->comparisonFilename($comparacion);
 
             return $pdf->download($filename);
         } catch (\Exception $e) {
-            \Log::error('Error en exportPDF: ' . $e->getMessage());
+            Log::error('Error en exportPDF: ' . $e->getMessage());
 
             return response()->json([
                 'success' => false,
