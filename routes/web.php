@@ -6,8 +6,12 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ScraperController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [SearchController::class, 'index'])->name('home');
-Route::post('/search', [SearchController::class, 'search'])->name('search');
+Route::get('/', function () {
+    return view('welcome');
+})->name('home');
+
+Route::get('/search', [SearchController::class, 'index'])->name('search');
+Route::post('/search', [SearchController::class, 'search'])->name('search.query');
 Route::post('/search/advanced', [SearchController::class, 'searchAdvanced'])->name('search.advanced');
 
 // ============================================================================
