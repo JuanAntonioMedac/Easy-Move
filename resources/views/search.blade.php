@@ -180,7 +180,7 @@
 
         <form id="searchForm" class="space-y-6">
             @csrf
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                 {{-- Tipo de servicio --}}
                 <div>
                     <label for="id_tipo_servicio" class="field-label">
@@ -194,16 +194,26 @@
                     </select>
                 </div>
 
-                {{-- Código postal --}}
+                {{-- Provincia --}}
+                <div>
+                    <label for="provincia" class="field-label">
+                        <i class="bi bi-map"></i>Provincia
+                    </label>
+                    <select id="provincia" name="provincia" required class="field-input">
+                        <option value="">— Seleccionar —</option>
+                        @foreach ($provincias as $prov)
+                            <option value="{{ $prov }}">{{ $prov }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                {{-- Código postal (depende de provincia) --}}
                 <div>
                     <label for="codigo_postal" class="field-label">
                         <i class="bi bi-geo-alt"></i>Código postal
                     </label>
-                    <select id="codigo_postal" name="codigo_postal" required class="field-input">
-                        <option value="">— Seleccionar —</option>
-                        @foreach ($codigosPostales as $codigo)
-                            <option value="{{ $codigo }}">{{ $codigo }}</option>
-                        @endforeach
+                    <select id="codigo_postal" name="codigo_postal" required class="field-input" disabled>
+                        <option value="">— Selecciona una provincia primero —</option>
                     </select>
                 </div>
 
@@ -357,12 +367,37 @@
 
 @section('scripts')
 <script>
-// Inicializar Tom Select
-new TomSelect('#codigo_postal', {
+// Mapa provincia => [codigos postales] (inyectado desde el controlador)
+const cpsPorProvincia = @json($cpsPorProvincia);
+
+// Inicializar Tom Select sobre el select de CP (vacío inicialmente)
+const cpSelect = new TomSelect('#codigo_postal', {
     create: false,
-    placeholder: 'Buscar código postal...',
+    placeholder: 'Selecciona una provincia primero',
     searchField: ['text', 'value'],
-    maxOptions: 100,
+    maxOptions: 500,
+});
+cpSelect.disable();
+
+// Cuando cambia la provincia, repoblar opciones de CP
+const provinciaSelect = document.getElementById('provincia');
+provinciaSelect.addEventListener('change', function () {
+    const prov = this.value;
+    cpSelect.clear();
+    cpSelect.clearOptions();
+
+    if (!prov || !cpsPorProvincia[prov]) {
+        cpSelect.disable();
+        cpSelect.settings.placeholder = 'Selecciona una provincia primero';
+        cpSelect.inputState();
+        return;
+    }
+
+    const opts = cpsPorProvincia[prov].map(cp => ({ value: cp, text: cp }));
+    cpSelect.addOptions(opts);
+    cpSelect.enable();
+    cpSelect.settings.placeholder = 'Buscar código postal...';
+    cpSelect.inputState();
 });
 
 const isAuthenticated = {{ auth()->check() ? 'true' : 'false' }};

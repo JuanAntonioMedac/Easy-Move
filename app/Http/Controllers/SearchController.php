@@ -28,9 +28,25 @@ class SearchController extends Controller
         $tiposServicios = TipoServicio::all();
         $codigosPostales = Ubicacion::distinct()->pluck('codigo_postal')->sort()->values();
 
+        // Mapa provincia => [codigos_postales] para selector dependiente.
+        // Una sola query agrupada en cliente para evitar N+1.
+        $cpsPorProvincia = Ubicacion::query()
+            ->select('provincia', 'codigo_postal')
+            ->whereNotNull('provincia')
+            ->where('provincia', '!=', 'Desconocida')
+            ->orderBy('provincia')
+            ->orderBy('codigo_postal')
+            ->get()
+            ->groupBy('provincia')
+            ->map(fn ($rows) => $rows->pluck('codigo_postal')->unique()->values()->all());
+
+        $provincias = $cpsPorProvincia->keys()->values();
+
         return view('search', [
             'tiposServicios' => $tiposServicios,
             'codigosPostales' => $codigosPostales,
+            'provincias' => $provincias,
+            'cpsPorProvincia' => $cpsPorProvincia,
             'user' => Auth::user(),
         ]);
     }
@@ -68,6 +84,20 @@ class SearchController extends Controller
                 ]
             );
 
+            // Resolver IDs de ubicación con disponibilidad: si el CP exacto no tiene
+            // tarifas asociadas (p. ej. recién creado), caer a cualquier ubicación
+            // de la misma provincia (mismo prefijo de 2 dígitos) que sí las tenga.
+            $idsBusqueda = Ubicacion::where('codigo_postal', $validated['codigo_postal'])
+                ->whereHas('disponibilidades')
+                ->pluck('id_ubicacion');
+            if ($idsBusqueda->isEmpty()) {
+                $prefijo = substr($validated['codigo_postal'], 0, 2);
+                $idsBusqueda = Ubicacion::where('codigo_postal', 'like', $prefijo . '%')
+                    ->whereHas('disponibilidades')
+                    ->limit(1)
+                    ->pluck('id_ubicacion');
+            }
+
             // Query base: buscar tarifas disponibles para la ubicación y tipo de servicio
 
             $tarifasQuery = Tarifa::query()
@@ -75,8 +105,8 @@ class SearchController extends Controller
                 ->whereHas('servicio', function ($q) use ($validated) {
                     $q->where('id_tipo_servicio', $validated['id_tipo_servicio']);
                 })
-                ->whereHas('disponibilidades', function ($q) use ($ubicacion) {
-                    $q->where('id_ubicacion', $ubicacion->id_ubicacion);
+                ->whereHas('disponibilidades', function ($q) use ($idsBusqueda) {
+                    $q->whereIn('id_ubicacion', $idsBusqueda);
                 });
 
             // Aplicar filtro de rango de precio
@@ -146,8 +176,8 @@ class SearchController extends Controller
                     ->whereHas('servicio', function ($q) use ($validated) {
                         $q->where('id_tipo_servicio', $validated['id_tipo_servicio']);
                     })
-                    ->whereHas('disponibilidades', function ($q) use ($ubicacion) {
-                        $q->where('id_ubicacion', $ubicacion->id_ubicacion);
+                    ->whereHas('disponibilidades', function ($q) use ($idsBusqueda) {
+                        $q->whereIn('id_ubicacion', $idsBusqueda);
                     })
                     ->count();
             } else {
