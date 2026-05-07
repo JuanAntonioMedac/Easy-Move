@@ -232,14 +232,20 @@
                     ['icon' => 'piggy-bank-fill', 'title' => 'Ahorro real garantizado', 'desc' => 'Algoritmo de coincidencia que te muestra tu mejor opción según consumo.'],
                     ['icon' => 'shield-check', 'title' => 'Privacidad absoluta', 'desc' => 'Sin spam, sin reventa de datos. Tu información nunca sale de aquí.'],
                     ['icon' => 'graph-up-arrow', 'title' => 'Datos siempre actualizados', 'desc' => 'Sincronización automática con los proveedores cada 24 horas.'],
-                    ['icon' => 'sliders2', 'title' => 'Filtros avanzados', 'desc' => 'Permanencia, precio, condiciones especiales, energía verde y más.'],
-                    ['icon' => 'file-earmark-pdf', 'title' => 'Exporta y comparte', 'desc' => 'Descarga tus comparativas en PDF o envíalas por email en un clic.'],
+                    ['icon' => 'sliders2', 'title' => 'Filtros avanzados', 'desc' => 'Permanencia, precio, condiciones especiales, energía verde y más.', 'badge' => 'Solo registrados'],
+                    ['icon' => 'file-earmark-pdf', 'title' => 'Exporta y comparte', 'desc' => 'Descarga tus comparativas en PDF o envíalas por email en un clic.', 'badge' => 'Solo registrados'],
+                    ['icon' => 'pin-map-fill', 'title' => 'Explora la zona', 'desc' => 'Descubre bares y restaurantes alrededor del código postal directamente sobre el mapa.', 'badge' => 'Solo registrados'],
                 ];
             @endphp
 
             @foreach ($features as $f)
-                <div class="feature-card reveal rounded-2xl p-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"
+                <div class="feature-card reveal rounded-2xl p-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 relative"
                      onmousemove="this.style.setProperty('--mx', (event.offsetX) + 'px'); this.style.setProperty('--my', (event.offsetY) + 'px');">
+                    @if (!empty($f['badge']))
+                        <span class="absolute top-4 right-4 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                            <i class="bi bi-person-check-fill"></i>{{ $f['badge'] }}
+                        </span>
+                    @endif
                     <div class="feature-icon mb-5">
                         <i class="bi bi-{{ $f['icon'] }}"></i>
                     </div>

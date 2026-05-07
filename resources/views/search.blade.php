@@ -147,6 +147,183 @@
     .badge-bestseller { background: rgba(245,158,11,.14); color: rgb(180 83 9); }
     .badge-sin-permanencia { background: rgba(99,102,241,.14); color: rgb(67 56 202); }
 
+    /* ==== Flip card (Comparador <-> Explorar zona) ==== */
+    .flip-wrapper { perspective: 2200px; }
+    .flip-inner {
+        position: relative;
+        transition: transform .85s cubic-bezier(.2,.7,.2,1);
+        transform-style: preserve-3d;
+    }
+    .flip-wrapper.flipped .flip-inner { transform: rotateY(180deg); }
+    .flip-face {
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+    }
+    .flip-back {
+        position: absolute;
+        inset: 0;
+        transform: rotateY(180deg);
+    }
+    .flip-toggle-btn {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        z-index: 5;
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+        padding: .5rem .9rem;
+        border-radius: 9999px;
+        background: rgba(255,255,255,.9);
+        border: 1px solid rgb(226 232 240);
+        color: rgb(67 56 202);
+        font-size: .8rem;
+        font-weight: 700;
+        cursor: pointer;
+        backdrop-filter: blur(8px);
+        transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+    html.dark .flip-toggle-btn {
+        background: rgba(15,23,42,.75);
+        border-color: rgb(51 65 85);
+        color: rgb(165 180 252);
+    }
+    .flip-toggle-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 24px -12px rgba(99,102,241,.55);
+    }
+    .flip-toggle-btn i { transition: transform .6s ease; }
+    .flip-wrapper.flipped .flip-toggle-btn i { transform: rotate(180deg); }
+
+    /* Map area */
+    .map-frame-wrap {
+        position: relative;
+        border-radius: 1rem;
+        overflow: hidden;
+        border: 1px solid rgb(226 232 240);
+        background: rgb(248 250 252);
+        height: 560px;
+    }
+    html.dark .map-frame-wrap {
+        border-color: rgb(51 65 85);
+        background: rgb(15 23 42);
+    }
+    #leafletMap { width: 100%; height: 100%; }
+
+    /* Places list */
+    .places-list-wrap {
+        border: 1px solid rgb(226 232 240);
+        border-radius: 1rem;
+        background: white;
+        height: 560px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    html.dark .places-list-wrap { background: rgb(15 23 42); border-color: rgb(51 65 85); }
+    .places-list-header {
+        padding: .9rem 1rem;
+        border-bottom: 1px solid rgb(226 232 240);
+        font-size: .8rem; font-weight: 700;
+        text-transform: uppercase; letter-spacing: .05em;
+        color: rgb(71 85 105);
+        display: flex; align-items: center; justify-content: space-between; gap: .5rem;
+    }
+    html.dark .places-list-header { border-color: rgb(51 65 85); color: rgb(148 163 184); }
+    .places-list { overflow-y: auto; flex: 1; }
+    .place-item {
+        display: flex; gap: .75rem; align-items: flex-start;
+        padding: .85rem 1rem;
+        border-bottom: 1px solid rgb(241 245 249);
+        cursor: pointer;
+        transition: background .15s ease, border-color .15s ease;
+    }
+    html.dark .place-item { border-color: rgb(30 41 59); }
+    .place-item:hover {
+        background: rgb(248 250 252);
+    }
+    html.dark .place-item:hover { background: rgb(30 41 59); }
+    .place-item.active {
+        background: rgba(99,102,241,.08);
+        border-left: 3px solid rgb(99 102 241);
+        padding-left: calc(1rem - 3px);
+    }
+    html.dark .place-item.active { background: rgba(129,140,248,.12); }
+    .place-icon {
+        width: 38px; height: 38px;
+        border-radius: .6rem;
+        display: grid; place-items: center;
+        flex-shrink: 0;
+        font-size: 1.05rem;
+    }
+    .place-icon.bar { background: rgba(245,158,11,.14); color: rgb(180 83 9); }
+    .place-icon.restaurant { background: rgba(239,68,68,.14); color: rgb(185 28 28); }
+    .place-icon.cafe { background: rgba(120,53,15,.14); color: rgb(120 53 15); }
+    .place-icon.pub { background: rgba(168,85,247,.14); color: rgb(126 34 206); }
+    .place-icon.fast_food { background: rgba(16,185,129,.14); color: rgb(5 150 105); }
+    html.dark .place-icon.cafe { color: rgb(217 119 6); }
+    .place-info { min-width: 0; flex: 1; }
+    .place-name {
+        font-weight: 700; font-size: .9rem;
+        color: rgb(15 23 42);
+        overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    html.dark .place-name { color: rgb(241 245 249); }
+    .place-meta { font-size: .72rem; color: rgb(100 116 139); margin-top: .15rem; }
+    html.dark .place-meta { color: rgb(148 163 184); }
+    .place-tag {
+        display: inline-block;
+        font-size: .65rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        padding: .1rem .45rem;
+        border-radius: 9999px;
+        margin-right: .25rem;
+    }
+    .place-tag.bar { background: rgba(245,158,11,.14); color: rgb(180 83 9); }
+    .place-tag.restaurant { background: rgba(239,68,68,.14); color: rgb(185 28 28); }
+    .place-tag.cafe { background: rgba(120,53,15,.14); color: rgb(120 53 15); }
+    .place-tag.pub { background: rgba(168,85,247,.14); color: rgb(126 34 206); }
+    .place-tag.fast_food { background: rgba(16,185,129,.14); color: rgb(5 150 105); }
+
+    .places-list-loading, .places-list-empty {
+        padding: 2rem 1rem; text-align: center;
+        color: rgb(100 116 139); font-size: .85rem;
+    }
+    html.dark .places-list-loading, html.dark .places-list-empty { color: rgb(148 163 184); }
+
+    /* Filtros tipo en cabecera de la lista */
+    .place-filter {
+        font-size: .7rem; font-weight: 600;
+        padding: .25rem .55rem;
+        border-radius: 9999px;
+        border: 1px solid rgb(226 232 240);
+        color: rgb(71 85 105);
+        background: white;
+        cursor: pointer;
+        transition: all .15s ease;
+    }
+    html.dark .place-filter { background: rgb(15 23 42); border-color: rgb(51 65 85); color: rgb(203 213 225); }
+    .place-filter.active {
+        background: rgb(99 102 241);
+        color: white;
+        border-color: transparent;
+    }
+
+    /* Leaflet popup tweaks (dark mode friendly) */
+    .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+        background: white; color: rgb(15 23 42);
+    }
+    html.dark .leaflet-popup-content-wrapper, html.dark .leaflet-popup-tip {
+        background: rgb(15 23 42); color: rgb(241 245 249);
+    }
+    html.dark .leaflet-control-attribution {
+        background: rgba(15,23,42,.8) !important;
+        color: rgb(148 163 184) !important;
+    }
+    html.dark .leaflet-control-attribution a { color: rgb(165 180 252) !important; }
+
     /* ==== Benefit items ==== */
     .benefit-item {
         display: inline-flex; align-items: center; gap: .35rem;
@@ -163,8 +340,19 @@
 
 <div class="space-y-8">
 
-    {{-- ============================ HERO + FORMULARIO ============================ --}}
-    <div class="search-hero p-6 sm:p-10 shadow-sm">
+    {{-- ============================ HERO + FORMULARIO (FLIP) ============================ --}}
+    <div id="heroFlip" class="flip-wrapper relative">
+      @auth
+        <button type="button" id="flipToggleBtn" class="flip-toggle-btn" onclick="toggleHeroFlip()" aria-label="Cambiar modo">
+            <i class="bi bi-arrow-repeat"></i>
+            <span id="flipToggleLabel">Explorar zona</span>
+        </button>
+      @endauth
+
+      <div class="flip-inner">
+
+        {{-- ============================ CARA FRONTAL: COMPARADOR ============================ --}}
+        <div class="flip-face search-hero p-6 sm:p-10 shadow-sm">
         <div class="mb-8 max-w-3xl">
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white/70 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-700 text-indigo-600 dark:text-indigo-400 mb-4">
                 <i class="bi bi-stars"></i> Comparador inteligente
@@ -300,7 +488,66 @@
                 </p>
             </div>
         @endguest
+        </div>
+        {{-- /CARA FRONTAL --}}
+
+        @auth
+        {{-- ============================ CARA TRASERA: EXPLORAR ZONA ============================ --}}
+        <div class="flip-face flip-back search-hero p-6 sm:p-10 shadow-sm">
+            <div class="mb-8 max-w-3xl">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white/70 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-700 text-indigo-600 dark:text-indigo-400 mb-4">
+                    <i class="bi bi-geo-alt-fill"></i> Explorar zona
+                </div>
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                    Descubre bares y restaurantes
+                    <span class="block gradient-text">cerca de tu código postal.</span>
+                </h1>
+                <p class="mt-3 text-base sm:text-lg text-slate-600 dark:text-slate-300">
+                    Selecciona la provincia y el código postal para ver en el mapa los locales de la zona.
+                </p>
+            </div>
+
+            <form id="zoneForm" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                    {{-- Provincia --}}
+                    <div>
+                        <label for="zone_provincia" class="field-label">
+                            <i class="bi bi-map"></i>Provincia
+                        </label>
+                        <select id="zone_provincia" name="zone_provincia" required class="field-input">
+                            <option value="">— Seleccionar —</option>
+                            @foreach ($provincias as $prov)
+                                <option value="{{ $prov }}">{{ $prov }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- Código postal --}}
+                    <div>
+                        <label for="zone_codigo_postal" class="field-label">
+                            <i class="bi bi-geo-alt"></i>Código postal
+                        </label>
+                        <select id="zone_codigo_postal" name="zone_codigo_postal" required class="field-input" disabled>
+                            <option value="">— Selecciona una provincia primero —</option>
+                        </select>
+                    </div>
+
+                    {{-- Botón --}}
+                    <div>
+                        <button type="submit" class="btn-brand ring-brand w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-white font-bold text-base">
+                            <i class="bi bi-pin-map-fill text-lg"></i>
+                            Ver en el mapa
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        {{-- /CARA TRASERA --}}
+        @endauth
+
+      </div>
     </div>
+    {{-- /HERO FLIP --}}
 
     {{-- ============================ ESTADO VACÍO ============================ --}}
     <div id="emptyState" class="rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 bg-white/60 dark:bg-slate-900/40 p-16 text-center">
@@ -334,6 +581,52 @@
             {{-- Cards generated by JS --}}
         </div>
     </div>
+
+    @auth
+    {{-- ============================ MAPA DE ZONA ============================ --}}
+    <div id="mapSection" class="hidden">
+        <div class="flex items-center justify-between flex-wrap gap-3 mb-4">
+            <div class="flex items-center gap-2">
+                <i class="bi bi-pin-map-fill text-rose-500 text-xl"></i>
+                <span id="mapTitle" class="text-sm font-bold text-slate-700 dark:text-slate-200">Bares y restaurantes en la zona</span>
+            </div>
+            <a id="mapOpenLink" href="#" target="_blank" rel="noopener" class="hidden inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                <i class="bi bi-box-arrow-up-right"></i>Abrir en OpenStreetMap
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div id="mapFrameWrap" class="map-frame-wrap lg:col-span-2">
+                <div id="leafletMap"></div>
+            </div>
+
+            <div class="places-list-wrap">
+                <div class="places-list-header">
+                    <span><i class="bi bi-list-ul me-2"></i><span id="placesCount">Locales</span></span>
+                    <div class="flex items-center gap-1">
+                        <button type="button" class="place-filter active" data-filter="all">Todo</button>
+                        <button type="button" class="place-filter" data-filter="bar">Bares</button>
+                        <button type="button" class="place-filter" data-filter="restaurant">Restaur.</button>
+                    </div>
+                </div>
+                <div id="placesList" class="places-list">
+                    <div class="places-list-empty">Selecciona una zona para ver locales.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- ============================ ESTADO VACÍO MAPA ============================ --}}
+    <div id="mapEmptyState" class="hidden rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 bg-white/60 dark:bg-slate-900/40 p-16 text-center">
+        <div class="w-16 h-16 mx-auto mb-5 rounded-2xl grid place-items-center bg-gradient-to-br from-rose-500/15 to-amber-500/15 text-rose-500">
+            <i class="bi bi-geo-alt-fill text-3xl"></i>
+        </div>
+        <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">Explora una zona</h2>
+        <p class="text-slate-600 dark:text-slate-400 max-w-xl mx-auto leading-relaxed">
+            Selecciona una provincia y un código postal para ver en el mapa los bares y restaurantes disponibles.
+        </p>
+    </div>
+    @endauth
 
     {{-- ============================ MODAL COMPARATIVA ============================ --}}
     @auth
@@ -781,5 +1074,354 @@ async function exportPdf() {
         alert('Error al descargar PDF');
     }
 }
+
+// =================================================================
+// MODO ZONA: flip de la tarjeta y mapa de bares/restaurantes
+// (solo disponible para usuarios autenticados)
+// =================================================================
+@auth
+const heroFlip = document.getElementById('heroFlip');
+const flipToggleLabel = document.getElementById('flipToggleLabel');
+
+const tarifaEmptyState = document.getElementById('emptyState');
+const tarifaResultsSection = document.getElementById('resultsSection');
+const mapSection = document.getElementById('mapSection');
+const mapEmptyState = document.getElementById('mapEmptyState');
+
+let tarifaPrevState = { empty: false, results: true };
+
+function setMode(mode) {
+    const isZone = mode === 'zone';
+    heroFlip.classList.toggle('flipped', isZone);
+    flipToggleLabel.textContent = isZone ? 'Comparador' : 'Explorar zona';
+
+    if (isZone) {
+        tarifaPrevState = {
+            empty: tarifaEmptyState.classList.contains('hidden'),
+            results: tarifaResultsSection.classList.contains('hidden'),
+        };
+        tarifaEmptyState.classList.add('hidden');
+        tarifaResultsSection.classList.add('hidden');
+
+        const hasMap = leafletMap !== null && placesMarkers.length > 0;
+        mapSection.classList.toggle('hidden', !hasMap);
+        mapEmptyState.classList.toggle('hidden', hasMap);
+        if (hasMap) setTimeout(() => leafletMap.invalidateSize(), 60);
+    } else {
+        mapSection.classList.add('hidden');
+        mapEmptyState.classList.add('hidden');
+        tarifaEmptyState.classList.toggle('hidden', tarifaPrevState.empty);
+        tarifaResultsSection.classList.toggle('hidden', tarifaPrevState.results);
+    }
+}
+
+function toggleHeroFlip() {
+    const goingToZone = !heroFlip.classList.contains('flipped');
+    setMode(goingToZone ? 'zone' : 'tarifa');
+}
+
+// Provincia -> CP en el formulario de zona (reutiliza cpsPorProvincia)
+const zoneCpSelect = new TomSelect('#zone_codigo_postal', {
+    create: false,
+    placeholder: 'Selecciona una provincia primero',
+    searchField: ['text', 'value'],
+    maxOptions: 500,
+});
+zoneCpSelect.disable();
+
+document.getElementById('zone_provincia').addEventListener('change', function () {
+    const prov = this.value;
+    zoneCpSelect.clear();
+    zoneCpSelect.clearOptions();
+
+    if (!prov || !cpsPorProvincia[prov]) {
+        zoneCpSelect.disable();
+        zoneCpSelect.settings.placeholder = 'Selecciona una provincia primero';
+        zoneCpSelect.inputState();
+        return;
+    }
+
+    const opts = cpsPorProvincia[prov].map(cp => ({ value: cp, text: cp }));
+    zoneCpSelect.addOptions(opts);
+    zoneCpSelect.enable();
+    zoneCpSelect.settings.placeholder = 'Buscar código postal...';
+    zoneCpSelect.inputState();
+});
+
+// Carga diferida de Leaflet (CSS + JS) la primera vez
+let leafletReady = null;
+function ensureLeaflet() {
+    if (leafletReady) return leafletReady;
+    leafletReady = new Promise((resolve, reject) => {
+        const css = document.createElement('link');
+        css.rel = 'stylesheet';
+        css.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+        css.integrity = 'sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=';
+        css.crossOrigin = '';
+        document.head.appendChild(css);
+
+        const script = document.createElement('script');
+        script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+        script.integrity = 'sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=';
+        script.crossOrigin = '';
+        script.onload = () => resolve(window.L);
+        script.onerror = reject;
+        document.head.appendChild(script);
+    });
+    return leafletReady;
+}
+
+let leafletMap = null;
+let placesMarkers = [];           // [{ id, marker, place }]
+let placesData = [];              // raw places del último query
+let activePlaceFilter = 'all';
+
+const PLACE_LABELS = {
+    bar: 'Bar',
+    restaurant: 'Restaurante',
+    cafe: 'Cafetería',
+    pub: 'Pub',
+    fast_food: 'Comida rápida',
+};
+const PLACE_ICONS = {
+    bar: 'bi-cup-straw',
+    restaurant: 'bi-egg-fried',
+    cafe: 'bi-cup-hot',
+    pub: 'bi-cup-fill',
+    fast_food: 'bi-bag',
+};
+
+async function geocodePostal(cp, provincia) {
+    // Intento 1: query libre con CP + provincia + país (la opción más fiable en España)
+    const tryQuery = async (q) => {
+        const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(q)}`;
+        const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+        if (!res.ok) return null;
+        const data = await res.json();
+        if (!data.length) return null;
+        return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+    };
+
+    let result = await tryQuery(`${cp} ${provincia} España`);
+    if (result) return result;
+
+    // Intento 2: query estructurada (sin mezclar con q)
+    const structured = `https://nominatim.openstreetmap.org/search?format=json&limit=1&country=es&postalcode=${encodeURIComponent(cp)}`;
+    const res = await fetch(structured, { headers: { 'Accept': 'application/json' } });
+    if (res.ok) {
+        const data = await res.json();
+        if (data.length) return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+    }
+
+    // Intento 3: solo provincia
+    result = await tryQuery(`${provincia} España`);
+    if (result) return result;
+
+    throw new Error('No se pudo localizar el código postal');
+}
+
+async function fetchPlaces(cp, lat, lon) {
+    // Buscamos locales que estén:
+    //  (a) dentro del polígono del CP (boundary=postal_code), o
+    //  (b) etiquetados explícitamente con addr:postcode = cp.
+    // Overpass deduplica por id, así que la unión es segura.
+    const amenityRe = '^(bar|restaurant|cafe|pub|fast_food)$';
+    // Limitamos a España: los CPs no son únicos a nivel mundial (p.ej. 18009 existe
+    // también en Ucrania), así que sin esto Overpass devuelve fronteras y locales
+    // de otros países que comparten el código.
+    const query = `
+        [out:json][timeout:25];
+        area["ISO3166-1"="ES"][admin_level=2]->.es;
+        rel(area.es)["boundary"="postal_code"]["postal_code"="${cp}"]->.cp;
+        .cp map_to_area->.cpArea;
+        (
+          node(area.cpArea)["amenity"~"${amenityRe}"];
+          way(area.cpArea)["amenity"~"${amenityRe}"];
+          node(area.es)["amenity"~"${amenityRe}"]["addr:postcode"="${cp}"](around:6000,${lat},${lon});
+          way(area.es)["amenity"~"${amenityRe}"]["addr:postcode"="${cp}"](around:6000,${lat},${lon});
+        );
+        out center tags;
+    `;
+    const res = await fetch('https://overpass-api.de/api/interpreter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'data=' + encodeURIComponent(query),
+    });
+    if (!res.ok) throw new Error('Overpass error ' + res.status);
+    const json = await res.json();
+    return (json.elements || []).map((el, idx) => {
+        const lat = el.lat ?? el.center?.lat;
+        const lon = el.lon ?? el.center?.lon;
+        if (lat == null || lon == null) return null;
+        const tags = el.tags || {};
+        return {
+            id: `${el.type}-${el.id}`,
+            lat, lon,
+            name: tags.name || 'Sin nombre',
+            amenity: tags.amenity,
+            address: [tags['addr:street'], tags['addr:housenumber']].filter(Boolean).join(' '),
+            cuisine: tags.cuisine,
+            phone: tags.phone || tags['contact:phone'],
+            website: tags.website || tags['contact:website'],
+        };
+    }).filter(Boolean);
+}
+
+function buildPopupHtml(place) {
+    const parts = [`<div style="font-weight:700;font-size:.95rem;margin-bottom:.2rem">${escapeHtml(place.name)}</div>`];
+    parts.push(`<div style="font-size:.75rem;color:#64748b;text-transform:capitalize">${PLACE_LABELS[place.amenity] ?? place.amenity}</div>`);
+    if (place.address) parts.push(`<div style="font-size:.75rem;margin-top:.35rem"><i class="bi bi-geo-alt"></i> ${escapeHtml(place.address)}</div>`);
+    if (place.cuisine) parts.push(`<div style="font-size:.75rem;text-transform:capitalize"><i class="bi bi-tag"></i> ${escapeHtml(place.cuisine.replaceAll(';', ', '))}</div>`);
+    if (place.phone) parts.push(`<div style="font-size:.75rem"><i class="bi bi-telephone"></i> ${escapeHtml(place.phone)}</div>`);
+    if (place.website) parts.push(`<div style="font-size:.75rem"><a href="${escapeAttr(place.website)}" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right"></i> Sitio web</a></div>`);
+    return parts.join('');
+}
+
+function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+function escapeAttr(s) { return escapeHtml(s); }
+
+function renderPlacesList() {
+    const list = document.getElementById('placesList');
+    const filtered = activePlaceFilter === 'all'
+        ? placesData
+        : placesData.filter(p => p.amenity === activePlaceFilter);
+
+    document.getElementById('placesCount').textContent =
+        filtered.length === 0 ? 'Sin locales' :
+        `${filtered.length} local${filtered.length !== 1 ? 'es' : ''}`;
+
+    if (!filtered.length) {
+        list.innerHTML = `<div class="places-list-empty">No hay locales que mostrar con este filtro.</div>`;
+        return;
+    }
+
+    list.innerHTML = filtered.map(p => {
+        const type = p.amenity || 'restaurant';
+        const icon = PLACE_ICONS[type] || 'bi-shop';
+        const label = PLACE_LABELS[type] || type;
+        const meta = [p.address, p.cuisine].filter(Boolean).join(' · ');
+        return `
+            <div class="place-item" data-id="${p.id}">
+                <div class="place-icon ${type}"><i class="bi ${icon}"></i></div>
+                <div class="place-info">
+                    <div class="place-name" title="${escapeAttr(p.name)}">${escapeHtml(p.name)}</div>
+                    <div class="place-meta">
+                        <span class="place-tag ${type}">${label}</span>
+                        ${meta ? escapeHtml(meta) : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    list.querySelectorAll('.place-item').forEach(el => {
+        el.addEventListener('click', () => focusPlace(el.dataset.id));
+    });
+}
+
+function focusPlace(id) {
+    const entry = placesMarkers.find(m => m.id === id);
+    if (!entry || !leafletMap) return;
+    leafletMap.flyTo([entry.place.lat, entry.place.lon], 18, { duration: .8 });
+    entry.marker.openPopup();
+    setActiveListItem(id);
+}
+
+function setActiveListItem(id) {
+    document.querySelectorAll('.place-item').forEach(el => {
+        el.classList.toggle('active', el.dataset.id === id);
+        if (el.dataset.id === id) el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    });
+}
+
+document.querySelectorAll('.place-filter').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.place-filter').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activePlaceFilter = btn.dataset.filter;
+        renderPlacesList();
+        // Mostrar/ocultar markers según filtro
+        placesMarkers.forEach(({ marker, place }) => {
+            const visible = activePlaceFilter === 'all' || place.amenity === activePlaceFilter;
+            if (visible) {
+                if (!leafletMap.hasLayer(marker)) marker.addTo(leafletMap);
+            } else {
+                if (leafletMap.hasLayer(marker)) leafletMap.removeLayer(marker);
+            }
+        });
+    });
+});
+
+document.getElementById('zoneForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const provincia = document.getElementById('zone_provincia').value;
+    const cp = document.getElementById('zone_codigo_postal').value;
+
+    if (!provincia || !cp) {
+        alert('Selecciona una provincia y un código postal');
+        return;
+    }
+
+    mapEmptyState.classList.add('hidden');
+    mapSection.classList.remove('hidden');
+    document.getElementById('placesList').innerHTML = `<div class="places-list-loading"><div class="spinner-modern" style="width:32px;height:32px;border-width:3px;margin-bottom:.6rem"></div>Buscando locales…</div>`;
+    document.getElementById('placesCount').textContent = 'Cargando…';
+
+    try {
+        const L = await ensureLeaflet();
+
+        // Geocode
+        const { lat, lon } = await geocodePostal(cp, provincia);
+
+        // Inicializar / mover mapa
+        if (!leafletMap) {
+            leafletMap = L.map('leafletMap', { zoomControl: true }).setView([lat, lon], 16);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap, &copy; CARTO',
+                maxZoom: 19,
+            }).addTo(leafletMap);
+        } else {
+            leafletMap.setView([lat, lon], 16);
+        }
+
+        // Limpiar markers anteriores
+        placesMarkers.forEach(({ marker }) => leafletMap.removeLayer(marker));
+        placesMarkers = [];
+
+        // Fetch lugares (filtrados estrictamente por el CP)
+        placesData = await fetchPlaces(cp, lat, lon);
+        placesData.sort((a, b) => a.name.localeCompare(b.name, 'es'));
+
+        // Markers
+        placesData.forEach(p => {
+            const marker = L.marker([p.lat, p.lon])
+                .bindPopup(buildPopupHtml(p))
+                .on('click', () => setActiveListItem(p.id))
+                .addTo(leafletMap);
+            placesMarkers.push({ id: p.id, marker, place: p });
+        });
+
+        document.getElementById('mapTitle').textContent = `Bares y restaurantes en ${cp} (${provincia})`;
+        const openLink = document.getElementById('mapOpenLink');
+        openLink.href = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=16/${lat}/${lon}`;
+        openLink.classList.remove('hidden');
+
+        renderPlacesList();
+        // Forzar refresco por si el contenedor estaba oculto
+        setTimeout(() => leafletMap.invalidateSize(), 50);
+
+    } catch (err) {
+        console.error(err);
+        document.getElementById('placesList').innerHTML = `
+            <div class="places-list-empty">
+                <i class="bi bi-exclamation-triangle text-rose-500"></i><br>
+                ${err.message || 'No se pudo cargar la zona. Intenta de nuevo.'}
+            </div>`;
+        document.getElementById('placesCount').textContent = 'Error';
+    }
+});
+@endauth
 </script>
 @endsection
