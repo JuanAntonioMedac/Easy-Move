@@ -150,6 +150,12 @@
 
                 {{-- Right Section --}}
                 <div class="flex items-center gap-2 ml-auto">
+                    {{-- Botón Buscar Tarifas (visible para todos) --}}
+                    <a href="{{ route('search') }}" class="hidden sm:flex btn-brand ring-brand items-center gap-2 px-5 py-2.5 rounded-xl text-white font-bold transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5">
+                        <i class="bi bi-search text-lg"></i>
+                        <span class="hidden md:inline">Buscar tarifas</span>
+                    </a>
+
                     @auth
                         {{-- Comparisons Menu --}}
                         <div class="relative hidden md:block">
@@ -233,6 +239,9 @@
             {{-- Mobile Menu --}}
             <div id="mobileMenu" class="hidden md:hidden pb-4 border-t border-slate-200 dark:border-slate-800 animate-slide-down">
                 <div class="flex flex-col gap-2 pt-3">
+                    <a href="{{ route('search') }}" class="px-4 py-3 rounded-lg text-sm font-bold text-white bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 transition-colors flex items-center gap-2">
+                        <i class="bi bi-search text-lg"></i><span>Buscar tarifas</span>
+                    </a>
                     @auth
                         <a href="{{ route('comparison.history') }}" class="px-4 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-2">
                             <i class="bi bi-clock-history text-sky-500"></i><span>Historial</span>
@@ -291,9 +300,8 @@
                         Empresa
                     </h4>
                     <ul class="space-y-2 text-sm text-slate-600 dark:text-slate-400">
-                        <li><a href="#" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Sobre Nosotros</a></li>
-                        <li><a href="#" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Blog</a></li>
-                        <li><a href="#" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Contacto</a></li>
+                        <li><a href="{{ route('about') }}" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Sobre Nosotros</a></li>
+                        <li><a href="{{ route('contact') }}" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Contacto</a></li>
                     </ul>
                 </div>
 

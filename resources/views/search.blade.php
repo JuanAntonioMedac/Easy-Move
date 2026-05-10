@@ -242,27 +242,49 @@
         position: relative;
         border-radius: 1rem;
         overflow: hidden;
-        border: 1px solid rgb(226 232 240);
+        border: 1.5px solid rgb(226 232 240);
         background: rgb(248 250 252);
         height: 560px;
+        transition: border-color .3s ease, box-shadow .3s ease;
     }
     html.dark .map-frame-wrap {
         border-color: rgb(51 65 85);
         background: rgb(15 23 42);
     }
+    #mapSection .map-frame-wrap {
+        border-color: rgb(239,68,68);
+        box-shadow: 0 16px 32px -20px rgba(239,68,68,.45);
+        background: linear-gradient(135deg, rgba(254,226,226,.35), rgb(248 250 252) 55%);
+    }
+    html.dark #mapSection .map-frame-wrap {
+        border-color: rgb(248,113,113);
+        box-shadow: 0 16px 32px -20px rgba(239,68,68,.55);
+        background: linear-gradient(135deg, rgba(127,29,29,.55), rgb(15 23 42) 55%);
+    }
     #leafletMap { width: 100%; height: 100%; }
 
     /* Places list */
     .places-list-wrap {
-        border: 1px solid rgb(226 232 240);
+        border: 1.5px solid rgb(226 232 240);
         border-radius: 1rem;
         background: white;
         height: 560px;
         display: flex;
         flex-direction: column;
         overflow: hidden;
+        transition: border-color .3s ease, box-shadow .3s ease, background-color .3s ease;
     }
     html.dark .places-list-wrap { background: rgb(15 23 42); border-color: rgb(51 65 85); }
+    #mapSection .places-list-wrap {
+        border-color: rgb(239,68,68);
+        box-shadow: 0 16px 32px -20px rgba(239,68,68,.45);
+        background: linear-gradient(180deg, rgba(254,226,226,.5) 0%, rgba(254,226,226,.15) 100%);
+    }
+    html.dark #mapSection .places-list-wrap {
+        border-color: rgb(248,113,113);
+        box-shadow: 0 16px 32px -20px rgba(239,68,68,.55);
+        background: linear-gradient(180deg, rgba(127,29,29,.65) 0%, rgba(127,29,29,.2) 100%);
+    }
     .places-list-header {
         padding: .9rem 1rem;
         border-bottom: 1px solid rgb(226 232 240);
@@ -378,6 +400,147 @@
     }
     html.dark .benefit-item { background: rgb(30 41 59); color: rgb(203 213 225); }
     .benefit-item.eco { background: rgba(16,185,129,.12); color: rgb(5 150 105); }
+
+    /* ==== MODO ZONA: Cambio de colores completo ==== */
+    .flip-wrapper.flipped .search-hero {
+        background:
+            radial-gradient(1200px 400px at 0% -10%, rgba(239,68,68,.18), transparent 60%),
+            radial-gradient(1000px 360px at 100% 0%, rgba(248,113,113,.18), transparent 60%),
+            linear-gradient(180deg, #ffffff 0%, #fef2f2 100%);
+    }
+    html.dark .flip-wrapper.flipped .search-hero {
+        background:
+            radial-gradient(1200px 400px at 0% -10%, rgba(239,68,68,.22), transparent 60%),
+            radial-gradient(1000px 360px at 100% 0%, rgba(248,113,113,.18), transparent 60%),
+            linear-gradient(180deg, #7f1d1d 0%, #450a0a 100%);
+    }
+    .flip-wrapper.flipped .search-hero { border-color: rgba(239,68,68,.35); }
+    html.dark .flip-wrapper.flipped .search-hero { border-color: rgba(248,113,113,.45); }
+
+    /* Inputs en modo zona */
+    .flip-wrapper.flipped .field-input {
+        border-color: rgba(239,68,68,.45);
+    }
+    .flip-wrapper.flipped .field-input:focus {
+        border-color: rgb(220 38 38);
+        box-shadow: 0 0 0 4px rgba(239,68,68,.18);
+    }
+    html.dark .flip-wrapper.flipped .field-input {
+        border-color: rgba(248,113,113,.5);
+    }
+    html.dark .flip-wrapper.flipped .field-input:focus {
+        border-color: rgb(244 63 94);
+        box-shadow: 0 0 0 4px rgba(244,63,94,.22);
+    }
+
+    /* Labels en modo zona */
+    .flip-wrapper.flipped .field-label {
+        color: rgb(159 18 57);
+    }
+    html.dark .flip-wrapper.flipped .field-label {
+        color: rgb(254 205 211);
+    }
+
+    /* Badge en modo zona */
+    .flip-wrapper.flipped .inline-flex.items-center.gap-2.px-3.py-1 {
+        background: rgba(239,68,68,.15) !important;
+        border-color: rgba(239,68,68,.35) !important;
+        color: rgb(185 28 28) !important;
+    }
+    html.dark .flip-wrapper.flipped .inline-flex.items-center.gap-2.px-3.py-1 {
+        background: rgba(248,113,113,.15) !important;
+        border-color: rgba(248,113,113,.4) !important;
+        color: rgb(253 164 175) !important;
+    }
+
+    /* Botón en modo zona */
+    .flip-wrapper.flipped .btn-brand {
+        background: linear-gradient(135deg, #ef4444, #e11d48);
+        box-shadow: 0 10px 32px -10px rgba(239,68,68,.45);
+    }
+    .flip-wrapper.flipped .btn-brand:hover {
+        background: linear-gradient(135deg, #dc2626, #be123c);
+        box-shadow: 0 14px 40px -12px rgba(239,68,68,.55);
+        transform: translateY(-2px);
+    }
+    html.dark .flip-wrapper.flipped .btn-brand {
+        background: linear-gradient(135deg, #dc2626, #be123c);
+        box-shadow: 0 10px 32px -10px rgba(239,68,68,.55);
+    }
+    html.dark .flip-wrapper.flipped .btn-brand:hover {
+        background: linear-gradient(135deg, #b91c1c, #991b1b);
+        box-shadow: 0 14px 40px -12px rgba(239,68,68,.65);
+    }
+
+    /* Ring brand en modo zona */
+    .flip-wrapper.flipped .ring-brand {
+        --tw-ring-color: rgba(239,68,68,.25);
+    }
+
+    /* Filtros avanzados botón en modo zona */
+    .flip-wrapper.flipped #toggleFiltersBtn {
+        color: rgb(220 38 38);
+    }
+    .flip-wrapper.flipped #toggleFiltersBtn:hover {
+        color: rgb(185 28 28);
+    }
+    html.dark .flip-wrapper.flipped #toggleFiltersBtn {
+        color: rgb(253 230 138);
+    }
+    html.dark .flip-wrapper.flipped #toggleFiltersBtn:hover {
+        color: rgb(253 224 71);
+    }
+
+    /* Heading de filtros avanzados en modo zona */
+    .flip-wrapper.flipped #advancedFilters h3 {
+        color: rgb(220 38 38);
+    }
+    html.dark .flip-wrapper.flipped #advancedFilters h3 {
+        color: rgb(254 205 211);
+    }
+    .flip-wrapper.flipped #advancedFilters h3 i {
+        color: rgb(220 38 38) !important;
+    }
+    html.dark .flip-wrapper.flipped #advancedFilters h3 i {
+        color: rgb(248 113 113) !important;
+    }
+
+    /* Botones de filtros avanzados en modo zona */
+    .flip-wrapper.flipped #applyFiltersBtn {
+        background: linear-gradient(135deg, #ef4444, #e11d48);
+        border-color: transparent;
+    }
+    .flip-wrapper.flipped #applyFiltersBtn:hover {
+        background: linear-gradient(135deg, #dc2626, #be123c);
+    }
+    html.dark .flip-wrapper.flipped #applyFiltersBtn {
+        background: linear-gradient(135deg, #dc2626, #be123c);
+    }
+    html.dark .flip-wrapper.flipped #applyFiltersBtn:hover {
+        background: linear-gradient(135deg, #b91c1c, #991b1b);
+    }
+
+    /* Aviso para invitados en modo zona */
+    .flip-wrapper.flipped .mt-6.p-4.rounded-xl {
+        background: linear-gradient(to right, rgba(239,68,68,.08), rgba(244,63,94,.08)) !important;
+        border-color: rgba(239,68,68,.3) !important;
+    }
+    .flip-wrapper.flipped .mt-6.p-4.rounded-xl p {
+        color: rgb(153 27 27) !important;
+    }
+    .flip-wrapper.flipped .mt-6.p-4.rounded-xl i {
+        color: rgb(239 68 68) !important;
+    }
+    html.dark .flip-wrapper.flipped .mt-6.p-4.rounded-xl {
+        background: linear-gradient(to right, rgba(127,29,29,.4), rgba(127,29,29,.35)) !important;
+        border-color: rgba(248,113,113,.4) !important;
+    }
+    html.dark .flip-wrapper.flipped .mt-6.p-4.rounded-xl p {
+        color: rgb(254 205 211) !important;
+    }
+    html.dark .flip-wrapper.flipped .mt-6.p-4.rounded-xl i {
+        color: rgb(248 113 113) !important;
+    }
 </style>
 
 <div class="space-y-8">

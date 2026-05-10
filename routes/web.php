@@ -10,6 +10,14 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
+Route::get('/sobre-nosotros', function () {
+    return view('about');
+})->name('about');
+
+Route::get('/contacto', function () {
+    return view('contact');
+})->name('contact');
+
 Route::get('/search', [SearchController::class, 'index'])->name('search');
 Route::post('/search', [SearchController::class, 'search'])->name('search.query');
 Route::post('/search/advanced', [SearchController::class, 'searchAdvanced'])->name('search.advanced');
