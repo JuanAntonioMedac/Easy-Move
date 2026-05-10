@@ -76,12 +76,7 @@ Copia el valor (incluyendo `base64:`) y pégalo en `APP_KEY` en Railway.
 ### 5. **Configurar el Servidor PHP**
 
 Railway usa automáticamente PHP 8.2+ (compatible con Laravel 11).
-El `Procfile` utiliza el servidor PHP built-in de Laravel:
-```
-web: php -S 0.0.0.0:${PORT:-8000} -t public
-```
 
-Para producción con mejor rendimiento, considera agregar Nginx (ver sección avanzada).
 ### 6. **Despliegue Automático**
 
 Una vez que subas cambios a `main`, Railway hará automáticamente:

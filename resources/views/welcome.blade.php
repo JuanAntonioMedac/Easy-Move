@@ -120,6 +120,24 @@
                     </a>
                 </div>
 
+                <div class="inline-flex flex-wrap items-center gap-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-900/70 px-4 py-3 text-sm text-slate-700 dark:text-slate-200 shadow-sm">
+                    <div class="inline-flex items-center gap-2">
+                        <span class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-rose-100 text-rose-600 dark:bg-rose-900/40 dark:text-rose-300">
+                            <i class="bi bi-pin-map-fill"></i>
+                        </span>
+                        <div>
+                            <div class="font-bold">Explora bares y restaurantes</div>
+                            <div class="text-xs text-slate-500 dark:text-slate-400">Buscador por zona con mapa interactivo</div>
+                        </div>
+                    </div>
+                    <a href="{{ route('search', ['mode' => 'zone']) }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-rose-200 dark:border-rose-900/60 text-rose-700 dark:text-rose-200 font-semibold hover:bg-rose-50 dark:hover:bg-rose-900/30 transition">
+                        <i class="bi bi-compass"></i>
+                        Explorar zona
+                    </a>
+                    <span class="text-[10px] uppercase tracking-wider font-bold text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-900/40 px-2 py-1 rounded-full">Novedad</span>
+                    <span class="text-[10px] uppercase tracking-wider font-bold text-indigo-700 dark:text-indigo-300 bg-indigo-100 dark:bg-indigo-900/40 px-2 py-1 rounded-full">Solo registrados</span>
+                </div>
+
                 <div class="grid grid-cols-3 gap-6 pt-6 border-t border-slate-200 dark:border-slate-800">
                     <div>
                         <div class="text-2xl sm:text-3xl font-extrabold gradient-text stat-num">+50K</div>

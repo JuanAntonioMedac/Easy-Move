@@ -164,36 +164,78 @@
         inset: 0;
         transform: rotateY(180deg);
     }
-    .flip-toggle-btn {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        z-index: 5;
+    .mode-tabs {
         display: inline-flex;
         align-items: center;
-        gap: .45rem;
-        padding: .5rem .9rem;
+        gap: .35rem;
+        padding: .4rem;
         border-radius: 9999px;
-        background: rgba(255,255,255,.9);
-        border: 1px solid rgb(226 232 240);
-        color: rgb(67 56 202);
-        font-size: .8rem;
-        font-weight: 700;
-        cursor: pointer;
+        border: 1px solid rgba(99,102,241,.25);
+        background: linear-gradient(135deg, rgba(255,255,255,.96), rgba(241,245,249,.95));
         backdrop-filter: blur(8px);
+        box-shadow: 0 14px 30px -18px rgba(15,23,42,.3);
+    }
+    html.dark .mode-tabs {
+        border-color: rgba(129,140,248,.4);
+        background: linear-gradient(135deg, rgba(15,23,42,.92), rgba(30,41,59,.85));
+    }
+    .mode-tab {
+        display: inline-flex;
+        align-items: center;
+        gap: .55rem;
+        padding: .65rem 1.15rem;
+        border-radius: 9999px;
+        font-weight: 800;
+        font-size: .9rem;
+        color: rgb(30 41 59);
+        border: 1px solid transparent;
+        background: rgba(255,255,255,.75);
+        box-shadow: inset 0 0 0 1px rgba(148,163,184,.3);
+        transition: all .2s ease;
+    }
+    .mode-tab:hover { transform: translateY(-1px); }
+    html.dark .mode-tab {
+        color: rgb(226 232 240);
+        background: rgba(15,23,42,.6);
+        box-shadow: inset 0 0 0 1px rgba(71,85,105,.5);
+    }
+    .mode-tab.active {
+        background: linear-gradient(135deg, #0ea5e9, #6366f1);
+        color: white;
+        box-shadow: 0 10px 22px -14px rgba(99,102,241,.6);
+    }
+    .mode-tab.primary.active {
+        background: linear-gradient(135deg, #2563eb, #4f46e5);
+        box-shadow: 0 12px 24px -14px rgba(37,99,235,.65);
+    }
+    .mode-tab.alt.active {
+        background: linear-gradient(135deg, #f97316, #ef4444);
+        box-shadow: 0 10px 22px -14px rgba(239,68,68,.6);
+    }
+
+    .zone-shortcut-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: .5rem;
+        padding: .6rem 1rem;
+        border-radius: 9999px;
+        border: 1px solid rgba(244,63,94,.25);
+        background: rgba(255,255,255,.9);
+        color: rgb(190 18 60);
+        font-weight: 700;
+        font-size: .85rem;
         transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
     }
-    html.dark .flip-toggle-btn {
-        background: rgba(15,23,42,.75);
-        border-color: rgb(51 65 85);
-        color: rgb(165 180 252);
-    }
-    .flip-toggle-btn:hover {
+    .zone-shortcut-btn:hover {
         transform: translateY(-1px);
-        box-shadow: 0 10px 24px -12px rgba(99,102,241,.55);
+        box-shadow: 0 10px 24px -14px rgba(244,63,94,.45);
+        background: rgba(255,228,230,.8);
     }
-    .flip-toggle-btn i { transition: transform .6s ease; }
-    .flip-wrapper.flipped .flip-toggle-btn i { transform: rotate(180deg); }
+    html.dark .zone-shortcut-btn {
+        background: rgba(15,23,42,.75);
+        border-color: rgba(244,63,94,.35);
+        color: rgb(253 164 175);
+    }
 
     /* Map area */
     .map-frame-wrap {
@@ -343,10 +385,18 @@
     {{-- ============================ HERO + FORMULARIO (FLIP) ============================ --}}
     <div id="heroFlip" class="flip-wrapper relative">
       @auth
-        <button type="button" id="flipToggleBtn" class="flip-toggle-btn" onclick="toggleHeroFlip()" aria-label="Cambiar modo">
-            <i class="bi bi-arrow-repeat"></i>
-            <span id="flipToggleLabel">Explorar zona</span>
-        </button>
+        <div class="flex justify-end mb-4">
+            <div class="mode-tabs" role="tablist" aria-label="Cambiar modo">
+                <button type="button" class="mode-tab primary active" data-mode="tarifa" onclick="setMode('tarifa')" role="tab" aria-selected="true">
+                    <i class="bi bi-stars"></i>
+                    Comparador
+                </button>
+                <button type="button" class="mode-tab alt" data-mode="zone" onclick="setMode('zone')" role="tab" aria-selected="false">
+                    <i class="bi bi-search-heart"></i>
+                    Buscar bares y restaurantes
+                </button>
+            </div>
+        </div>
       @endauth
 
       <div class="flip-inner">
@@ -569,10 +619,16 @@
                     <span id="resultsCount" class="text-sm font-bold text-slate-700 dark:text-slate-200">Cargando resultados...</span>
                 </div>
                 @auth
-                    <button id="saveComparisonStickyBtn" type="button" onclick="saveCurrentComparison()" class="hidden inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-indigo-500 text-indigo-600 dark:text-indigo-300 bg-white dark:bg-slate-900 font-bold text-sm hover:bg-indigo-50 dark:hover:bg-slate-800 transition disabled:opacity-50 disabled:cursor-not-allowed">
-                        <i class="bi bi-bookmark-fill"></i>
-                        <span>Guardar seleccionada</span>
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <button type="button" class="zone-shortcut-btn" onclick="setMode('zone')">
+                            <i class="bi bi-compass"></i>
+                            Explorar zona
+                        </button>
+                        <button id="saveComparisonStickyBtn" type="button" onclick="saveCurrentComparison()" class="hidden inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-indigo-500 text-indigo-600 dark:text-indigo-300 bg-white dark:bg-slate-900 font-bold text-sm hover:bg-indigo-50 dark:hover:bg-slate-800 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="bi bi-bookmark-fill"></i>
+                            <span>Guardar seleccionada</span>
+                        </button>
+                    </div>
                 @endauth
             </div>
         </div>
@@ -1081,8 +1137,6 @@ async function exportPdf() {
 // =================================================================
 @auth
 const heroFlip = document.getElementById('heroFlip');
-const flipToggleLabel = document.getElementById('flipToggleLabel');
-
 const tarifaEmptyState = document.getElementById('emptyState');
 const tarifaResultsSection = document.getElementById('resultsSection');
 const mapSection = document.getElementById('mapSection');
@@ -1093,7 +1147,12 @@ let tarifaPrevState = { empty: false, results: true };
 function setMode(mode) {
     const isZone = mode === 'zone';
     heroFlip.classList.toggle('flipped', isZone);
-    flipToggleLabel.textContent = isZone ? 'Comparador' : 'Explorar zona';
+
+    document.querySelectorAll('.mode-tab').forEach(tab => {
+        const active = tab.dataset.mode === mode;
+        tab.classList.toggle('active', active);
+        tab.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
 
     if (isZone) {
         tarifaPrevState = {
@@ -1115,9 +1174,9 @@ function setMode(mode) {
     }
 }
 
-function toggleHeroFlip() {
-    const goingToZone = !heroFlip.classList.contains('flipped');
-    setMode(goingToZone ? 'zone' : 'tarifa');
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('mode') === 'zone') {
+    setMode('zone');
 }
 
 // Provincia -> CP en el formulario de zona (reutiliza cpsPorProvincia)
