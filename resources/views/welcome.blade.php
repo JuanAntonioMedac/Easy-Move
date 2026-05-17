@@ -129,13 +129,13 @@
                             <div class="font-bold">Explora bares y restaurantes</div>
                             <div class="text-xs text-slate-500 dark:text-slate-400">Buscador por zona con mapa interactivo</div>
                         </div>
-                    </div>
-                    <a href="{{ route('search', ['mode' => 'zone']) }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-rose-200 dark:border-rose-900/60 text-rose-700 dark:text-rose-200 font-semibold hover:bg-rose-50 dark:hover:bg-rose-900/30 transition">
+                    </div>                   
+                    <span class="text-[10px] uppercase tracking-wider font-bold text-indigo-700 dark:text-indigo-300 bg-indigo-100 dark:bg-indigo-900/40 px-2 py-1 rounded-full">Solo registrados</span>
+                    <span class="text-[10px] uppercase tracking-wider font-bold text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-900/40 px-2 py-1 rounded-full">Novedad</span>
+                     <a href="{{ route('search', ['mode' => 'zone']) }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-rose-200 dark:border-rose-900/60 text-rose-700 dark:text-rose-200 font-semibold hover:bg-rose-50 dark:hover:bg-rose-900/30 transition">
                         <i class="bi bi-compass"></i>
                         Explorar zona
                     </a>
-                    <span class="text-[10px] uppercase tracking-wider font-bold text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-900/40 px-2 py-1 rounded-full">Novedad</span>
-                    <span class="text-[10px] uppercase tracking-wider font-bold text-indigo-700 dark:text-indigo-300 bg-indigo-100 dark:bg-indigo-900/40 px-2 py-1 rounded-full">Solo registrados</span>
                 </div>
 
                 <div class="grid grid-cols-3 gap-6 pt-6 border-t border-slate-200 dark:border-slate-800">
