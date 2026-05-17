@@ -1,0 +1,352 @@
+{
+  "name": "Scraping individual",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://api.zenrows.com/v1/",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "f01f1ca19fd796db31b7961c3e3b5c8f58a83bb4"
+            },
+            {
+              "name": "url",
+              "value": "={{ $json.targetUrl }}"
+            },
+            {
+              "name": "js_render",
+              "value": "true"
+            },
+            {
+              "name": "premium_proxy",
+              "value": "true"
+            },
+            {
+              "name": "antibot",
+              "value": "true"
+            },
+            {
+              "name": "wait",
+              "value": "3000"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b3159759-947c-4889-ab94-20ced3bfaa77",
+      "name": "ZenRows (Scraping Antibot)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -736,
+        432
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const companies = [\n  { name: 'Orange', url: 'https://www.orange.es/tarifas' },\n  \n];\n\nconst items = [];\n\n\nfor (const company of companies) {\n  items.push({\n    json: {\n      company: company.name,\n      targetUrl: company.url\n    }\n  });\n}\n\n\nreturn items;"
+      },
+      "id": "8826610a-88e4-40d6-8d4b-3a3882423101",
+      "name": "Generar Tareas (CP + Compañía)1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -960,
+        432
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const out = [];\n\n// 1. Obtenemos el HTML de la entrada\nconst htmlText = $input.first().json.data || $input.first().json.texto_limpio || $input.first().json.body || \"\";\n\nif (!htmlText) {\n    return [{ json: { error: \"El HTML de Orange llegó vacío.\" } }];\n}\n\n// 2. PARSER DE ORANGE\n// Cortamos el HTML por cada bloque de tarjeta de tarifa\nconst blocks = htmlText.split('class=\"card-tariff-new');\n\nfor (let i = 1; i < blocks.length; i++) {\n    const block = blocks[i];\n\n    // Extraer datos del input hidden (Nombre, ID y Precio base)\n    const dataMatch = block.match(/dataSimpleTariff[^>]*data-price=\"([^\"]+)\"[^>]*data-name=\"([^\"]+)\"/);\n    if (!dataMatch) continue;\n\n    const precioBase = parseFloat(dataMatch[1]);\n    const nombreTecnico = dataMatch[2];\n\n    // Extraer el Título comercial (Ej: Cine y Series con 1 línea)\n    const titleMatch = block.match(/card-tariff-new__header[^>]*>\\s*([\\s\\S]*?)\\s*<\\/div>/);\n    const nombreComercial = titleMatch ? titleMatch[1].trim() : nombreTecnico;\n\n    // Extraer características (Soporta formatos nuevos con __features__ o __features-simple__)\n    let condiciones = [];\n    const featureRegex = /card-tariff-(?:new|simple)__features__main[^>]*>\\s*([\\s\\S]*?)\\s*<\\/div>/g;\n    let featureM;\n    while ((featureM = featureRegex.exec(block)) !== null) {\n        let text = featureM[1].replace(/<[^>]+>/g, '').replace(/\\s+/g, ' ').trim();\n        if (text) condiciones.push(\"- \" + text);\n    }\n\n    // Extraer servicios de streaming incluidos leyendo los iconos directamente del bloque\n    if (block.includes('iconassets__disney-plus') && !block.includes('card-tariff-simple__features__item--disabled\"> <hl-icon name=\"iconassets__disney-plus')) {\n        condiciones.push(\"- Incluye Disney+\");\n    }\n    if (block.includes('iconassets__netflix-mini') && !block.includes('card-tariff-simple__features__item--disabled\"> <hl-icon name=\"iconassets__netflix-mini')) {\n        condiciones.push(\"- Incluye Netflix\");\n    }\n\n    // Extraer Precio Promocional (Buscamos la etiqueta <hl-price-block> que no sea 'is-old')\n    let precioFinal = precioBase;\n    const priceBlocks = block.split('<hl-price-block');\n    \n    for (let p = 1; p < priceBlocks.length; p++) {\n        const pBlock = priceBlocks[p];\n        // Si no es el precio antiguo (tachado), nos quedamos con este valor\n        if (!pBlock.includes('is-old=\"true\"') && !pBlock.includes('price-block--is-old')) {\n            const unitMatch = pBlock.match(/unit=\"(\\d+)\"/);\n            if (unitMatch) {\n                precioFinal = parseFloat(unitMatch[1]);\n                break;\n            }\n        }\n    }\n\n    // Extraer URL de \"Más info\"\n    let url_oferta = null;\n    const urlMatch = block.match(/href=\"([^\"]+)\"[^>]*class=\"[^\"]*js-more-info-tariff/);\n    if (urlMatch) {\n        url_oferta = urlMatch[1].startsWith('http') ? urlMatch[1] : \"https://www.orange.es\" + urlMatch[1];\n    }\n\n    // Extraer texto extra de promociones (Ej: Líneas adicionales gratis)\n    const rewardMatch = block.match(/card-tariff-simple__features__main[^>]*>\\s*([\\s\\S]*?)\\s*<\\/div>/);\n    if (rewardMatch && rewardMatch[1].includes('¡Incluye')) {\n        let textReward = rewardMatch[1].replace(/<[^>]+>/g, '').replace(/\\s+/g, ' ').trim();\n        condiciones.push(\"- Promo: \" + textReward);\n    }\n\n    out.push({\n        json: {\n            id_proveedor: 14,\n            id_tipo_servicio: 3,\n            nombre_tarifa: nombreComercial,\n            precio: precioFinal,\n            precio_fuera_promo: precioBase,\n            unidad_precio: \"€/mes\",\n            permanencia: block.toLowerCase().includes(\"sin permanencia\") ? \"Sin permanencia\" : \"12 meses\",\n            condiciones: condiciones.join('\\n'),\n            url_oferta_externa: url_oferta || \"https://www.orange.es/tarifas\"\n        }\n    });\n}\n\n// Limpiar duplicados por nombre de tarifa\nconst uniqueOut = Array.from(new Map(out.map(item => [item.json.nombre_tarifa, item])).values());\n\nif (uniqueOut.length === 0) {\n    return [{ json: { error: \"No se detectaron tarifas de Orange. Revisa las clases del HTML.\" } }];\n}\n\nreturn uniqueOut;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -512,
+        432
+      ],
+      "id": "1a6ab942-1fb4-480f-8c83-994bbe2ff158",
+      "name": "Parser Orange"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "daysInterval": 5
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1184,
+        432
+      ],
+      "id": "ceb85ee7-7749-44c9-b321-414536d7cd0c",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "table": {
+          "__rl": true,
+          "value": "tarifas",
+          "mode": "list",
+          "cachedResultName": "tarifas"
+        },
+        "dataMode": "defineBelow",
+        "columnToMatchOn": "nombre_tarifa",
+        "valueToMatchOn": "={{ $json.nombre_tarifa }}",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "precio",
+              "value": "={{ $json.precio }}"
+            },
+            {
+              "column": "permanencia",
+              "value": "={{ $json.permanencia }}"
+            },
+            {
+              "column": "condiciones",
+              "value": "={{ $json.condiciones }}"
+            },
+            {
+              "column": "url_oferta_externa",
+              "value": "={{ $json.url_oferta_externa }}"
+            },
+            {
+              "column": "id_servicio",
+              "value": "={{ $json.id_servicio }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f01a8619-56b5-48d7-a90d-dbcc721dcc4f",
+      "name": "MySQL (Guardar Datos en tarifas)",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.1,
+      "position": [
+        144,
+        400
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "mySql": {
+          "id": "Nl5gkbRXGYGvAiPU",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "numberInputs": 3,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -80,
+        384
+      ],
+      "id": "097d27c2-c6fb-4df8-bae9-88121c7023a6",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "table": {
+          "__rl": true,
+          "value": "servicios",
+          "mode": "list",
+          "cachedResultName": "servicios"
+        },
+        "dataMode": "defineBelow",
+        "columnToMatchOn": "nombre_servicio",
+        "valueToMatchOn": "={{ $json.nombre_tarifa }}",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "id_proveedor",
+              "value": "={{ $json.id_proveedor }}"
+            },
+            {
+              "column": "id_tipo_servicio",
+              "value": "={{ $json.id_tipo_servicio }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "cf20e252-6390-4148-bdeb-03495bc24f1f",
+      "name": "MySQL (Guardar Datos en sevicios)",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.1,
+      "position": [
+        -288,
+        112
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "mySql": {
+          "id": "Nl5gkbRXGYGvAiPU",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "table": {
+          "__rl": true,
+          "value": "servicios",
+          "mode": "list",
+          "cachedResultName": "servicios"
+        },
+        "limit": 1,
+        "where": {
+          "values": [
+            {
+              "column": "nombre_servicio",
+              "value": "={{ $json.nombre_tarifa }}"
+            }
+          ]
+        },
+        "sort": {
+          "values": []
+        },
+        "options": {}
+      },
+      "id": "07379dd4-345b-4982-891f-e243678ad66b",
+      "name": "MySQL (Obtener Id)",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.1,
+      "position": [
+        -288,
+        320
+      ],
+      "alwaysOutputData": true,
+      "executeOnce": false,
+      "credentials": {
+        "mySql": {
+          "id": "Nl5gkbRXGYGvAiPU",
+          "name": "MySQL account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "ZenRows (Scraping Antibot)": {
+      "main": [
+        [
+          {
+            "node": "Parser Orange",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generar Tareas (CP + Compañía)1": {
+      "main": [
+        [
+          {
+            "node": "ZenRows (Scraping Antibot)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parser Orange": {
+      "main": [
+        [
+          {
+            "node": "MySQL (Obtener Id)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "MySQL (Guardar Datos en sevicios)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Generar Tareas (CP + Compañía)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MySQL (Guardar Datos en tarifas)": {
+      "main": [
+        []
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "MySQL (Guardar Datos en tarifas)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MySQL (Guardar Datos en sevicios)": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MySQL (Obtener Id)": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "4d76ab2a-5038-48cd-873d-4d578ce40aea",
+  "meta": {
+    "instanceId": "8d11eec518c1ec77f3998b7f2a37ee8ebdf17d2060bd2ebaebd07ab69975021c"
+  },
+  "id": "m61jYyX82ai86hcZ",
+  "tags": []
+}
