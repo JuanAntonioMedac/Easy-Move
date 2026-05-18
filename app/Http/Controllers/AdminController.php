@@ -9,6 +9,7 @@ use App\Models\TipoServicio;
 use App\Models\Ubicacion;
 use App\Models\User;
 use App\Models\Comparacion;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -44,12 +45,16 @@ class AdminController extends Controller
 
         // Búsquedas por día (últimos 7 días)
         $busquedasPorDia = [];
-        $diasNombres = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+        $labelsBusquedasPorDia = [];
         
         for ($i = 6; $i >= 0; $i--) {
-            $fecha = now()->subDays($i);
-            $count = Comparacion::whereDate('fecha', $fecha->toDateString())->count();
+            $fecha = Carbon::now()->subDays($i);
+            $count = Comparacion::whereBetween('fecha', [
+                $fecha->copy()->startOfDay(),
+                $fecha->copy()->endOfDay(),
+            ])->count();
             $busquedasPorDia[] = $count;
+            $labelsBusquedasPorDia[] = $fecha->locale('es')->translatedFormat('D');
         }
 
         // Proveedores más buscados (con servicios)
@@ -72,6 +77,7 @@ class AdminController extends Controller
             'totalUbicaciones' => $totalUbicaciones,
             'busquedasUltimaSemana' => $busquedasUltimaSemana,
             'busquedasPorDia' => $busquedasPorDia,
+            'labelsBusquedasPorDia' => $labelsBusquedasPorDia,
             'porcentajeUsuarios' => 0,
             'porcentajeBusquedas' => $porcentajeBusquedas,
             'usuariosNuevos' => $usuariosNuevos,

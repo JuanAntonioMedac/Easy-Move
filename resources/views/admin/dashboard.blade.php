@@ -97,11 +97,11 @@
         </div>
         <div class="space-y-3">
             @php
-                $dias = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
                 $datos = $busquedasPorDia ?? [0,0,0,0,0,0,0];
+                $labels = $labelsBusquedasPorDia ?? ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
                 $maxValor = !empty($datos) && max($datos) > 0 ? max($datos) : 1;
             @endphp
-            @foreach ($dias as $idx => $dia)
+            @foreach ($labels as $idx => $dia)
                 <div class="flex items-center gap-3">
                     <span class="text-xs font-bold text-slate-500 dark:text-slate-400 w-8">{{ $dia }}</span>
                     <div class="flex-1 h-7 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
@@ -162,8 +162,8 @@
                     <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors group">
                         <td class="py-4 px-6">
                             <div class="flex items-center gap-3">
-                                @if ($proveedor->logo)
-                                    <img src="{{ asset('storage/' . $proveedor->logo) }}" alt="{{ $proveedor->nombre }}" class="w-10 h-10 rounded-xl object-cover shadow-sm">
+                                @if ($proveedor->logo_url)
+                                    <img src="{{ $proveedor->logo_url }}" alt="{{ $proveedor->nombre }}" class="w-10 h-10 rounded-xl object-contain bg-white dark:bg-slate-900 p-1 shadow-sm">
                                 @else
                                     <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-indigo-500 grid place-items-center text-white font-bold shadow-md">{{ substr($proveedor->nombre, 0, 1) }}</div>
                                 @endif

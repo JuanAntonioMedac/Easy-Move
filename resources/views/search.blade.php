@@ -158,6 +158,12 @@
     .flip-face {
         backface-visibility: hidden;
         -webkit-backface-visibility: hidden;
+        transition: opacity .2s ease;
+    }
+    .flip-face.is-hidden {
+        opacity: 0;
+        pointer-events: none;
+        visibility: hidden;
     }
     .flip-back {
         position: absolute;
@@ -740,7 +746,6 @@
         <div class="flip-face flip-back search-hero p-6 sm:p-10 shadow-sm">
             <div class="mb-8 max-w-3xl">
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white/70 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-700 text-indigo-600 dark:text-indigo-400 mb-4">
-                    <span class="text-2xl">🍺🍔</span>
                     <i class="bi bi-geo-alt-fill"></i> Explorar zona
                 </div>
                 <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white">
@@ -1135,7 +1140,7 @@ document.getElementById('searchForm').addEventListener('submit', async (e) => {
                     <div class="h-1.5 w-full bg-gradient-to-r ${accentBar}"></div>
                     <div class="p-5 flex items-center gap-3 border-b border-slate-100 dark:border-slate-800">
                         ${tarifa.proveedor?.logo
-                            ? `<img src="${tarifa.proveedor.logo}" alt="${tarifa.proveedor.nombre}" class="w-12 h-12 rounded-lg object-cover flex-shrink-0">`
+                            ? `<div class="w-12 h-12 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-1 flex items-center justify-center flex-shrink-0 shadow-sm"><img src="${tarifa.proveedor.logo}" alt="${tarifa.proveedor.nombre}" class="max-w-full max-h-full object-contain"></div>`
                             : `<div class="w-12 h-12 rounded-lg bg-gradient-to-br ${accentBar} grid place-items-center text-white font-bold flex-shrink-0">${(tarifa.proveedor?.nombre ?? '?').charAt(0)}</div>`
                         }
                         <div class="flex-grow min-w-0">
@@ -1206,7 +1211,7 @@ async function viewComparison(comparacionId, tarifaData) {
             <div class="space-y-4">
                 <div class="p-5 rounded-xl bg-gradient-to-br from-sky-50 to-indigo-50 dark:from-sky-950/40 dark:to-indigo-950/40 border border-sky-100 dark:border-sky-900">
                     <div class="flex items-start gap-3 mb-3">
-                        ${tarifaData.proveedor?.logo ? `<img src="${tarifaData.proveedor.logo}" alt="" class="w-12 h-12 rounded-lg object-cover">` : ''}
+                        ${tarifaData.proveedor?.logo ? `<div class="w-12 h-12 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-1 flex items-center justify-center shadow-sm"><img src="${tarifaData.proveedor.logo}" alt="" class="max-w-full max-h-full object-contain"></div>` : ''}
                         <div class="flex-grow">
                             <p class="text-[10px] font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-300">Proveedor</p>
                             <h3 class="text-xl font-extrabold text-slate-900 dark:text-white">${tarifaData.proveedor?.nombre ?? 'Proveedor'}</h3>
@@ -1332,6 +1337,8 @@ async function exportPdf() {
 // =================================================================
 @auth
 const heroFlip = document.getElementById('heroFlip');
+const tarifaFace = heroFlip.querySelector('.flip-face:not(.flip-back)');
+const zoneFace = heroFlip.querySelector('.flip-back');
 const tarifaEmptyState = document.getElementById('emptyState');
 const tarifaResultsSection = document.getElementById('resultsSection');
 const mapSection = document.getElementById('mapSection');
@@ -1342,6 +1349,10 @@ let tarifaPrevState = { empty: false, results: true };
 function setMode(mode) {
     const isZone = mode === 'zone';
     heroFlip.classList.toggle('flipped', isZone);
+    tarifaFace.classList.toggle('is-hidden', isZone);
+    tarifaFace.toggleAttribute('inert', isZone);
+    zoneFace.classList.toggle('is-hidden', !isZone);
+    zoneFace.toggleAttribute('inert', !isZone);
 
     document.querySelectorAll('.mode-tab').forEach(tab => {
         const active = tab.dataset.mode === mode;
@@ -1372,6 +1383,11 @@ function setMode(mode) {
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get('mode') === 'zone') {
     setMode('zone');
+} else {
+    tarifaFace.classList.remove('is-hidden');
+    tarifaFace.removeAttribute('inert');
+    zoneFace.classList.add('is-hidden');
+    zoneFace.setAttribute('inert', '');
 }
 
 // Provincia -> CP en el formulario de zona (reutiliza cpsPorProvincia)

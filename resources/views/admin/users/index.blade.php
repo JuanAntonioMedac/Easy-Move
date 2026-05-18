@@ -40,7 +40,6 @@
                 <tr>
                     <th class="text-left py-3 px-6 text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Usuario</th>
                     <th class="text-left py-3 px-6 text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Email</th>
-                    <th class="text-left py-3 px-6 text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Rol</th>
                     <th class="text-left py-3 px-6 text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Registrado</th>
                     <th class="text-right py-3 px-6 text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Acciones</th>
                 </tr>
@@ -57,16 +56,6 @@
                             </div>
                         </td>
                         <td class="py-4 px-6 text-sm text-slate-600 dark:text-slate-400">{{ $user->email }}</td>
-                        <td class="py-4 px-6">
-                            <form method="POST" action="{{ route('admin.users.update-role', $user) }}" class="inline">
-                                @csrf @method('PUT')
-                                <select name="rol" onchange="this.form.submit()"
-                                        class="px-3 py-1.5 rounded-full text-xs font-bold border-0 cursor-pointer transition-all {{ $user->rol === 'admin' ? 'bg-rose-100 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300' : 'bg-sky-100 dark:bg-sky-950/50 text-sky-700 dark:text-sky-300' }}">
-                                    <option value="usuario" @selected($user->rol === 'usuario')>Usuario</option>
-                                    <option value="admin" @selected($user->rol === 'admin')>Administrador</option>
-                                </select>
-                            </form>
-                        </td>
                         <td class="py-4 px-6 text-sm text-slate-600 dark:text-slate-400">
                             {{ $user->created_at ? \Carbon\Carbon::parse($user->created_at)->format('d/m/Y') : 'N/A' }}
                         </td>

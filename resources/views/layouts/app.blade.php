@@ -138,8 +138,8 @@
 
                 {{-- Logo --}}
                 <a href="{{ route('home') }}" class="group flex items-center gap-3 hover:opacity-95 transition-opacity">
-                    <div class="relative w-11 h-11 rounded-xl flex items-center justify-center shadow-lg shadow-sky-500/25 bg-gradient-to-br from-sky-500 via-indigo-500 to-purple-500 group-hover:scale-105 transition-transform duration-300">
-                        <i class="bi bi-lightning-charge-fill text-white text-xl"></i>
+                    <div class="relative w-12 h-12 rounded-xl flex items-center justify-center shadow-lg shadow-sky-500/25 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 group-hover:scale-105 transition-transform duration-300 overflow-hidden p-0.5">
+                        <img src="{{ asset('brand-logo.png') }}" alt="CamionBrum" class="w-full h-full object-contain">
                         <span class="absolute inset-0 rounded-xl ring-1 ring-white/20"></span>
                     </div>
                     <div class="hidden sm:block leading-tight">
@@ -274,8 +274,8 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-10">
                 <div class="flex flex-col gap-3">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg bg-gradient-to-br from-sky-500 via-indigo-500 to-purple-500">
-                            <i class="bi bi-lightning-charge-fill text-lg"></i>
+                        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-white shadow-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 overflow-hidden p-0.5">
+                            <img src="{{ asset('brand-logo.png') }}" alt="CamionBrum" class="w-full h-full object-contain">
                         </div>
                         <h3 class="text-lg font-extrabold tracking-tight gradient-text">EasyMove</h3>
                     </div>

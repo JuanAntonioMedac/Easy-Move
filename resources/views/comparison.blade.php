@@ -97,8 +97,8 @@
 
                     <div class="p-5 space-y-4">
                         <div class="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
-                            @if($tarifa->servicio->proveedor->logo)
-                                <img src="{{ Storage::url($tarifa->servicio->proveedor->logo) }}" alt="{{ $tarifa->servicio->proveedor->nombre }}" class="w-12 h-12 rounded-xl object-cover shadow-sm">
+                            @if($tarifa->servicio->proveedor->logo_url)
+                                <img src="{{ $tarifa->servicio->proveedor->logo_url }}" alt="{{ $tarifa->servicio->proveedor->nombre }}" class="w-12 h-12 rounded-xl object-contain bg-white dark:bg-slate-900 p-1 shadow-sm">
                             @else
                                 <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 grid place-items-center text-white font-bold">
                                     {{ substr($tarifa->servicio->proveedor->nombre, 0, 1) }}
@@ -162,19 +162,6 @@
                                     No disponible
                                 </button>
                             @endif
-
-                            @auth
-                                <div class="flex gap-2">
-                                    <button onclick="downloadTarifaPDF({{ $comparacion_id }}, {{ $tarifa->id_tarifa }})"
-                                            class="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl font-semibold text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition">
-                                        <i class="bi bi-file-earmark-pdf"></i><span>PDF</span>
-                                    </button>
-                                    <button onclick="downloadTodasPDF({{ $comparacion_id }})"
-                                            class="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl font-semibold text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition">
-                                        <i class="bi bi-files"></i><span>Todas</span>
-                                    </button>
-                                </div>
-                            @endauth
                         </div>
                     </div>
                 </div>

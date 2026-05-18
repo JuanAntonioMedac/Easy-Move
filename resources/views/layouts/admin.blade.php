@@ -100,8 +100,8 @@
         <div class="h-full flex flex-col">
             <div class="px-6 py-5 border-b border-slate-200 dark:border-slate-800">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 via-indigo-500 to-purple-500 grid place-items-center text-white shadow-lg shadow-indigo-500/30">
-                        <i class="bi bi-shield-lock-fill text-lg"></i>
+                    <div class="w-12 h-12 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 grid place-items-center text-white shadow-lg shadow-indigo-500/30 overflow-hidden p-0.5">
+                        <img src="{{ asset('brand-logo.png') }}" alt="CamionBrum" class="w-full h-full object-contain">
                     </div>
                     <div>
                         <p class="text-sm font-extrabold gradient-text leading-tight">Panel Admin</p>

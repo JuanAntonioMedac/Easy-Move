@@ -18,6 +18,16 @@ Route::get('/contacto', function () {
     return view('contact');
 })->name('contact');
 
+Route::get('/brand-logo', function () {
+    $path = storage_path('app/private/logo/CamionBrum.png');
+
+    abort_unless(is_file($path), 404);
+
+    return response()->file($path, [
+        'Cache-Control' => 'public, max-age=31536000, immutable',
+    ]);
+})->name('brand.logo');
+
 Route::get('/search', [SearchController::class, 'index'])->name('search');
 Route::post('/search', [SearchController::class, 'search'])->name('search.query');
 Route::post('/search/advanced', [SearchController::class, 'searchAdvanced'])->name('search.advanced');

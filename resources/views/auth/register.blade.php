@@ -12,8 +12,8 @@
     <div class="relative w-full max-w-md">
         <div class="rounded-3xl border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-2xl shadow-indigo-500/10 p-8 sm:p-10 animate-fade-in-up">
             <div class="flex flex-col items-center text-center mb-8">
-                <div class="w-14 h-14 rounded-2xl grid place-items-center bg-gradient-to-br from-purple-500 via-indigo-500 to-sky-500 text-white shadow-lg shadow-purple-500/30 mb-4">
-                    <i class="bi bi-person-plus-fill text-2xl"></i>
+                <div class="w-16 h-16 rounded-2xl grid place-items-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-white shadow-lg shadow-purple-500/30 mb-4 overflow-hidden p-0.5">
+                    <img src="{{ asset('brand-logo.png') }}" alt="CamionBrum" class="w-full h-full object-contain">
                 </div>
                 <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">Crea tu cuenta</h1>
                 <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">Guarda tus comparativas y desbloquea filtros avanzados</p>

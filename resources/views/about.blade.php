@@ -33,7 +33,7 @@
             <span class="block gradient-text">encontrar la mejor tarifa.</span>
         </h1>
         <p class="mt-4 text-lg text-slate-600 dark:text-slate-300 max-w-2xl">
-            EasyMove nace para ayudar a las familias y negocios a comparar servicios en segundos, con datos reales y sin letra pequena.
+            EasyMove nace para ayudar a las familias y negocios a comparar servicios en segundos, con datos reales y sin letra pequeña.
         </p>
         <div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-900/70 p-4">
@@ -46,7 +46,7 @@
             </div>
             <div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-900/70 p-4">
                 <p class="text-sm text-slate-500 dark:text-slate-400">Ahorro medio</p>
-                <p class="text-2xl font-extrabold gradient-text">€150/ano</p>
+                <p class="text-2xl font-extrabold gradient-text">€150/año</p>
             </div>
         </div>
     </div>
@@ -64,7 +64,7 @@
                 <i class="bi bi-shield-check text-xl"></i>
             </div>
             <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Transparencia total</h2>
-            <p class="text-sm text-slate-600 dark:text-slate-400">Sin letra pequena, sin spam. Solo comparativas claras y condiciones reales.</p>
+            <p class="text-sm text-slate-600 dark:text-slate-400">Sin letra pequeña, sin spam. Solo comparativas claras y condiciones reales.</p>
         </div>
         <div class="rounded-2xl p-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
             <div class="w-11 h-11 rounded-xl grid place-items-center bg-gradient-to-br from-rose-500 to-amber-500 text-white shadow-lg shadow-rose-500/30 mb-4">

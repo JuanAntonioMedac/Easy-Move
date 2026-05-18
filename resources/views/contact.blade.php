@@ -45,6 +45,35 @@
         height: 1px;
         background: linear-gradient(90deg, transparent, rgba(148,163,184,.4), transparent);
     }
+
+    .contact-card .field-input {
+        width: 100%;
+        background: transparent;
+        border: 1px solid rgb(226 232 240);
+        color: rgb(15 23 42);
+        box-shadow: none;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+    }
+    .contact-card .field-input:focus {
+        background: transparent;
+        box-shadow: 0 0 0 4px rgba(99,102,241,.16);
+    }
+    html.dark .contact-card .field-input {
+        background: transparent;
+        border-color: rgb(51 65 85);
+        color: rgb(241 245 249);
+    }
+    html.dark .contact-card .field-input:focus {
+        background: transparent;
+    }
+    .contact-card textarea.field-input {
+        resize: vertical;
+    }
+    .contact-card select.field-input {
+        padding-right: 2.5rem;
+    }
 </style>
 
 <section class="space-y-12">
@@ -72,7 +101,7 @@
             <div class="w-11 h-11 rounded-xl grid place-items-center bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/30 mb-4">
                 <i class="bi bi-telephone-fill text-xl"></i>
             </div>
-            <h2 class="text-lg font-bold text-slate-900 dark:text-white">Telefono</h2>
+            <h2 class="text-lg font-bold text-slate-900 dark:text-white">Teléfono</h2>
             <p class="text-sm text-slate-600 dark:text-slate-400">+34 900 123 456</p>
         </div>
         <div class="rounded-2xl p-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
@@ -87,32 +116,49 @@
     <div class="grid lg:grid-cols-2 gap-10 items-start">
         <div class="contact-card overflow-hidden">
             <div class="contact-card-header px-8 py-6">
-                <h3 class="text-2xl font-extrabold text-slate-900 dark:text-white">Escribenos</h3>
+                <h3 class="text-2xl font-extrabold text-slate-900 dark:text-white">Escríbenos</h3>
                 <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">Te respondemos en menos de 24 horas laborales.</p>
             </div>
             <div class="px-8 py-7">
-                <form class="space-y-4" onsubmit="event.preventDefault();">
-                    <div>
-                        <label class="field-label">Nombre</label>
-                        <input type="text" class="field-input" placeholder="Tu nombre" />
+                <form class="space-y-5" onsubmit="event.preventDefault();">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="field-label">Nombre</label>
+                            <input type="text" class="field-input" placeholder="Tu nombre" autocomplete="name" />
+                        </div>
+                        <div>
+                            <label class="field-label">Email</label>
+                            <input type="email" class="field-input" placeholder="tu@email.com" autocomplete="email" />
+                        </div>
                     </div>
+
                     <div>
-                        <label class="field-label">Email</label>
-                        <input type="email" class="field-input" placeholder="tu@email.com" />
+                        <label class="field-label">Motivo</label>
+                        <select class="field-input">
+                            <option value="">Selecciona una opción</option>
+                            <option value="soporte">Soporte</option>
+                            <option value="sugerencia">Sugerencia</option>
+                            <option value="proveedores">Alta de proveedor</option>
+                            <option value="otro">Otro</option>
+                        </select>
                     </div>
+
                     <div>
                         <label class="field-label">Mensaje</label>
-                        <textarea class="field-input" rows="5" placeholder="Cuentanos en que podemos ayudarte"></textarea>
+                        <textarea class="field-input min-h-[140px] resize-y" rows="6" placeholder="Cuéntanos en qué podemos ayudarte"></textarea>
+                        <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">Incluye los detalles clave para poder responderte mejor.</p>
                     </div>
+
                     <div class="contact-divider"></div>
-                    <div class="flex flex-col sm:flex-row gap-3">
-                        <button type="submit" class="btn-brand ring-brand inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-white font-semibold">
+
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                        <button type="submit" class="btn-brand ring-brand inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl text-white font-semibold w-full sm:w-auto">
                             <i class="bi bi-send-fill"></i>
                             Enviar mensaje
                         </button>
-                        <div class="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
-                            <i class="bi bi-shield-check text-emerald-500"></i>
-                            Tus datos no se comparten con terceros.
+                        <div class="inline-flex items-start gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3">
+                            <i class="bi bi-shield-check text-emerald-500 mt-0.5"></i>
+                            <span>Tus datos no se comparten con terceros y solo se usan para responderte.</span>
                         </div>
                     </div>
                 </form>
@@ -120,8 +166,8 @@
         </div>
 
         <div class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-gradient-to-br from-slate-50 to-white dark:from-slate-900 dark:to-slate-950 p-8">
-            <h3 class="text-2xl font-extrabold text-slate-900 dark:text-white">Tambien puedes</h3>
-            <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">Accede rapido al comparador o al buscador de bares y restaurantes.</p>
+            <h3 class="text-2xl font-extrabold text-slate-900 dark:text-white">También puedes</h3>
+            <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">Accede rápido al comparador o al buscador de bares y restaurantes.</p>
             <div class="mt-6 flex flex-col gap-3">
                 <a href="{{ route('search') }}" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:border-sky-400 hover:text-sky-600 dark:hover:text-sky-400 transition">
                     <i class="bi bi-stars"></i>

@@ -56,9 +56,11 @@
                     <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
                         <td class="py-4 px-6">
                             @if ($proveedor->logo)
-                                <img src="{{ $proveedor->logo_url }}" alt="{{ $proveedor->nombre }}" class="w-12 h-12 rounded-xl object-cover shadow-sm">
+                                <div class="w-16 h-16 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2 flex items-center justify-center shadow-sm">
+                                    <img src="{{ $proveedor->logo_url }}" alt="{{ $proveedor->nombre }}" class="max-w-full max-h-full object-contain">
+                                </div>
                             @else
-                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 grid place-items-center text-white font-bold shadow-md">
+                                <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 grid place-items-center text-white font-bold shadow-md">
                                     {{ substr($proveedor->nombre, 0, 1) }}
                                 </div>
                             @endif

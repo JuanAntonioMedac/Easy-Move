@@ -68,6 +68,15 @@ class EasyMoveSeeder extends Seeder
                 'preferencias' => json_encode(['language' => 'es']),
                 'fecha_registro' => now(),
             ],
+             [
+                'id_usuario' => 4,
+                'nombre' => 'Usuario',
+                'email' => 'usuario@easymove.com',
+                'password' => Hash::make('usuario123456'),
+                'rol' => 'usuario',
+                'preferencias' => json_encode(['language' => 'es']),
+                'fecha_registro' => now(),
+            ],
         ];
         if (\Schema::hasColumn('usuarios', 'created_at')) {
             foreach ($usuariosBase as &$u) {
@@ -91,26 +100,26 @@ class EasyMoveSeeder extends Seeder
         // PROVEEDORES (mercado español real)
         // =========================
         DB::table('proveedores')->insert([
-            ['id_proveedor' => 1,  'nombre' => 'Endesa',         'web' => 'https://www.endesa.com',        'logo' => 'proveedores/endesa.png',         'tipo_proveedor' => 'mixto',      'api_disponible' => 1, 'created_at' => now(), 'updated_at' => now()],
-            ['id_proveedor' => 2,  'nombre' => 'Iberdrola',      'web' => 'https://www.iberdrola.es',      'logo' => 'proveedores/iberdrola.png',      'tipo_proveedor' => 'mixto',      'api_disponible' => 1, 'created_at' => now(), 'updated_at' => now()],
-            ['id_proveedor' => 3,  'nombre' => 'EDP',            'web' => 'https://www.edpenergia.es',     'logo' => 'proveedores/edp.png',            'tipo_proveedor' => 'luz',        'api_disponible' => 0, 'created_at' => now(), 'updated_at' => now()],
-            ['id_proveedor' => 4,  'nombre' => 'Naturgy',        'web' => 'https://www.naturgy.es',        'logo' => 'proveedores/naturgy.png',        'tipo_proveedor' => 'mixto',      'api_disponible' => 1, 'created_at' => now(), 'updated_at' => now()],
-            ['id_proveedor' => 5,  'nombre' => 'Movistar',       'web' => 'https://www.movistar.es',       'logo' => 'proveedores/movistar.png',       'tipo_proveedor' => 'telefonica', 'api_disponible' => 1, 'created_at' => now(), 'updated_at' => now()],
-            ['id_proveedor' => 6,  'nombre' => 'Vodafone',       'web' => 'https://www.vodafone.es',       'logo' => 'proveedores/vodafone.png',       'tipo_proveedor' => 'telefonica', 'api_disponible' => 1, 'created_at' => now(), 'updated_at' => now()],
-            ['id_proveedor' => 7,  'nombre' => 'Repsol',         'web' => 'https://www.repsol.es',         'logo' => 'proveedores/repsol.png',         'tipo_proveedor' => 'mixto',      'api_disponible' => 1, 'created_at' => now(), 'updated_at' => now()],
-            ['id_proveedor' => 8,  'nombre' => 'TotalEnergies',  'web' => 'https://www.totalenergies.es',  'logo' => 'proveedores/totalenergies.png',  'tipo_proveedor' => 'mixto',      'api_disponible' => 0, 'created_at' => now(), 'updated_at' => now()],
-            ['id_proveedor' => 9,  'nombre' => 'Holaluz',        'web' => 'https://www.holaluz.com',       'logo' => 'proveedores/holaluz.png',        'tipo_proveedor' => 'luz',        'api_disponible' => 1, 'created_at' => now(), 'updated_at' => now()],
-            ['id_proveedor' => 10, 'nombre' => 'Octopus Energy', 'web' => 'https://octopusenergy.es',      'logo' => 'proveedores/octopus.png',        'tipo_proveedor' => 'luz',        'api_disponible' => 1, 'created_at' => now(), 'updated_at' => now()],
-            ['id_proveedor' => 11, 'nombre' => 'Lucera',         'web' => 'https://www.lucera.es',         'logo' => 'proveedores/lucera.png',         'tipo_proveedor' => 'luz',        'api_disponible' => 0, 'created_at' => now(), 'updated_at' => now()],
-            ['id_proveedor' => 12, 'nombre' => 'Audax',          'web' => 'https://www.audaxrenovables.es','logo' => 'proveedores/audax.png',          'tipo_proveedor' => 'luz',        'api_disponible' => 0, 'created_at' => now(), 'updated_at' => now()],
-            ['id_proveedor' => 13, 'nombre' => 'Cepsa',          'web' => 'https://www.cepsa.es',          'logo' => 'proveedores/cepsa.png',          'tipo_proveedor' => 'gas',        'api_disponible' => 0, 'created_at' => now(), 'updated_at' => now()],
-            ['id_proveedor' => 14, 'nombre' => 'Orange',         'web' => 'https://www.orange.es',         'logo' => 'proveedores/orange.png',         'tipo_proveedor' => 'telefonica', 'api_disponible' => 1, 'created_at' => now(), 'updated_at' => now()],
-            ['id_proveedor' => 15, 'nombre' => 'MásMóvil',       'web' => 'https://www.masmovil.es',       'logo' => 'proveedores/masmovil.png',       'tipo_proveedor' => 'telefonica', 'api_disponible' => 1, 'created_at' => now(), 'updated_at' => now()],
-            ['id_proveedor' => 16, 'nombre' => 'Yoigo',          'web' => 'https://www.yoigo.com',         'logo' => 'proveedores/yoigo.png',          'tipo_proveedor' => 'telefonica', 'api_disponible' => 0, 'created_at' => now(), 'updated_at' => now()],
-            ['id_proveedor' => 17, 'nombre' => 'Pepephone',      'web' => 'https://www.pepephone.com',     'logo' => 'proveedores/pepephone.png',      'tipo_proveedor' => 'telefonica', 'api_disponible' => 0, 'created_at' => now(), 'updated_at' => now()],
-            ['id_proveedor' => 18, 'nombre' => 'Lowi',           'web' => 'https://www.lowi.es',           'logo' => 'proveedores/lowi.png',           'tipo_proveedor' => 'telefonica', 'api_disponible' => 1, 'created_at' => now(), 'updated_at' => now()],
-            ['id_proveedor' => 19, 'nombre' => 'O2',             'web' => 'https://o2online.es',           'logo' => 'proveedores/o2.png',             'tipo_proveedor' => 'telefonica', 'api_disponible' => 0, 'created_at' => now(), 'updated_at' => now()],
-            ['id_proveedor' => 20, 'nombre' => 'Digi',           'web' => 'https://www.digimobil.es',      'logo' => 'proveedores/digi.png',           'tipo_proveedor' => 'telefonica', 'api_disponible' => 0, 'created_at' => now(), 'updated_at' => now()],
+            ['id_proveedor' => 1,  'nombre' => 'Endesa',         'web' => 'https://www.endesa.com',        'logo' => 'https://www.endesa.com/content/dam/endesa-com/endesa_logo.svg',         'tipo_proveedor' => 'mixto',      'api_disponible' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['id_proveedor' => 2,  'nombre' => 'Iberdrola',      'web' => 'https://www.iberdrola.es',      'logo' => 'https://www.iberdrola.es/ibdmedia/comun/img/logos/logo-iberdrola-125-menu.svg',      'tipo_proveedor' => 'mixto',      'api_disponible' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['id_proveedor' => 3,  'nombre' => 'EDP',            'web' => 'https://www.edpenergia.es',     'logo' => 'https://www.edpenergia.es/media/4789/logoedp_group_masterlogo_rgb_dark_pos-1.svg',            'tipo_proveedor' => 'luz',        'api_disponible' => 0, 'created_at' => now(), 'updated_at' => now()],
+            ['id_proveedor' => 4,  'nombre' => 'Naturgy',        'web' => 'https://www.naturgy.es',        'logo' => 'https://www.naturgy.es/content/dam/naturgy/espana/global/logos/logo_naturgy_home.svg',        'tipo_proveedor' => 'mixto',      'api_disponible' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['id_proveedor' => 5,  'nombre' => 'Movistar',       'web' => 'https://www.movistar.es',       'logo' => 'https://ssr.col.movistar.es/api/v1/get-glyph/movistar-logo-h-m/3.00/movistarBlue',       'tipo_proveedor' => 'telefonica', 'api_disponible' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['id_proveedor' => 6,  'nombre' => 'Vodafone',       'web' => 'https://www.vodafone.es',       'logo' => 'https://www.vodafone.es/c/statics/maestro/logo_vodafone.png?v=20230614045454',       'tipo_proveedor' => 'telefonica', 'api_disponible' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['id_proveedor' => 7,  'nombre' => 'Repsol',         'web' => 'https://www.repsol.es',         'logo' => 'https://www.repsol.com/content/dam/repsol-corporate/es/home/nuevo-logo.jpg',         'tipo_proveedor' => 'mixto',      'api_disponible' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['id_proveedor' => 8,  'nombre' => 'TotalEnergies',  'web' => 'https://www.totalenergies.es',  'logo' => 'https://www.totalenergies.es/themes/custom/total_redesign/logo.svg',  'tipo_proveedor' => 'mixto',      'api_disponible' => 0, 'created_at' => now(), 'updated_at' => now()],
+            ['id_proveedor' => 9,  'nombre' => 'Holaluz',        'web' => 'https://www.holaluz.com',       'logo' => 'https://assets.holaluz.com/logos/logo-gradient.svg',        'tipo_proveedor' => 'luz',        'api_disponible' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['id_proveedor' => 10, 'nombre' => 'Octopus Energy', 'web' => 'https://octopusenergy.es',      'logo' => 'https://a.storyblok.com/f/157872/347x313/8e2ae0facb/hero.svg',        'tipo_proveedor' => 'luz',        'api_disponible' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['id_proveedor' => 11, 'nombre' => 'Lucera',         'web' => 'https://www.lucera.es',         'logo' => 'https://assets.lucera.es/kokiri/19.1.15/logos/logo.svg',         'tipo_proveedor' => 'luz',        'api_disponible' => 0, 'created_at' => now(), 'updated_at' => now()],
+            ['id_proveedor' => 12, 'nombre' => 'Audax',          'web' => 'https://www.audaxrenovables.es','logo' => 'https://www.audaxrenovables.es/wp-content/uploads/2026/03/AUDAX-LOGO-COLOR-RGB.png',          'tipo_proveedor' => 'luz',        'api_disponible' => 0, 'created_at' => now(), 'updated_at' => now()],
+            ['id_proveedor' => 13, 'nombre' => 'Cepsa',          'web' => 'https://www.cepsa.es',          'logo' => 'https://www.moeve.es/error/error-resources/logo-dark.svg',          'tipo_proveedor' => 'gas',        'api_disponible' => 0, 'created_at' => now(), 'updated_at' => now()],
+            ['id_proveedor' => 14, 'nombre' => 'Orange',         'web' => 'https://www.orange.es',         'logo' => 'https://areaclientes.orange.es/assets/orange/img/Orange_Master_logo.svg',         'tipo_proveedor' => 'telefonica', 'api_disponible' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['id_proveedor' => 15, 'nombre' => 'MásMóvil',       'web' => 'https://www.masmovil.es',       'logo' => 'https://eshop.prod.k8s.masmovil.com/contentful/api/assets/ysrgozgyxrl6/u1BjQK6Z2lZ00x8KL3Ezn/8bf0478f297febe6021f5862500679ae/logo.svg?w=256',       'tipo_proveedor' => 'telefonica', 'api_disponible' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['id_proveedor' => 16, 'nombre' => 'Yoigo',          'web' => 'https://www.yoigo.com',         'logo' => 'https://eshop.prod.k8s.masmovil.com/contentful/api/assets/ysrgozgyxrl6/HgmucNPhwME624yADrpBp/4e847d16b950e5482c4d45d75ac70f9e/Frame_10.svg?w=128',          'tipo_proveedor' => 'telefonica', 'api_disponible' => 0, 'created_at' => now(), 'updated_at' => now()],
+            ['id_proveedor' => 17, 'nombre' => 'Pepephone',      'web' => 'https://www.pepephone.com',     'logo' => 'https://www.pepephone.com/react-pepe-ecare/public/static/assets/logo-pepephone-bw.svg',      'tipo_proveedor' => 'telefonica', 'api_disponible' => 0, 'created_at' => now(), 'updated_at' => now()],
+            ['id_proveedor' => 18, 'nombre' => 'Lowi',           'web' => 'https://www.lowi.es',           'logo' => 'https://content.lowi.es/statics/imagen/2000035299303/logo.svg?v=20250506101257',           'tipo_proveedor' => 'telefonica', 'api_disponible' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['id_proveedor' => 19, 'nombre' => 'O2',             'web' => 'https://o2online.es',           'logo' => 'https://web.static.o2online.es/media/public/logo-o2-blue.svg',             'tipo_proveedor' => 'telefonica', 'api_disponible' => 0, 'created_at' => now(), 'updated_at' => now()],
+            ['id_proveedor' => 20, 'nombre' => 'Digi',           'web' => 'https://www.digimobil.es',      'logo' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSv9vYYuwx5ZlNV5MkG2OyVtF9HDrn_tfykSg&s',           'tipo_proveedor' => 'telefonica', 'api_disponible' => 0, 'created_at' => now(), 'updated_at' => now()],
         ]);
 
         // =========================
